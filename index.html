@@ -61,9 +61,29 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Toast notifications */
+        .toast {
+            animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: all 0.4s ease;
+        }
+        .toast.toast-out {
+            animation: toastOut 0.4s ease forwards;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(20px) scale(0.95); }
+        }
     </style>
 </head>
 <body class="antialiased">
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
     <!-- Navigation -->
     <nav class="glass fixed w-full top-0 z-50 border-b border-stone-800">
@@ -248,6 +268,27 @@
                 .replace(/'/g, '&#39;');
         }
 
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'toast pointer-events-auto flex items-center gap-3 bg-[#1A1A1A] border border-[#C5A47E]/40 text-stone-200 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md';
+            toast.innerHTML = `
+                <span class="text-[#C5A47E] text-lg">✧</span>
+                <span class="text-xs uppercase tracking-wider font-light">${escapeHtml(message)}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('toast-out');
+                toast.addEventListener('animationend', () => {
+                    toast.remove();
+                });
+            }, 2500);
+        }
+
         function saveCart() {
             localStorage.setItem('carving_cart', JSON.stringify(cart));
             updateCartCount();
@@ -333,7 +374,7 @@
             if (!p) return;
             cart.push({ id: p.id, name: p.name, price: p.price, img: p.image_url });
             saveCart();
-            alert(`${p.name} додано до кошика`);
+            showToast(`«${p.name}» додано до кошика`);
         }
 
         function renderCart() {
