@@ -19,29 +19,67 @@
             font-family: 'Montserrat', sans-serif;
             background-color: var(--color-bg);
             color: var(--color-primary);
+            overflow-x: hidden;
         }
         h1, h2, h3, h4, .serif {
             font-family: 'Cormorant Garamond', serif;
         }
         .glass {
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
+
+        /* Product Cards */
         .product-card {
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(197, 164, 126, 0.4);
+            box-shadow: 0 20px 40px -15px rgba(197, 164, 126, 0.15);
         }
         .product-card:hover .product-img {
-            transform: scale(1.04);
+            transform: scale(1.07);
         }
+
+        /* Luxury Shimmer Buttons */
         .btn-luxury {
-            transition: all 0.3s ease;
-            letter-spacing: 0.15em;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            letter-spacing: 0.18em;
+            position: relative;
+            overflow: hidden;
         }
         .btn-luxury:hover {
-            opacity: 0.88;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(197, 164, 126, 0.3);
         }
+        .btn-luxury::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -150%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transform: rotate(25deg);
+            transition: all 0.8s ease;
+        }
+        .btn-luxury:hover::after {
+            left: 150%;
+        }
+
+        /* Scroll reveal class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .page-transition {
             animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -77,7 +115,10 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-[#C5A47E]/30 selection:text-white">
+<body class="antialiased selection:bg-[#C5A47E]/30 selection:text-white relative">
+
+    <!-- Dynamic Animated Background Canvas -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 w-full h-full"></canvas>
 
     <!-- Toast Notifications Container -->
     <div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
@@ -102,171 +143,275 @@
         </div>
     </nav>
 
-    <!-- Home Page -->
-    <section id="page-home" class="page page-transition pt-24">
-        <!-- Hero Section -->
-        <div class="max-w-7xl mx-auto px-6 sm:px-12 pt-16 pb-24 md:pt-28 md:pb-36 flex flex-col items-center text-center">
-            <span class="text-[10px] uppercase tracking-[0.35em] text-[#C5A47E] mb-6 font-light">Exclusive Fruit Carving</span>
-            <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl mb-8 font-light italic leading-[0.95] max-w-5xl tracking-tight">
-                Мистецтво, створене для особливих моментів
-            </h1>
-            <p class="text-stone-400 text-sm md:text-base font-light max-w-2xl mb-12 leading-relaxed tracking-wide">
-                Авторські карвінг-композиції Viktoria Bilak. Грація ліній, абсолютна свіжість і преміальна естетика фуршетної культури.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-5 w-full sm:w-auto justify-center">
-                <button type="button" onclick="showPage('catalog')" class="btn-luxury bg-[#C5A47E] text-stone-950 px-10 py-4 rounded-full text-[11px] uppercase font-medium">
-                    Переглянути каталог
-                </button>
-                <button type="button" onclick="showPage('confirm')" class="btn-luxury border border-stone-700 text-stone-200 px-10 py-4 rounded-full text-[11px] uppercase font-light hover:border-stone-400">
-                    Індивідуальне замовлення
-                </button>
-            </div>
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10">
 
-            <!-- Hero Showcase Image -->
-            <div class="w-full mt-20 relative overflow-hidden rounded-3xl border border-stone-800/60">
-                <img src="https://images.unsplash.com/photo-1590779033116-f6776606670b?auto=format&fit=crop&q=80&w=1920" class="w-full h-[50vh] md:h-[75vh] object-cover opacity-70 filter brightness-90" alt="Carving Showcase">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent"></div>
-            </div>
-        </div>
-
-        <!-- Philosophy Section -->
-        <div class="border-t border-stone-800/60 py-28 md:py-36 bg-[#0E0E0E]">
-            <div class="max-w-6xl mx-auto px-6 sm:px-12">
-                <div class="text-center mb-20">
-                    <span class="text-[10px] uppercase tracking-[0.3em] text-stone-500 block mb-3">Філософія</span>
-                    <h2 class="text-4xl md:text-6xl font-light italic">Витонченість у кожній деталі</h2>
+        <!-- Home Page -->
+        <section id="page-home" class="page page-transition pt-24">
+            <!-- Hero Section -->
+            <div class="max-w-7xl mx-auto px-6 sm:px-12 pt-16 pb-24 md:pt-28 md:pb-36 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase tracking-[0.35em] text-[#C5A47E] mb-6 font-light reveal">Exclusive Fruit Carving</span>
+                <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl mb-8 font-light italic leading-[0.95] max-w-5xl tracking-tight reveal">
+                    Мистецтво, створене для особливих моментів
+                </h1>
+                <p class="text-stone-400 text-sm md:text-base font-light max-w-2xl mb-12 leading-relaxed tracking-wide reveal">
+                    Авторські карвінг-композиції Viktoria Bilak. Грація ліній, абсолютна свіжість і преміальна естетика фуршетної культури.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-5 w-full sm:w-auto justify-center reveal">
+                    <button type="button" onclick="showPage('catalog')" class="btn-luxury bg-[#C5A47E] text-stone-950 px-10 py-4 rounded-full text-[11px] uppercase font-medium">
+                        Переглянути каталог
+                    </button>
+                    <button type="button" onclick="showPage('confirm')" class="btn-luxury border border-stone-700 text-stone-200 px-10 py-4 rounded-full text-[11px] uppercase font-light hover:border-stone-400">
+                        Індивідуальне замовлення
+                    </button>
                 </div>
-                <div class="grid md:grid-cols-3 gap-16 md:gap-12">
-                    <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2">
-                        <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">01 /</span>
-                        <h3 class="text-2xl mb-4 serif italic font-normal">Чистота ліній</h3>
-                        <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Кожен розріз — це розмова з формою, де кожен міліметр має гармонійне значення.</p>
-                    </div>
-                    <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2">
-                        <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">02 /</span>
-                        <h3 class="text-2xl mb-4 serif italic font-normal">Свіжість моменту</h3>
-                        <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Ми Працюємо виключно з відбірними фрукти, збереженими у своїй природній естетиці.</p>
-                    </div>
-                    <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2">
-                        <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">03 /</span>
-                        <h3 class="text-2xl mb-4 serif italic font-normal">Ексклюзивність</h3>
-                        <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Створення унікальних композицій, адаптованих до вашої події та гостей.</p>
-                    </div>
+
+                <!-- Hero Showcase Image -->
+                <div class="w-full mt-20 relative overflow-hidden rounded-3xl border border-stone-800/60 reveal">
+                    <img src="https://images.unsplash.com/photo-1590779033116-f6776606670b?auto=format&fit=crop&q=80&w=1920" class="w-full h-[50vh] md:h-[75vh] object-cover opacity-70 filter brightness-90 transition-transform duration-1000 hover:scale-105" alt="Carving Showcase">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent"></div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Catalog Page -->
-    <section id="page-catalog" class="page hidden page-transition max-w-7xl mx-auto px-6 sm:px-12 py-32 md:py-40">
-        <div class="text-center mb-24">
-            <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E] block mb-3">Колекція</span>
-            <h2 class="text-5xl md:text-7xl font-light italic mb-6">Каталог робіт</h2>
-            <div class="w-16 h-[1px] bg-[#C5A47E]/60 mx-auto"></div>
-        </div>
-        <div id="catalog-loader" class="hidden flex justify-center py-20">
-            <div class="loader"></div>
-        </div>
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 sm:gap-16">
-            <!-- Products from Supabase -->
-        </div>
-    </section>
-
-    <!-- Cart Page -->
-    <section id="page-cart" class="page hidden page-transition max-w-3xl mx-auto px-6 sm:px-12 py-32 md:py-40">
-        <div class="text-center mb-16">
-            <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E] block mb-3">Ваш вибір</span>
-            <h2 class="text-5xl md:text-6xl font-light italic mb-4">Обрані вироби</h2>
-            <div class="w-12 h-[1px] bg-[#C5A47E]/60 mx-auto"></div>
-        </div>
-        <div id="cart-items" class="bg-[#141414] rounded-3xl p-8 mb-12 border border-stone-800/60">
-            <!-- Cart items -->
-        </div>
-        <div class="flex justify-between items-center mb-12 text-2xl serif italic px-2">
-            <span class="font-light text-stone-400">Загальна вартість:</span>
-            <span id="cart-total" class="font-medium text-white">0 грн</span>
-        </div>
-        <div id="checkout-section" class="text-center">
-            <button type="button" onclick="showPage('confirm')" class="btn-luxury bg-[#C5A47E] text-stone-950 px-12 py-5 rounded-full text-xs uppercase font-medium w-full md:w-auto">
-                Перейти до оформлення
-            </button>
-        </div>
-    </section>
-
-    <!-- Confirmation Page -->
-    <section id="page-confirm" class="page hidden page-transition max-w-2xl mx-auto px-6 py-36 md:py-44 text-center">
-        <div class="bg-[#141414] rounded-3xl p-10 sm:p-20 border border-stone-800/60">
-            <div class="text-3xl mb-8 text-[#C5A47E]">✧</div>
-            <h2 class="text-4xl sm:text-5xl mb-6 italic font-light">Замовлення майже готове</h2>
-            <p class="text-sm sm:text-base text-stone-400 font-light mb-12 leading-relaxed">
-                Для узгодження деталей, доставки та дати проведення, зв'яжіться з нами за телефоном.
-            </p>
-            <a href="tel:+380000000000" onclick="clearCart()" class="inline-block btn-luxury bg-[#C5A47E] text-stone-950 px-10 py-5 rounded-full text-xs uppercase font-medium w-full">
-                Зателефонувати для підтвердження
-            </a>
-            <button type="button" onclick="showPage('catalog')" class="mt-8 text-stone-500 text-xs uppercase tracking-[0.2em] hover:text-stone-300 transition block w-full">
-                Повернутися до каталогу
-            </button>
-        </div>
-    </section>
-
-    <!-- Admin Page -->
-    <section id="page-admin" class="page hidden page-transition max-w-4xl mx-auto px-6 sm:px-12 py-32 md:py-40">
-        <div id="admin-auth" class="text-center py-20 bg-[#141414] rounded-3xl border border-stone-800/60">
-            <h2 class="text-3xl mb-8 serif italic font-light">Вхід у кабінет</h2>
-            <input type="password" id="admin-pass" placeholder="Пароль" onkeydown="if(event.key==='Enter') checkAdmin()" class="bg-transparent border-b border-stone-700 p-3 outline-none text-center mb-10 block mx-auto w-56 text-white text-sm tracking-widest focus:border-[#C5A47E] transition">
-            <button type="button" onclick="checkAdmin()" class="btn-luxury border border-stone-600 px-10 py-3 rounded-full text-xs uppercase tracking-[0.2em]">Увійти</button>
-        </div>
-        <div id="admin-panel" class="hidden">
-            <div class="flex justify-between items-end mb-12">
-                <h2 class="text-4xl italic font-light">Керування каталогом</h2>
-                <button type="button" onclick="showPage('home')" class="text-xs uppercase tracking-[0.2em] text-stone-500 hover:text-stone-300">Вийти</button>
-            </div>
-            <div class="bg-[#141414] p-8 sm:p-12 rounded-3xl border border-stone-800/60 mb-16">
-                <h3 class="text-2xl mb-8 serif italic font-light">Додати нову роботу</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Назва</label>
-                        <input type="text" id="prod-name" placeholder="напр. Кавун-Квітка" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
+            <!-- Philosophy Section -->
+            <div class="border-t border-stone-800/60 py-28 md:py-36 bg-[#0E0E0E]/80 backdrop-blur-sm">
+                <div class="max-w-6xl mx-auto px-6 sm:px-12">
+                    <div class="text-center mb-20 reveal">
+                        <span class="text-[10px] uppercase tracking-[0.3em] text-stone-500 block mb-3">Філософія</span>
+                        <h2 class="text-4xl md:text-6xl font-light italic">Витонченість у кожній деталі</h2>
                     </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Ціна (грн)</label>
-                        <input type="number" id="prod-price" placeholder="0" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Фотографія</label>
-                        <input type="file" id="prod-file" accept="image/*" class="bg-transparent border-b border-stone-800 p-2 outline-none text-stone-400 text-xs cursor-pointer">
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Статус</label>
-                        <select id="prod-status" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
-                            <option value="В наявності" class="bg-[#141414] text-white">В наявності</option>
-                            <option value="Під замовлення" class="bg-[#141414] text-white">Під замовлення</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col gap-2 md:col-span-2">
-                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Опис</label>
-                        <textarea id="prod-desc" placeholder="Опишіть особливості роботи..." class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition resize-none text-white text-sm"></textarea>
+                    <div class="grid md:grid-cols-3 gap-16 md:gap-12">
+                        <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2 reveal">
+                            <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">01 /</span>
+                            <h3 class="text-2xl mb-4 serif italic font-normal">Чистота ліній</h3>
+                            <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Кожен розріз — це розмова з формою, де кожен міліметр має гармонійне значення.</p>
+                        </div>
+                        <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2 reveal">
+                            <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">02 /</span>
+                            <h3 class="text-2xl mb-4 serif italic font-normal">Свіжість моменту</h3>
+                            <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Ми Працюємо виключно з відбірними фрукти, збереженими у своїй природній естетиці.</p>
+                        </div>
+                        <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2 reveal">
+                            <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">03 /</span>
+                            <h3 class="text-2xl mb-4 serif italic font-normal">Ексклюзивність</h3>
+                            <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Створення унікальних композицій, адаптованих до вашої події та гостей.</p>
+                        </div>
                     </div>
                 </div>
-                <button type="button" id="btn-add-prod" onclick="addProduct()" class="mt-12 bg-[#C5A47E] text-stone-950 px-10 py-4 rounded-full text-xs uppercase font-medium hover:bg-stone-200 transition flex items-center justify-center gap-2">
-                    <span id="btn-add-text">Створити картку</span>
-                    <div id="btn-add-loader" class="loader hidden"></div>
+            </div>
+        </section>
+
+        <!-- Catalog Page -->
+        <section id="page-catalog" class="page hidden page-transition max-w-7xl mx-auto px-6 sm:px-12 py-32 md:py-40">
+            <div class="text-center mb-24 reveal">
+                <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E] block mb-3">Колекція</span>
+                <h2 class="text-5xl md:text-7xl font-light italic mb-6">Каталог робіт</h2>
+                <div class="w-16 h-[1px] bg-[#C5A47E]/60 mx-auto"></div>
+            </div>
+            <div id="catalog-loader" class="hidden flex justify-center py-20">
+                <div class="loader"></div>
+            </div>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 sm:gap-16">
+                <!-- Products from Supabase -->
+            </div>
+        </section>
+
+        <!-- Cart Page -->
+        <section id="page-cart" class="page hidden page-transition max-w-3xl mx-auto px-6 sm:px-12 py-32 md:py-40">
+            <div class="text-center mb-16 reveal">
+                <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E] block mb-3">Ваш вибір</span>
+                <h2 class="text-5xl md:text-6xl font-light italic mb-4">Обрані вироби</h2>
+                <div class="w-12 h-[1px] bg-[#C5A47E]/60 mx-auto"></div>
+            </div>
+            <div id="cart-items" class="bg-[#141414]/90 backdrop-blur-md rounded-3xl p-8 mb-12 border border-stone-800/60 reveal">
+                <!-- Cart items -->
+            </div>
+            <div class="flex justify-between items-center mb-12 text-2xl serif italic px-2 reveal">
+                <span class="font-light text-stone-400">Загальна вартість:</span>
+                <span id="cart-total" class="font-medium text-white">0 грн</span>
+            </div>
+            <div id="checkout-section" class="text-center reveal">
+                <button type="button" onclick="showPage('confirm')" class="btn-luxury bg-[#C5A47E] text-stone-950 px-12 py-5 rounded-full text-xs uppercase font-medium w-full md:w-auto">
+                    Перейти до оформлення
                 </button>
             </div>
-            <div id="admin-product-list" class="grid gap-4">
-                <!-- Admin product list -->
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
-    <footer class="bg-[#080808] py-16 text-center border-t border-stone-800/60">
-        <div class="text-2xl serif italic mb-3 font-light">Furshet | Viktoria Bilak</div>
-        <p class="text-stone-600 text-[10px] uppercase tracking-[0.3em] font-light">&copy; 2026 Галерея Живого Мистецтва</p>
-    </footer>
+        <!-- Confirmation Page -->
+        <section id="page-confirm" class="page hidden page-transition max-w-2xl mx-auto px-6 py-36 md:py-44 text-center">
+            <div class="bg-[#141414]/90 backdrop-blur-md rounded-3xl p-10 sm:p-20 border border-stone-800/60 reveal">
+                <div class="text-3xl mb-8 text-[#C5A47E]">✧</div>
+                <h2 class="text-4xl sm:text-5xl mb-6 italic font-light">Замовлення майже готове</h2>
+                <p class="text-sm sm:text-base text-stone-400 font-light mb-12 leading-relaxed">
+                    Для узгодження деталей, доставки та дати проведення, зв'яжіться з нами за телефоном.
+                </p>
+                <a href="tel:+380000000000" onclick="clearCart()" class="inline-block btn-luxury bg-[#C5A47E] text-stone-950 px-10 py-5 rounded-full text-xs uppercase font-medium w-full">
+                    Зателефонувати для підтвердження
+                </a>
+                <button type="button" onclick="showPage('catalog')" class="mt-8 text-stone-500 text-xs uppercase tracking-[0.2em] hover:text-stone-300 transition block w-full">
+                    Повернутися до каталогу
+                </button>
+            </div>
+        </section>
+
+        <!-- Admin Page -->
+        <section id="page-admin" class="page hidden page-transition max-w-4xl mx-auto px-6 sm:px-12 py-32 md:py-40">
+            <div id="admin-auth" class="text-center py-20 bg-[#141414]/90 backdrop-blur-md rounded-3xl border border-stone-800/60 reveal">
+                <h2 class="text-3xl mb-8 serif italic font-light">Вхід у кабінет</h2>
+                <input type="password" id="admin-pass" placeholder="Пароль" onkeydown="if(event.key==='Enter') checkAdmin()" class="bg-transparent border-b border-stone-700 p-3 outline-none text-center mb-10 block mx-auto w-56 text-white text-sm tracking-widest focus:border-[#C5A47E] transition">
+                <button type="button" onclick="checkAdmin()" class="btn-luxury border border-stone-600 px-10 py-3 rounded-full text-xs uppercase tracking-[0.2em]">Увійти</button>
+            </div>
+            <div id="admin-panel" class="hidden">
+                <div class="flex justify-between items-end mb-12">
+                    <h2 class="text-4xl italic font-light">Керування каталогом</h2>
+                    <button type="button" onclick="showPage('home')" class="text-xs uppercase tracking-[0.2em] text-stone-500 hover:text-stone-300">Вийти</button>
+                </div>
+                <div class="bg-[#141414]/90 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-stone-800/60 mb-16">
+                    <h3 class="text-2xl mb-8 serif italic font-light">Додати нову роботу</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Назва</label>
+                            <input type="text" id="prod-name" placeholder="напр. Кавун-Квітка" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Ціна (грн)</label>
+                            <input type="number" id="prod-price" placeholder="0" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Фотографія</label>
+                            <input type="file" id="prod-file" accept="image/*" class="bg-transparent border-b border-stone-800 p-2 outline-none text-stone-400 text-xs cursor-pointer">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Статус</label>
+                            <select id="prod-status" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
+                                <option value="В наявності" class="bg-[#141414] text-white">В наявності</option>
+                                <option value="Під замовлення" class="bg-[#141414] text-white">Під замовлення</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2 md:col-span-2">
+                            <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Опис</label>
+                            <textarea id="prod-desc" placeholder="Опишіть особливості роботи..." class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition resize-none text-white text-sm"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-add-prod" onclick="addProduct()" class="mt-12 bg-[#C5A47E] text-stone-950 px-10 py-4 rounded-full text-xs uppercase font-medium hover:bg-stone-200 transition flex items-center justify-center gap-2">
+                        <span id="btn-add-text">Створити картку</span>
+                        <div id="btn-add-loader" class="loader hidden"></div>
+                    </button>
+                </div>
+                <div id="admin-product-list" class="grid gap-4">
+                    <!-- Admin product list -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-[#080808]/90 backdrop-blur-md py-16 text-center border-t border-stone-800/60">
+            <div class="text-2xl serif italic mb-3 font-light">Furshet | Viktoria Bilak</div>
+            <p class="text-stone-600 text-[10px] uppercase tracking-[0.3em] font-light">&copy; 2026 Галерея Живого Мистецтва</p>
+        </footer>
+
+    </div>
 
     <script>
+        // --- DYNAMIC CANVAS BACKGROUND LOGIC ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 200 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 0.4 + 0.15;
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.fadeSpeed = Math.random() * 0.005 + 0.002;
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+
+                // Mouse interaction
+                if (mouse.x && mouse.y) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        const force = (mouse.radius - dist) / mouse.radius;
+                        this.x -= (dx / dist) * force * 1.5;
+                        this.y -= (dy / dist) * force * 1.5;
+                    }
+                }
+
+                if (this.y < -10) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(197, 164, 126, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 75; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Ambient background glow following mouse
+            if (mouse.x && mouse.y) {
+                const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 10, mouse.x, mouse.y, 350);
+                gradient.addColorStop(0, 'rgba(197, 164, 126, 0.04)');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // --- REVEAL ON SCROLL LOGIC ---
+        function initRevealOnScroll() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach(el => observer.observe(el));
+        }
+
         // --- CONFIGURATION ---
         const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_92Zgv6tUh3E9MWqEhRj-EA_PP1PtRa9';
@@ -332,6 +477,7 @@
             if (pageId === 'catalog') renderCatalog();
             if (pageId === 'cart') renderCart();
             if (pageId === 'admin') renderAdmin();
+            setTimeout(initRevealOnScroll, 100);
         }
 
         function updateCartCount() {
@@ -366,7 +512,7 @@
                 }
 
                 grid.innerHTML = catalogProducts.map((p, index) => `
-                    <div class="product-card bg-[#141414] rounded-3xl overflow-hidden border border-stone-800/60 group flex flex-col justify-between">
+                    <div class="product-card bg-[#141414]/90 backdrop-blur-md rounded-3xl overflow-hidden border border-stone-800/60 group flex flex-col justify-between reveal">
                         <div>
                             <div class="relative overflow-hidden aspect-[4/5] bg-stone-900">
                                 <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="product-img w-full h-full object-cover transition duration-700 ease-out" alt="${escapeHtml(p.name)}">
@@ -385,6 +531,8 @@
                         </div>
                     </div>
                 `).join('');
+
+                initRevealOnScroll();
             } catch (err) {
                 console.error(err);
                 loader.classList.add('hidden');
@@ -467,7 +615,7 @@
                 }
 
                 list.innerHTML = products.map(p => `
-                    <div class="bg-[#141414] p-6 rounded-2xl flex justify-between items-center border border-stone-800/60">
+                    <div class="bg-[#141414]/90 backdrop-blur-md p-6 rounded-2xl flex justify-between items-center border border-stone-800/60">
                         <div class="flex items-center gap-5">
                             <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="w-16 h-16 object-cover rounded-xl border border-stone-800/60" alt="${escapeHtml(p.name)}">
                             <div>
@@ -561,6 +709,7 @@
 
         updateCartCount();
         showPage('home');
+        initRevealOnScroll();
     </script>
 </body>
 </html>
