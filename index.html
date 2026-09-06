@@ -3,62 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Furshet | Viktoria Bilak - Carving Art</title>
+    <title>Furshet | Viktoria Bilak — Carving Art</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-primary: #E5E5E5;
+            --color-primary: #EDEDED;
             --color-accent: #C5A47E;
-            --color-bg: #121212;
-            --color-surface: #1E1E1E;
+            --color-bg: #0A0A0A;
+            --color-surface: #141414;
         }
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--color-bg);
             color: var(--color-primary);
         }
-        h1, h2, h3, .serif {
+        h1, h2, h3, h4, .serif {
             font-family: 'Cormorant Garamond', serif;
         }
         .glass {
-            background: rgba(18, 18, 18, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .product-card {
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        .product-card:hover .product-img {
+            transform: scale(1.04);
         }
-        .btn-premium {
+        .btn-luxury {
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 0.15em;
         }
-        .btn-premium:hover {
-            letter-spacing: 1px;
-            background-color: var(--color-accent);
-            color: #121212;
+        .btn-luxury:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
         }
         .page-transition {
-            animation: fadeIn 0.6s ease-out;
+            animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .loader {
-            border: 3px solid #333;
-            border-top: 3px solid var(--color-accent);
+            border: 2px solid #262626;
+            border-top: 2px solid var(--color-accent);
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+            width: 22px;
+            height: 22px;
+            animation: spin 0.8s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -71,167 +68,188 @@
             animation: toastOut 0.4s ease forwards;
         }
         @keyframes toastIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes toastOut {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to { opacity: 0; transform: translateY(20px) scale(0.95); }
+            from { opacity: 1; transform: translateY(0) scale(0.96); }
+            to { opacity: 0; transform: translateY(20px) scale(0.96); }
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-[#C5A47E]/30 selection:text-white">
 
     <!-- Toast Notifications Container -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+    <div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
     <!-- Navigation -->
-    <nav class="glass fixed w-full top-0 z-50 border-b border-stone-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
-            <div class="text-xl sm:text-2xl font-medium tracking-widest uppercase cursor-pointer serif italic" onclick="showPage('home')">
-                Furshet <span class="text-[#C5A47E]">Art</span>
+    <nav class="glass fixed w-full top-0 z-50 border-b border-stone-800/60">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 py-5 sm:py-6 flex justify-between items-center">
+            <div class="text-xl sm:text-2xl font-normal tracking-[0.25em] uppercase cursor-pointer serif italic" onclick="showPage('home')">
+                Furshet <span class="text-[#C5A47E] font-light">Art</span>
             </div>
-            <div class="flex gap-3 sm:gap-8 items-center text-[10px] sm:text-xs uppercase tracking-widest font-light">
-                <button type="button" onclick="showPage('home')" class="hover:text-[#C5A47E] transition">Головна</button>
-                <button type="button" onclick="showPage('catalog')" class="hover:text-[#C5A47E] transition">Каталог</button>
-                <button type="button" onclick="showPage('admin')" class="text-stone-500 hover:text-stone-300 transition">Admin</button>
-                <button type="button" onclick="showPage('cart')" class="relative p-2 hover:scale-110 transition" aria-label="Кошик">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4L5 11z" />
+            <div class="flex gap-6 sm:gap-10 items-center text-[10px] sm:text-[11px] uppercase tracking-[0.2em] font-light text-stone-300">
+                <button type="button" onclick="showPage('home')" class="hover:text-[#C5A47E] transition duration-300">Головна</button>
+                <button type="button" onclick="showPage('catalog')" class="hover:text-[#C5A47E] transition duration-300">Каталог</button>
+                <button type="button" onclick="showPage('admin')" class="text-stone-500 hover:text-stone-300 transition duration-300">Admin</button>
+                <button type="button" onclick="showPage('cart')" class="relative p-1.5 hover:scale-105 transition duration-300" aria-label="Кошик">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-[1.2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4L5 11z" />
                     </svg>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-[#C5A47E] text-stone-900 text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-[#C5A47E] text-stone-950 text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-medium">0</span>
                 </button>
             </div>
         </div>
     </nav>
 
     <!-- Home Page -->
-    <section id="page-home" class="page page-transition">
-        <div class="relative h-screen flex items-center justify-center text-center overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1590779033116-f6776606670b?auto=format&fit=crop&q=80&w=1920" class="absolute inset-0 w-full h-full object-cover opacity-40 scale-105 transition-transform duration-[10s] hover:scale-100" alt="Carving Art">
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-[#121212]"></div>
-            <div class="relative z-10 px-4">
-                <h1 class="text-5xl md:text-8xl mb-6 italic font-light leading-tight">Furshet <br>Viktoria Bilak</h1>
-                <p class="text-lg md:text-xl mb-10 font-light tracking-widest uppercase opacity-80">Exclusive Art of Fruit Carving</p>
-                <button type="button" onclick="showPage('catalog')" class="btn-premium border border-stone-400 px-10 py-4 text-xs uppercase tracking-widest font-semibold hover:bg-stone-400 hover:text-stone-900 transition">
-                    Відкрити каталог
+    <section id="page-home" class="page page-transition pt-24">
+        <!-- Hero Section -->
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 pt-16 pb-24 md:pt-28 md:pb-36 flex flex-col items-center text-center">
+            <span class="text-[10px] uppercase tracking-[0.35em] text-[#C5A47E] mb-6 font-light">Exclusive Fruit Carving</span>
+            <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl mb-8 font-light italic leading-[0.95] max-w-5xl tracking-tight">
+                Мистецтво, створене для особливих моментів
+            </h1>
+            <p class="text-stone-400 text-sm md:text-base font-light max-w-2xl mb-12 leading-relaxed tracking-wide">
+                Авторські карвінг-композиції Viktoria Bilak. Грація ліній, абсолютна свіжість і преміальна естетика фуршетної культури.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-5 w-full sm:w-auto justify-center">
+                <button type="button" onclick="showPage('catalog')" class="btn-luxury bg-[#C5A47E] text-stone-950 px-10 py-4 rounded-full text-[11px] uppercase font-medium">
+                    Переглянути каталог
                 </button>
+                <button type="button" onclick="showPage('confirm')" class="btn-luxury border border-stone-700 text-stone-200 px-10 py-4 rounded-full text-[11px] uppercase font-light hover:border-stone-400">
+                    Індивідуальне замовлення
+                </button>
+            </div>
+
+            <!-- Hero Showcase Image -->
+            <div class="w-full mt-20 relative overflow-hidden rounded-3xl border border-stone-800/60">
+                <img src="https://images.unsplash.com/photo-1590779033116-f6776606670b?auto=format&fit=crop&q=80&w=1920" class="w-full h-[50vh] md:h-[75vh] object-cover opacity-70 filter brightness-90" alt="Carving Showcase">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent"></div>
             </div>
         </div>
 
-        <div class="max-w-5xl mx-auto px-6 py-24 text-center">
-            <h2 class="text-4xl md:text-5xl mb-16 italic">Філософія створення</h2>
-            <div class="grid md:grid-cols-3 gap-16">
-                <div class="group">
-                    <div class="text-3xl mb-6 text-[#C5A47E] group-hover:scale-110 transition duration-500">✧</div>
-                    <h3 class="text-xl mb-4 serif italic">Чистота ліній</h3>
-                    <p class="text-stone-400 font-light leading-relaxed text-sm">Кожен розріз — це розмова з формою, де кожен міліметр має значення.</p>
+        <!-- Philosophy Section -->
+        <div class="border-t border-stone-800/60 py-28 md:py-36 bg-[#0E0E0E]">
+            <div class="max-w-6xl mx-auto px-6 sm:px-12">
+                <div class="text-center mb-20">
+                    <span class="text-[10px] uppercase tracking-[0.3em] text-stone-500 block mb-3">Філософія</span>
+                    <h2 class="text-4xl md:text-6xl font-light italic">Витонченість у кожній деталі</h2>
                 </div>
-                <div class="group">
-                    <div class="text-3xl mb-6 text-[#C5A47E] group-hover:scale-110 transition duration-500">✧</div>
-                    <h3 class="text-xl mb-4 serif italic">Свіжість моменту</h3>
-                    <p class="text-stone-400 font-light leading-relaxed text-sm">Ми працюємо лише з відбірними продуктами, щоб мистецтво залишалося живим.</p>
-                </div>
-                <div class="group">
-                    <div class="text-3xl mb-6 text-[#C5A47E] group-hover:scale-110 transition duration-500">✧</div>
-                    <h3 class="text-xl mb-4 serif italic">Ексклюзивність</h3>
-                    <p class="text-stone-400 font-light leading-relaxed text-sm">Створення унікальних композицій під ваш особливий запит та подію.</p>
+                <div class="grid md:grid-cols-3 gap-16 md:gap-12">
+                    <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2">
+                        <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">01 /</span>
+                        <h3 class="text-2xl mb-4 serif italic font-normal">Чистота ліній</h3>
+                        <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Кожен розріз — це розмова з формою, де кожен міліметр має гармонійне значення.</p>
+                    </div>
+                    <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2">
+                        <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">02 /</span>
+                        <h3 class="text-2xl mb-4 serif italic font-normal">Свіжість моменту</h3>
+                        <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Ми Працюємо виключно з відбірними фрукти, збереженими у своїй природній естетиці.</p>
+                    </div>
+                    <div class="text-center md:text-left border-l border-stone-800/80 pl-6 md:pl-8 py-2">
+                        <span class="text-xs text-[#C5A47E] font-serif italic block mb-3">03 /</span>
+                        <h3 class="text-2xl mb-4 serif italic font-normal">Ексклюзивність</h3>
+                        <p class="text-stone-400 font-light leading-relaxed text-xs sm:text-sm">Створення унікальних композицій, адаптованих до вашої події та гостей.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Catalog Page -->
-    <section id="page-catalog" class="page hidden page-transition max-w-7xl mx-auto px-6 py-32">
-        <div class="text-center mb-20">
-            <h2 class="text-5xl italic mb-4">Колекція виробів</h2>
-            <div class="w-12 h-[1px] bg-[#C5A47E] mx-auto"></div>
+    <section id="page-catalog" class="page hidden page-transition max-w-7xl mx-auto px-6 sm:px-12 py-32 md:py-40">
+        <div class="text-center mb-24">
+            <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E] block mb-3">Колекція</span>
+            <h2 class="text-5xl md:text-7xl font-light italic mb-6">Каталог робіт</h2>
+            <div class="w-16 h-[1px] bg-[#C5A47E]/60 mx-auto"></div>
         </div>
         <div id="catalog-loader" class="hidden flex justify-center py-20">
             <div class="loader"></div>
         </div>
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 sm:gap-16">
             <!-- Products from Supabase -->
         </div>
     </section>
 
     <!-- Cart Page -->
-    <section id="page-cart" class="page hidden page-transition max-w-3xl mx-auto px-6 py-32">
+    <section id="page-cart" class="page hidden page-transition max-w-3xl mx-auto px-6 sm:px-12 py-32 md:py-40">
         <div class="text-center mb-16">
-            <h2 class="text-5xl italic mb-4">Ваш вибір</h2>
-            <div class="w-12 h-[1px] bg-[#C5A47E] mx-auto"></div>
+            <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E] block mb-3">Ваш вибір</span>
+            <h2 class="text-5xl md:text-6xl font-light italic mb-4">Обрані вироби</h2>
+            <div class="w-12 h-[1px] bg-[#C5A47E]/60 mx-auto"></div>
         </div>
-        <div id="cart-items" class="bg-[#1E1E1E] rounded-2xl shadow-sm p-8 mb-12 border border-stone-800">
+        <div id="cart-items" class="bg-[#141414] rounded-3xl p-8 mb-12 border border-stone-800/60">
             <!-- Cart items -->
         </div>
-        <div class="flex justify-between items-center mb-12 text-2xl serif italic">
-            <span class="font-light">Загальна вартість:</span>
-            <span id="cart-total" class="font-bold">0 грн</span>
+        <div class="flex justify-between items-center mb-12 text-2xl serif italic px-2">
+            <span class="font-light text-stone-400">Загальна вартість:</span>
+            <span id="cart-total" class="font-medium text-white">0 грн</span>
         </div>
         <div id="checkout-section" class="text-center">
-            <button type="button" onclick="showPage('confirm')" class="btn-premium bg-stone-200 text-stone-900 px-12 py-5 rounded-full text-xs uppercase tracking-widest font-semibold transition w-full md:w-auto">
+            <button type="button" onclick="showPage('confirm')" class="btn-luxury bg-[#C5A47E] text-stone-950 px-12 py-5 rounded-full text-xs uppercase font-medium w-full md:w-auto">
                 Перейти до оформлення
             </button>
         </div>
     </section>
 
     <!-- Confirmation Page -->
-    <section id="page-confirm" class="page hidden page-transition max-w-2xl mx-auto px-6 py-32 text-center">
-        <div class="bg-[#1E1E1E] rounded-3xl shadow-2xl p-8 sm:p-16 border border-stone-800">
-            <div class="text-4xl mb-8 text-[#C5A47E]">✧</div>
-            <h2 class="text-4xl mb-6 italic">Замовлення майже готове</h2>
-            <p class="text-lg text-stone-400 font-light mb-12 leading-relaxed">
-                Для підтвердження замовлення та обговорення деталей, будь ласка, зв'яжіться з нами за телефоном.
+    <section id="page-confirm" class="page hidden page-transition max-w-2xl mx-auto px-6 py-36 md:py-44 text-center">
+        <div class="bg-[#141414] rounded-3xl p-10 sm:p-20 border border-stone-800/60">
+            <div class="text-3xl mb-8 text-[#C5A47E]">✧</div>
+            <h2 class="text-4xl sm:text-5xl mb-6 italic font-light">Замовлення майже готове</h2>
+            <p class="text-sm sm:text-base text-stone-400 font-light mb-12 leading-relaxed">
+                Для узгодження деталей, доставки та дати проведення, зв'яжіться з нами за телефоном.
             </p>
-            <a href="tel:+380000000000" onclick="clearCart()" class="inline-block btn-premium bg-[#C5A47E] text-stone-900 px-10 py-5 rounded-full text-xs uppercase tracking-widest font-bold transition w-full">
-                Зателефонувати для замовлення
+            <a href="tel:+380000000000" onclick="clearCart()" class="inline-block btn-luxury bg-[#C5A47E] text-stone-950 px-10 py-5 rounded-full text-xs uppercase font-medium w-full">
+                Зателефонувати для підтвердження
             </a>
-            <button type="button" onclick="showPage('catalog')" class="mt-8 text-stone-500 text-xs uppercase tracking-widest underline hover:text-stone-300 transition block w-full">
+            <button type="button" onclick="showPage('catalog')" class="mt-8 text-stone-500 text-xs uppercase tracking-[0.2em] hover:text-stone-300 transition block w-full">
                 Повернутися до каталогу
             </button>
         </div>
     </section>
 
     <!-- Admin Page -->
-    <section id="page-admin" class="page hidden page-transition max-w-4xl mx-auto px-6 py-32">
-        <div id="admin-auth" class="text-center py-20 bg-[#1E1E1E] rounded-3xl shadow-sm border border-stone-800">
-            <h2 class="text-2xl mb-6 serif italic">Вхід у кабінет</h2>
-            <input type="password" id="admin-pass" placeholder="Пароль" onkeydown="if(event.key==='Enter') checkAdmin()" class="bg-transparent border-b border-stone-700 p-2 outline-none text-center mb-8 block mx-auto w-48 text-white">
-            <button type="button" onclick="checkAdmin()" class="btn-premium border border-stone-500 px-8 py-2 rounded-full text-xs uppercase tracking-widest">Увійти</button>
+    <section id="page-admin" class="page hidden page-transition max-w-4xl mx-auto px-6 sm:px-12 py-32 md:py-40">
+        <div id="admin-auth" class="text-center py-20 bg-[#141414] rounded-3xl border border-stone-800/60">
+            <h2 class="text-3xl mb-8 serif italic font-light">Вхід у кабінет</h2>
+            <input type="password" id="admin-pass" placeholder="Пароль" onkeydown="if(event.key==='Enter') checkAdmin()" class="bg-transparent border-b border-stone-700 p-3 outline-none text-center mb-10 block mx-auto w-56 text-white text-sm tracking-widest focus:border-[#C5A47E] transition">
+            <button type="button" onclick="checkAdmin()" class="btn-luxury border border-stone-600 px-10 py-3 rounded-full text-xs uppercase tracking-[0.2em]">Увійти</button>
         </div>
         <div id="admin-panel" class="hidden">
             <div class="flex justify-between items-end mb-12">
-                <h2 class="text-4xl italic">Керування каталогом</h2>
-                <button type="button" onclick="showPage('home')" class="text-xs uppercase tracking-widest text-stone-500 hover:text-stone-300">Вийти</button>
+                <h2 class="text-4xl italic font-light">Керування каталогом</h2>
+                <button type="button" onclick="showPage('home')" class="text-xs uppercase tracking-[0.2em] text-stone-500 hover:text-stone-300">Вийти</button>
             </div>
-            <div class="bg-[#1E1E1E] p-6 sm:p-10 rounded-3xl shadow-sm border border-stone-800 mb-16">
-                <h3 class="text-xl mb-8 serif italic">Додати нову роботу</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] uppercase tracking-widest text-stone-500">Назва</label>
-                        <input type="text" id="prod-name" placeholder="напр. Кавун-Квітка" class="bg-transparent border-b border-stone-700 p-2 outline-none focus:border-[#C5A47E] transition text-white">
+            <div class="bg-[#141414] p-8 sm:p-12 rounded-3xl border border-stone-800/60 mb-16">
+                <h3 class="text-2xl mb-8 serif italic font-light">Додати нову роботу</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Назва</label>
+                        <input type="text" id="prod-name" placeholder="напр. Кавун-Квітка" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] uppercase tracking-widest text-stone-500">Ціна (грн)</label>
-                        <input type="number" id="prod-price" placeholder="0" class="bg-transparent border-b border-stone-700 p-2 outline-none focus:border-[#C5A47E] transition text-white">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Ціна (грн)</label>
+                        <input type="number" id="prod-price" placeholder="0" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] uppercase tracking-widest text-stone-500">Фотографія</label>
-                        <input type="file" id="prod-file" accept="image/*" class="bg-transparent border-b border-stone-700 p-2 outline-none text-stone-400 text-xs cursor-pointer">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Фотографія</label>
+                        <input type="file" id="prod-file" accept="image/*" class="bg-transparent border-b border-stone-800 p-2 outline-none text-stone-400 text-xs cursor-pointer">
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] uppercase tracking-widest text-stone-500">Статус</label>
-                        <select id="prod-status" class="bg-transparent border-b border-stone-700 p-2 outline-none focus:border-[#C5A47E] transition text-white">
-                            <option value="В наявності" class="bg-[#1E1E1E] text-white">В наявності</option>
-                            <option value="Під замовлення" class="bg-[#1E1E1E] text-white">Під замовлення</option>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Статус</label>
+                        <select id="prod-status" class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition text-white text-sm">
+                            <option value="В наявності" class="bg-[#141414] text-white">В наявності</option>
+                            <option value="Під замовлення" class="bg-[#141414] text-white">Під замовлення</option>
                         </select>
                     </div>
-                    <div class="flex flex-col gap-1 md:col-span-2">
-                        <label class="text-[10px] uppercase tracking-widest text-stone-500">Опис</label>
-                        <textarea id="prod-desc" placeholder="Опишіть особливості роботи..." class="bg-transparent border-b border-stone-700 p-2 outline-none focus:border-[#C5A47E] transition resize-none text-white"></textarea>
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="text-[10px] uppercase tracking-[0.2em] text-stone-500">Опис</label>
+                        <textarea id="prod-desc" placeholder="Опишіть особливості роботи..." class="bg-transparent border-b border-stone-800 p-2 outline-none focus:border-[#C5A47E] transition resize-none text-white text-sm"></textarea>
                     </div>
                 </div>
-                <button type="button" id="btn-add-prod" onclick="addProduct()" class="mt-10 bg-[#C5A47E] text-stone-900 px-10 py-3 rounded-full text-xs uppercase tracking-widest font-bold hover:bg-stone-300 transition flex items-center justify-center gap-2">
+                <button type="button" id="btn-add-prod" onclick="addProduct()" class="mt-12 bg-[#C5A47E] text-stone-950 px-10 py-4 rounded-full text-xs uppercase font-medium hover:bg-stone-200 transition flex items-center justify-center gap-2">
                     <span id="btn-add-text">Створити картку</span>
                     <div id="btn-add-loader" class="loader hidden"></div>
                 </button>
@@ -242,9 +260,10 @@
         </div>
     </section>
 
-    <footer class="bg-[#1A1A1A] py-12 mt-20 text-center border-t border-stone-800">
-        <div class="text-xl serif italic mb-4">Furshet | Viktoria Bilak</div>
-        <p class="text-stone-600 text-[10px] uppercase tracking-widest">&copy; 2026 Галерея Живого Мистецтва</p>
+    <!-- Footer -->
+    <footer class="bg-[#080808] py-16 text-center border-t border-stone-800/60">
+        <div class="text-2xl serif italic mb-3 font-light">Furshet | Viktoria Bilak</div>
+        <p class="text-stone-600 text-[10px] uppercase tracking-[0.3em] font-light">&copy; 2026 Галерея Живого Мистецтва</p>
     </footer>
 
     <script>
@@ -277,7 +296,7 @@
             const iconColor = type === 'error' ? 'text-red-400' : 'text-[#C5A47E]';
             const icon = type === 'error' ? '✕' : '✧';
 
-            toast.className = `toast pointer-events-auto flex items-center gap-3 bg-[#1A1A1A] border ${borderColor} text-stone-200 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md`;
+            toast.className = `toast pointer-events-auto flex items-center gap-3 bg-[#141414] border ${borderColor} text-stone-200 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-md`;
             toast.innerHTML = `
                 <span class="${iconColor} text-lg">${icon}</span>
                 <span class="text-xs uppercase tracking-wider font-light">${escapeHtml(message)}</span>
@@ -342,34 +361,34 @@
                 loader.classList.add('hidden');
 
                 if (catalogProducts.length === 0) {
-                    grid.innerHTML = `<p class="text-center text-stone-500 py-10 col-span-full">Каталог порожній.</p>`;
+                    grid.innerHTML = `<p class="text-center text-stone-500 py-12 col-span-full font-light">Каталог порожній.</p>`;
                     return;
                 }
 
                 grid.innerHTML = catalogProducts.map((p, index) => `
-                    <div class="product-card bg-[#1E1E1E] rounded-3xl overflow-hidden border border-stone-800 group flex flex-col justify-between">
+                    <div class="product-card bg-[#141414] rounded-3xl overflow-hidden border border-stone-800/60 group flex flex-col justify-between">
                         <div>
-                            <div class="relative overflow-hidden">
-                                <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="w-full h-80 object-cover group-hover:scale-105 transition duration-700" alt="${escapeHtml(p.name)}">
+                            <div class="relative overflow-hidden aspect-[4/5] bg-stone-900">
+                                <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="product-img w-full h-full object-cover transition duration-700 ease-out" alt="${escapeHtml(p.name)}">
                                 <div class="absolute top-4 right-4">
-                                    <span class="text-[9px] uppercase tracking-widest px-3 py-1 rounded-full bg-stone-900/80 backdrop-blur text-stone-300 font-medium border border-stone-700">${escapeHtml(p.status)}</span>
+                                    <span class="text-[9px] uppercase tracking-[0.2em] px-3 py-1 rounded-full bg-[#0A0A0A]/80 backdrop-blur text-stone-300 font-light border border-stone-800">${escapeHtml(p.status)}</span>
                                 </div>
                             </div>
                             <div class="p-8 pb-4">
-                                <h3 class="text-2xl serif italic mb-2">${escapeHtml(p.name)}</h3>
-                                <p class="text-stone-500 text-sm font-light leading-relaxed">${escapeHtml(p.description)}</p>
+                                <h3 class="text-3xl serif italic font-normal mb-3 text-stone-100">${escapeHtml(p.name)}</h3>
+                                <p class="text-stone-400 text-xs font-light leading-relaxed">${escapeHtml(p.description)}</p>
                             </div>
                         </div>
-                        <div class="p-8 pt-0 flex justify-between items-center">
-                            <span class="text-xl font-light text-stone-200">${p.price} <span class="text-xs">грн</span></span>
-                            <button type="button" onclick="addToCartByIndex(${index})" class="btn-premium border border-stone-500 text-stone-300 px-5 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold transition">В кошик</button>
+                        <div class="p-8 pt-4 flex justify-between items-center border-t border-stone-800/40">
+                            <span class="text-xl font-light text-stone-200">${p.price} <span class="text-xs text-stone-500">грн</span></span>
+                            <button type="button" onclick="addToCartByIndex(${index})" class="btn-luxury border border-stone-700 hover:border-[#C5A47E] text-stone-200 px-6 py-2.5 rounded-full text-[10px] uppercase font-light transition duration-300">В кошик</button>
                         </div>
                     </div>
                 `).join('');
             } catch (err) {
                 console.error(err);
                 loader.classList.add('hidden');
-                grid.innerHTML = `<p class="text-center text-stone-500 py-10 col-span-full">Помилка завантаження каталогу. Перевірте налаштування Supabase.</p>`;
+                grid.innerHTML = `<p class="text-center text-stone-500 py-12 col-span-full font-light">Помилка завантаження каталогу. Перевірте налаштування Supabase.</p>`;
             }
         }
 
@@ -386,7 +405,7 @@
             const totalEl = document.getElementById('cart-total');
 
             if (cart.length === 0) {
-                container.innerHTML = `<p class="text-center text-stone-600 py-12 font-light italic">Ваш кошик порожній</p>`;
+                container.innerHTML = `<p class="text-center text-stone-500 py-16 font-light italic text-sm">Ваш кошик порожній</p>`;
                 totalEl.innerText = '0 грн';
                 document.getElementById('checkout-section').classList.add('hidden');
                 return;
@@ -397,17 +416,17 @@
             container.innerHTML = cart.map((item, index) => {
                 total += Number(item.price) || 0;
                 return `
-                    <div class="flex justify-between items-center py-6 border-b border-stone-800 last:border-0">
+                    <div class="flex justify-between items-center py-6 border-b border-stone-800/60 last:border-0">
                         <div class="flex items-center gap-6">
-                            <img src="${escapeHtml(item.img || 'https://via.placeholder.com/400')}" class="w-20 h-20 object-cover rounded-2xl" alt="${escapeHtml(item.name)}">
+                            <img src="${escapeHtml(item.img || 'https://via.placeholder.com/400')}" class="w-20 h-20 object-cover rounded-2xl border border-stone-800/60" alt="${escapeHtml(item.name)}">
                             <div>
-                                <div class="serif italic text-lg">${escapeHtml(item.name)}</div>
-                                <div class="text-stone-500 text-xs">${item.price} грн</div>
+                                <div class="serif italic text-xl font-light">${escapeHtml(item.name)}</div>
+                                <div class="text-stone-500 text-xs font-light mt-1">${item.price} грн</div>
                             </div>
                         </div>
                         <button type="button" onclick="removeFromCart(${index})" class="text-stone-600 hover:text-red-400 transition" aria-label="Видалити">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
@@ -436,32 +455,32 @@
 
         async function renderAdmin() {
             const list = document.getElementById('admin-product-list');
-            list.innerHTML = '<p class="text-center text-stone-500 py-4">Завантаження...</p>';
+            list.innerHTML = '<p class="text-center text-stone-500 py-6 font-light">Завантаження...</p>';
 
             try {
                 const { data: products, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
 
                 if (!products || products.length === 0) {
-                    list.innerHTML = `<p class="text-center text-stone-500 py-4">Немає товарів.</p>`;
+                    list.innerHTML = `<p class="text-center text-stone-500 py-6 font-light">Немає товарів.</p>`;
                     return;
                 }
 
                 list.innerHTML = products.map(p => `
-                    <div class="bg-[#1E1E1E] p-5 rounded-2xl flex justify-between items-center shadow-sm border border-stone-800">
-                        <div class="flex items-center gap-4">
-                            <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="w-14 h-14 object-cover rounded-xl" alt="${escapeHtml(p.name)}">
+                    <div class="bg-[#141414] p-6 rounded-2xl flex justify-between items-center border border-stone-800/60">
+                        <div class="flex items-center gap-5">
+                            <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="w-16 h-16 object-cover rounded-xl border border-stone-800/60" alt="${escapeHtml(p.name)}">
                             <div>
-                                <div class="font-medium serif italic">${escapeHtml(p.name)}</div>
-                                <div class="text-[10px] uppercase tracking-widest text-stone-500">${p.price} грн | ${escapeHtml(p.status)}</div>
+                                <div class="font-normal serif italic text-xl">${escapeHtml(p.name)}</div>
+                                <div class="text-[10px] uppercase tracking-[0.2em] text-stone-500 mt-1">${p.price} грн | ${escapeHtml(p.status)}</div>
                             </div>
                         </div>
-                        <button type="button" onclick="deleteProduct('${p.id}')" class="text-stone-600 hover:text-red-500 transition uppercase text-[10px] tracking-widest">Видалити</button>
+                        <button type="button" onclick="deleteProduct('${p.id}')" class="text-stone-600 hover:text-red-400 transition uppercase text-[10px] tracking-[0.2em]">Видалити</button>
                     </div>
                 `).join('');
             } catch (err) {
                 console.error(err);
-                list.innerHTML = `<p class="text-center text-red-500 py-4">Помилка завантаження списку.</p>`;
+                list.innerHTML = `<p class="text-center text-red-500 py-6 font-light">Помилка завантаження списку.</p>`;
             }
         }
 
