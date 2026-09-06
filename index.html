@@ -362,4 +362,186 @@
                         </div>
                         <div class="p-8 pt-0 flex justify-between items-center">
                             <span class="text-xl font-light text-stone-200">${p.price} <span class="text-xs">грн</span></span>
-                            <button type="button" onclick="addToCartByIndex(${index})" class="btn-premium border border-stone-500 text-stone-300 px-5 py-2 rounded-full text-[10px] uppercase tracking-widest
+                            <button type="button" onclick="addToCartByIndex(${index})" class="btn-premium border border-stone-500 text-stone-300 px-5 py-2 rounded-full text-[10px] uppercase tracking-widest font-bold transition">В кошик</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                loader.classList.add('hidden');
+                grid.innerHTML = `<p class="text-center text-stone-500 py-10 col-span-full">Помилка завантаження каталогу. Перевірте налаштування Supabase.</p>`;
+            }
+        }
+
+        function addToCartByIndex(index) {
+            const p = catalogProducts[index];
+            if (!p) return;
+            cart.push({ id: p.id, name: p.name, price: p.price, img: p.image_url });
+            saveCart();
+            showToast(`«${p.name}» додано до кошика`);
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-center text-stone-600 py-12 font-light italic">Ваш кошик порожній</p>`;
+                totalEl.innerText = '0 грн';
+                document.getElementById('checkout-section').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('checkout-section').classList.remove('hidden');
+            let total = 0;
+            container.innerHTML = cart.map((item, index) => {
+                total += Number(item.price) || 0;
+                return `
+                    <div class="flex justify-between items-center py-6 border-b border-stone-800 last:border-0">
+                        <div class="flex items-center gap-6">
+                            <img src="${escapeHtml(item.img || 'https://via.placeholder.com/400')}" class="w-20 h-20 object-cover rounded-2xl" alt="${escapeHtml(item.name)}">
+                            <div>
+                                <div class="serif italic text-lg">${escapeHtml(item.name)}</div>
+                                <div class="text-stone-500 text-xs">${item.price} грн</div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeFromCart(${index})" class="text-stone-600 hover:text-red-400 transition" aria-label="Видалити">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            totalEl.innerText = total + ' грн';
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            renderCart();
+        }
+
+        // --- ADMIN LOGIC ---
+        function checkAdmin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'admin123') {
+                document.getElementById('admin-auth').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                renderAdmin();
+            } else {
+                showToast('Невірний пароль!', 'error');
+            }
+        }
+
+        async function renderAdmin() {
+            const list = document.getElementById('admin-product-list');
+            list.innerHTML = '<p class="text-center text-stone-500 py-4">Завантаження...</p>';
+
+            try {
+                const { data: products, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+
+                if (!products || products.length === 0) {
+                    list.innerHTML = `<p class="text-center text-stone-500 py-4">Немає товарів.</p>`;
+                    return;
+                }
+
+                list.innerHTML = products.map(p => `
+                    <div class="bg-[#1E1E1E] p-5 rounded-2xl flex justify-between items-center shadow-sm border border-stone-800">
+                        <div class="flex items-center gap-4">
+                            <img src="${escapeHtml(p.image_url || 'https://via.placeholder.com/400')}" class="w-14 h-14 object-cover rounded-xl" alt="${escapeHtml(p.name)}">
+                            <div>
+                                <div class="font-medium serif italic">${escapeHtml(p.name)}</div>
+                                <div class="text-[10px] uppercase tracking-widest text-stone-500">${p.price} грн | ${escapeHtml(p.status)}</div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="deleteProduct('${p.id}')" class="text-stone-600 hover:text-red-500 transition uppercase text-[10px] tracking-widest">Видалити</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                list.innerHTML = `<p class="text-center text-red-500 py-4">Помилка завантаження списку.</p>`;
+            }
+        }
+
+        async function addProduct() {
+            const name = document.getElementById('prod-name').value;
+            const price = parseInt(document.getElementById('prod-price').value);
+            const status = document.getElementById('prod-status').value;
+            const desc = document.getElementById('prod-desc').value;
+            const fileInput = document.getElementById('prod-file');
+
+            const btnText = document.getElementById('btn-add-text');
+            const btnLoader = document.getElementById('btn-add-loader');
+
+            if (!name || isNaN(price)) return showToast('Заповніть обов\'язкові поля!', 'error');
+            if (!fileInput.files[0]) return showToast('Будь ласка, виберіть фотографію!', 'error');
+
+            btnText.classList.add('hidden');
+            btnLoader.classList.remove('hidden');
+
+            try {
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random()}.${fileExt}`;
+                const filePath = `${fileName}`;
+
+                // 1. Upload to Storage
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('product-images')
+                    .upload(filePath, file);
+
+                if (uploadError) throw uploadError;
+
+                // 2. Get Public URL
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('product-images')
+                    .getPublicUrl(filePath);
+
+                // 3. Insert into DB
+                const { error: dbError } = await supabaseClient
+                    .from('products')
+                    .insert([{
+                        name,
+                        price,
+                        status,
+                        description: desc,
+                        image_url: publicUrl
+                    }]);
+
+                if (dbError) throw dbError;
+
+                showToast('Товар успішно додано!');
+                document.getElementById('prod-name').value = '';
+                document.getElementById('prod-price').value = '';
+                document.getElementById('prod-file').value = '';
+                document.getElementById('prod-desc').value = '';
+                renderAdmin();
+            } catch (e) {
+                console.error(e);
+                showToast('Помилка: ' + e.message, 'error');
+            } finally {
+                btnText.classList.remove('hidden');
+                btnLoader.classList.add('hidden');
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цей товар?')) return;
+
+            try {
+                const { error } = await supabaseClient.from('products').delete().eq('id', id);
+                if (error) throw error;
+                showToast('Товар успішно видалено');
+                renderAdmin();
+            } catch (e) {
+                showToast('Помилка при видаленні: ' + e.message, 'error');
+            }
+        }
+
+        updateCartCount();
+        showPage('home');
+    </script>
+</body>
+</html>
