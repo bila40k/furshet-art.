@@ -98,7 +98,7 @@
   <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#C5A47E]/[0.03] blur-[150px] pointer-events-none -z-10 rounded-full"></div>
 
   <!-- ШАПКА (HEADER) -->
-  <header class="sticky top-0 z-40 bg-[#070707]/80 backdrop-blur-md border-b border-stone-800/60 transition-all duration-300">
+  <header class="sticky top-0 z-40 bg-[#070707]/90 backdrop-blur-md border-b border-stone-800/60 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
       
       <!-- БРЕНДИНГ ТА ЛОГОТИП -->
@@ -132,17 +132,17 @@
 
       <!-- НАВІГАЦІЯ ТА ДІЇ -->
       <div class="flex items-center gap-6">
-        <nav class="hidden md:flex items-center gap-8 text-xs uppercase tracking-[0.2em] text-stone-400">
+        <nav class="flex items-center gap-6 md:gap-8 text-xs uppercase tracking-[0.2em] text-stone-400">
           <a href="#catalog" class="hover:text-[#C5A47E] transition-colors">Каталог</a>
           
           <!-- Кнопка авторизації адміна -->
-          <button id="admin-auth-btn" onclick="handleAdminAuth()" class="hover:text-[#C5A47E] transition-colors flex items-center gap-1.5 cursor-pointer">
+          <button id="admin-auth-btn" type="button" class="hover:text-[#C5A47E] transition-colors flex items-center gap-1.5 cursor-pointer text-stone-300">
             <span id="admin-auth-text">Вхід Admin</span>
           </button>
         </nav>
 
         <!-- Кнопка Кошика -->
-        <button id="cart-toggle-btn" class="relative p-2.5 rounded-full border border-stone-800 bg-[#0d0d0d] hover:border-[#C5A47E]/60 transition-all text-stone-300 hover:text-white cursor-pointer">
+        <button id="cart-toggle-btn" type="button" class="relative p-2.5 rounded-full border border-stone-800 bg-[#0d0d0d] hover:border-[#C5A47E]/60 transition-all text-stone-300 hover:text-white cursor-pointer">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
@@ -170,10 +170,10 @@
     </p>
 
     <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
-      <a href="#catalog" class="btn-shimmer w-full sm:w-auto px-8 py-4 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-sm hover:bg-[#D4AF37] transition-all shadow-[0_0_25px_rgba(197,164,126,0.25)]">
+      <a href="#catalog" class="btn-shimmer w-full sm:w-auto px-8 py-4 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-sm hover:bg-[#D4AF37] transition-all shadow-[0_0_25px_rgba(197,164,126,0.25)] text-center">
         Переглянути каталог
       </a>
-      <a href="#contact" class="w-full sm:w-auto px-8 py-4 border border-stone-800 text-stone-300 font-medium text-xs uppercase tracking-[0.25em] rounded-sm hover:border-[#C5A47E] hover:text-white transition-all bg-[#0a0a0a]/50">
+      <a href="#contact" class="w-full sm:w-auto px-8 py-4 border border-stone-800 text-stone-300 font-medium text-xs uppercase tracking-[0.25em] rounded-sm hover:border-[#C5A47E] hover:text-white transition-all bg-[#0a0a0a]/50 text-center">
         Індивідуальне замовлення
       </a>
     </div>
@@ -195,18 +195,18 @@
     </div>
   </section>
 
-  <!-- ПАНЕЛЬ АДМІНІСТРАТОРА (ЗА ЗАМОВЧУВАННЯМ ПРИХОВАНА) -->
+  <!-- ПАНЕЛЬ АДМІНІСТРАТОРА (ПРИХОВАНА ДО ВХОДУ) -->
   <section id="admin-panel" class="hidden py-20 max-w-4xl mx-auto px-6 border-t border-stone-900">
     <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
       <div class="absolute top-0 right-0 w-64 h-64 bg-[#C5A47E]/[0.05] rounded-full blur-3xl pointer-events-none"></div>
 
       <div class="flex justify-between items-start mb-8">
         <div>
-          <span class="text-[10px] uppercase tracking-[0.25em] text-[#C5A47E]">Авторизований режим</span>
+          <span class="text-[10px] uppercase tracking-[0.25em] text-[#C5A47E]">Панель адміністратора</span>
           <h3 class="font-serif italic text-2xl md:text-3xl text-stone-100 mt-1">Додати нову роботу в портфоліо</h3>
         </div>
-        <button onclick="logoutAdmin()" class="text-xs uppercase tracking-widest text-stone-500 hover:text-stone-300 transition">
-          Вийти з адмінки
+        <button id="logout-btn" type="button" class="text-xs uppercase tracking-widest text-stone-500 hover:text-[#C5A47E] transition cursor-pointer">
+          Вийти
         </button>
       </div>
 
@@ -227,7 +227,7 @@
           <input type="url" id="prod-img" placeholder="https://..." class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
         </div>
 
-        <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-lg hover:bg-[#D4AF37] transition-all flex items-center justify-center gap-2">
+        <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-lg hover:bg-[#D4AF37] transition-all flex items-center justify-center gap-2 cursor-pointer">
           <span id="btn-add-text">Опублікувати в каталозі</span>
           <span id="btn-add-loader" class="hidden">Завантаження...</span>
         </button>
@@ -243,7 +243,7 @@
         <span class="text-stone-700">|</span>
         <span class="text-[9px] uppercase tracking-widest text-[#C5A47E]">by Victoria Bilak</span>
       </div>
-      <p class="font-light tracking-wider">&copy; 2026 Всі права захищено. Створено з любов'ю до фуршетного мистецтва.</p>
+      <p class="font-light tracking-wider">&copy; 2026 Всі права захищено. Створено для особливих моментів.</p>
     </div>
   </footer>
 
@@ -254,7 +254,7 @@
       <div>
         <div class="flex items-center justify-between pb-4 border-b border-stone-800">
           <h3 class="font-serif italic text-2xl text-stone-100">Ваше замовлення</h3>
-          <button id="cart-close-btn" class="text-stone-500 hover:text-white transition">✕</button>
+          <button id="cart-close-btn" type="button" class="text-stone-500 hover:text-white transition cursor-pointer">✕</button>
         </div>
         <div id="cart-items" class="py-6 space-y-4 max-h-[60vh] overflow-y-auto">
           <p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>
@@ -265,7 +265,7 @@
           <span class="text-xs uppercase tracking-widest text-stone-400">Всього:</span>
           <span id="cart-total" class="font-serif text-2xl text-[#C5A47E]">0 грн</span>
         </div>
-        <button onclick="showToast('Замовлення оформлено! Ми зв\'яжемося з вами.', 'success')" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm hover:bg-[#D4AF37] transition">
+        <button id="cart-checkout-btn" type="button" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm hover:bg-[#D4AF37] transition cursor-pointer">
           Оформити замовлення
         </button>
       </div>
@@ -276,28 +276,33 @@
 
   <!-- СКРИПТИ -->
   <script>
-    // 1. SUPABASE ІНІЦІАЛІЗАЦІЯ
+    // 1. SUPABASE
     const SUPABASE_URL = 'https://vdqgflfqqcslzrqgugvf.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkcWdmbGZxcWNzbHpycWd1Z3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNTAsImV4cCI6MjA1Njc5MzA1MH0.o-9R_c3N4i7_5Y9PZ2qUf_v5fB9Wz0y0wV8';
     
     let supabaseClient = null;
     try {
-      if (window.supabase) {
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
     } catch (e) {
-      console.error('Supabase Init Error:', e);
+      console.warn('Supabase Client disabled, using local fallback mode:', e);
     }
 
-    // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (SHA-256 ХЕШ ДЛЯ ПАРОЛЯ Arcen2007)
+    // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (SHA-256 ДЛЯ Arcen2007)
     const ADMIN_PASSWORD_HASH = "cb9e9334c679a83a0058b76df4395634b0717208aa0f7cb67d5cefa33cb7ee75";
 
     async function hashString(str) {
-      const buffer = new TextEncoder().encode(str);
-      const digest = await crypto.subtle.digest('SHA-256', buffer);
-      return Array.from(new Uint8Array(digest))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+      try {
+        if (window.crypto && window.crypto.subtle) {
+          const buffer = new TextEncoder().encode(str);
+          const digest = await window.crypto.subtle.digest('SHA-256', buffer);
+          return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+      } catch (err) {
+        console.warn('Crypto API fallback:', err);
+      }
+      return str === "Arcen2007" ? ADMIN_PASSWORD_HASH : "invalid_hash";
     }
 
     function isAdminLoggedIn() {
@@ -321,7 +326,6 @@
         authText.textContent = isAuth ? 'Панель Admin (Активна)' : 'Вхід Admin';
       }
 
-      // Показуємо/приховуємо кнопки видалення
       document.querySelectorAll('.admin-delete-btn').forEach(btn => {
         btn.style.display = isAuth ? 'inline-block' : 'none';
       });
@@ -330,21 +334,28 @@
     async function handleAdminAuth() {
       if (isAdminLoggedIn()) {
         const panel = document.getElementById('admin-panel');
-        panel.scrollIntoView({ behavior: 'smooth' });
+        if (panel) {
+          panel.classList.remove('hidden');
+          panel.scrollIntoView({ behavior: 'smooth' });
+        }
         return;
       }
 
       const pass = prompt('Введіть пароль адміністратора:');
       if (!pass) return;
 
-      const hash = await hashString(pass);
+      const hash = await hashString(pass.trim());
       if (hash === ADMIN_PASSWORD_HASH) {
         sessionStorage.setItem('is_admin_logged', 'true');
         updateAdminUI();
         showToast('Успішна авторизація!', 'success');
-        document.getElementById('admin-panel').scrollIntoView({ behavior: 'smooth' });
+        const panel = document.getElementById('admin-panel');
+        if (panel) {
+          panel.classList.remove('hidden');
+          panel.scrollIntoView({ behavior: 'smooth' });
+        }
       } else {
-        showToast('Невірний пароль доступу!', 'error');
+        alert('Невірний пароль доступу!');
       }
     }
 
@@ -354,9 +365,10 @@
       showToast('Ви вийшли з адмін-панелі', 'info');
     }
 
-    // 3. TOAST-ПОВІДОМЛЕННЯ
+    // 3. TOAST
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
+      if (!container) return;
       const toast = document.createElement('div');
       
       const borderColor = type === 'error' ? 'border-red-500/60' : (type === 'success' ? 'border-[#C5A47E]' : 'border-stone-700');
@@ -379,80 +391,82 @@
       }, 4000);
     }
 
-    // 4. CANVAS З ІСКОРКАМИ
+    // 4. CANVAS
     const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
-    let mouse = { x: -1000, y: -1000 };
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let particles = [];
+      let mouse = { x: -1000, y: -1000 };
 
-    function resizeCanvas() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    window.addEventListener('mousemove', (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-
-    class Particle {
-      constructor() {
-        this.reset();
+      function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
       }
-      reset() {
-        this.x = Math.random() * width;
-        this.y = height + Math.random() * 50;
-        this.size = Math.random() * 2 + 0.8;
-        this.speedY = Math.random() * 0.4 + 0.15;
-        this.speedX = (Math.random() - 0.5) * 0.2;
-        this.alpha = Math.random() * 0.6 + 0.2;
-      }
-      update() {
-        this.y -= this.speedY;
-        this.x += this.speedX;
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
 
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          const force = (120 - dist) / 120;
-          this.x -= (dx / dist) * force * 1.5;
-          this.y -= (dy / dist) * force * 1.5;
-        }
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
 
-        if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+      class Particle {
+        constructor() {
           this.reset();
         }
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(197, 164, 126, ${this.alpha})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = '#C5A47E';
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-    }
+        reset() {
+          this.x = Math.random() * width;
+          this.y = height + Math.random() * 50;
+          this.size = Math.random() * 2 + 0.8;
+          this.speedY = Math.random() * 0.4 + 0.15;
+          this.speedX = (Math.random() - 0.5) * 0.2;
+          this.alpha = Math.random() * 0.6 + 0.2;
+        }
+        update() {
+          this.y -= this.speedY;
+          this.x += this.speedX;
 
-    for (let i = 0; i < 50; i++) {
-      const p = new Particle();
-      p.y = Math.random() * height;
-      particles.push(p);
-    }
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            const force = (120 - dist) / 120;
+            this.x -= (dx / dist) * force * 1.5;
+            this.y -= (dy / dist) * force * 1.5;
+          }
 
-    function animateParticles() {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animateParticles);
+          if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+            this.reset();
+          }
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(197, 164, 126, ${this.alpha})`;
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = '#C5A47E';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      for (let i = 0; i < 45; i++) {
+        const p = new Particle();
+        p.y = Math.random() * height;
+        particles.push(p);
+      }
+
+      function animateParticles() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+          p.update();
+          p.draw();
+        });
+        requestAnimationFrame(animateParticles);
+      }
+      animateParticles();
     }
-    animateParticles();
 
     // 5. КОШИК
     let cart = [];
@@ -463,6 +477,7 @@
     const cartTotalEl = document.getElementById('cart-total');
 
     function toggleCart(show) {
+      if (!cartModal || !cartDrawer) return;
       if (show) {
         cartModal.classList.remove('pointer-events-none', 'opacity-0');
         cartDrawer.classList.remove('translate-x-full');
@@ -473,11 +488,8 @@
       }
     }
 
-    document.getElementById('cart-toggle-btn').addEventListener('click', () => toggleCart(true));
-    document.getElementById('cart-close-btn').addEventListener('click', () => toggleCart(false));
-    document.getElementById('cart-backdrop').addEventListener('click', () => toggleCart(false));
-
     function updateCartUI() {
+      if (!cartBadge || !cartItemsEl || !cartTotalEl) return;
       cartBadge.textContent = cart.length;
       if (cart.length > 0) {
         cartBadge.classList.remove('scale-0');
@@ -500,7 +512,7 @@
               <div class="font-serif italic text-stone-200">${item.name}</div>
               <div class="text-[10px] text-[#C5A47E]">${item.price} грн</div>
             </div>
-            <button onclick="removeFromCart(${idx})" class="text-stone-600 hover:text-red-400 text-xs transition">Видалити</button>
+            <button onclick="removeFromCart(${idx})" class="text-stone-600 hover:text-red-400 text-xs transition cursor-pointer">Видалити</button>
           </div>
         `;
       }).join('');
@@ -522,6 +534,8 @@
     // 6. ЗАВАНТАЖЕННЯ КАТАЛОГУ
     async function loadProducts() {
       const grid = document.getElementById('product-grid');
+      if (!grid) return;
+
       if (!supabaseClient) {
         renderFallbackProducts(grid);
         return;
@@ -529,8 +543,7 @@
 
       try {
         const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-        if (error) throw error;
-        if (!data || data.length === 0) {
+        if (error || !data || data.length === 0) {
           renderFallbackProducts(grid);
           return;
         }
@@ -558,7 +571,7 @@
           </div>
         `).join('');
       } catch (err) {
-        console.error(err);
+        console.warn("Каталог переведено у локальний режим:", err);
         renderFallbackProducts(grid);
       }
     }
@@ -572,57 +585,59 @@
           <div class="p-6">
             <h3 class="font-serif italic text-xl text-stone-100">Композиція "Золотий Лотос"</h3>
             <p class="text-sm text-[#C5A47E] mt-1">2 800 грн</p>
-            <button onclick="addToCart('Золотий Лотос', 2800)" class="mt-4 text-xs uppercase tracking-widest text-stone-300 hover:text-white transition">Додати в кошик →</button>
+            <button onclick="addToCart('Золотий Лотос', 2800)" class="mt-4 text-xs uppercase tracking-widest text-stone-300 hover:text-white transition cursor-pointer">Додати в кошик →</button>
           </div>
         </div>
       `;
     }
 
-    // 7. ДОДАВАННЯ ТОВАРУ (ЛИШЕ ДЛЯ АДМІНА)
-    document.getElementById('add-product-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!isAdminLoggedIn()) {
-        showToast('Потрібна авторизація адміністратора!', 'error');
-        return;
-      }
+    // 7. ДОДАВАННЯ ТОВАРУ
+    const addForm = document.getElementById('add-product-form');
+    if (addForm) {
+      addForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!isAdminLoggedIn()) {
+          showToast('Потрібна авторизація адміністратора!', 'error');
+          return;
+        }
 
-      const name = document.getElementById('prod-name').value.trim();
-      const price = parseFloat(document.getElementById('prod-price').value);
-      const img = document.getElementById('prod-img').value.trim();
+        const name = document.getElementById('prod-name').value.trim();
+        const price = parseFloat(document.getElementById('prod-price').value);
+        const img = document.getElementById('prod-img').value.trim();
 
-      if (!name || isNaN(price)) {
-        showToast('Заповніть обов\'язкові поля!', 'error');
-        return;
-      }
+        if (!name || isNaN(price)) {
+          showToast('Заповніть обов\'язкові поля!', 'error');
+          return;
+        }
 
-      const btnText = document.getElementById('btn-add-text');
-      const btnLoader = document.getElementById('btn-add-loader');
-      btnText.classList.add('hidden');
-      btnLoader.classList.remove('hidden');
+        const btnText = document.getElementById('btn-add-text');
+        const btnLoader = document.getElementById('btn-add-loader');
+        if (btnText) btnText.classList.add('hidden');
+        if (btnLoader) btnLoader.classList.remove('hidden');
 
-      try {
-        if (!supabaseClient) throw new Error('Supabase не налаштовано');
-        const { error } = await supabaseClient.from('products').insert([{
-          name: name,
-          price: price,
-          image_url: img || null,
-          status: 'available'
-        }]);
+        try {
+          if (!supabaseClient) throw new Error('Supabase не підключено');
+          const { error } = await supabaseClient.from('products').insert([{
+            name: name,
+            price: price,
+            image_url: img || null,
+            status: 'available'
+          }]);
 
-        if (error) throw error;
-        showToast('Нову композицію успішно опубліковано!', 'success');
-        document.getElementById('add-product-form').reset();
-        loadProducts();
-      } catch (err) {
-        console.error(err);
-        showToast(err.message || 'Помилка збереження', 'error');
-      } finally {
-        btnText.classList.remove('hidden');
-        btnLoader.classList.add('hidden');
-      }
-    });
+          if (error) throw error;
+          showToast('Нову композицію опубліковано!', 'success');
+          addForm.reset();
+          loadProducts();
+        } catch (err) {
+          showToast(err.message || 'Помилка збереження', 'error');
+        } finally {
+          if (btnText) btnText.classList.remove('hidden');
+          if (btnLoader) btnLoader.classList.add('hidden');
+        }
+      });
+    }
 
-    // 8. ВИДАЛЕННЯ ТОВАРУ (ЛИШЕ ДЛЯ АДМІНА)
+    // 8. ВИДАЛЕННЯ ТОВАРУ
     window.deleteProduct = async function(id) {
       if (!isAdminLoggedIn()) {
         showToast('Тільки адміністратор може видаляти позиції!', 'error');
@@ -641,8 +656,30 @@
       }
     };
 
-    // Ініціалізація при відкритті
+    // 9. БІНДИНГ ПОДІЙ ПРИ СТАРТІ
     document.addEventListener('DOMContentLoaded', () => {
+      const adminBtn = document.getElementById('admin-auth-btn');
+      if (adminBtn) adminBtn.addEventListener('click', handleAdminAuth);
+
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) logoutBtn.addEventListener('click', logoutAdmin);
+
+      const cartBtn = document.getElementById('cart-toggle-btn');
+      if (cartBtn) cartBtn.addEventListener('click', () => toggleCart(true));
+
+      const cartClose = document.getElementById('cart-close-btn');
+      if (cartClose) cartClose.addEventListener('click', () => toggleCart(false));
+
+      const backdrop = document.getElementById('cart-backdrop');
+      if (backdrop) backdrop.addEventListener('click', () => toggleCart(false));
+
+      const checkoutBtn = document.getElementById('cart-checkout-btn');
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+          showToast('Замовлення оформлено! Ми зв\'яжемося з вами.', 'success');
+        });
+      }
+
       updateAdminUI();
       loadProducts();
     });
