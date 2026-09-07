@@ -289,25 +289,6 @@
       console.warn('Supabase fallback mode:', e);
     }
 
-    // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (SHA-256 ДЛЯ Arcen2007)
-    const ADMIN_PASSWORD_HASH = "cb9e9334c679a83a0058b76df4395634b0717208aa0f7cb67d5cefa33cb7ee75";
-
-    async function hashString(str) {
-      try {
-        if (window.crypto && window.crypto.subtle) {
-          const buffer = new TextEncoder().encode(str);
-          const digest = await window.crypto.subtle.digest('SHA-256', buffer);
-          return Array.from(new Uint8Array(digest))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('')
-            .toLowerCase();
-        }
-      } catch (err) {
-        console.warn('Crypto error:', err);
-      }
-      return "";
-    }
-
     function isAdminLoggedIn() {
       return sessionStorage.getItem('is_admin_logged') === 'true';
     }
@@ -334,7 +315,7 @@
       });
     }
 
-    async function handleAdminAuth() {
+    function handleAdminAuth() {
       if (isAdminLoggedIn()) {
         const panel = document.getElementById('admin-panel');
         if (panel) {
@@ -348,12 +329,11 @@
       if (!rawPass) return;
 
       const cleanPass = rawPass.trim();
-      const hash = await hashString(cleanPass);
 
-      if (cleanPass === "Arcen2007" || hash === ADMIN_PASSWORD_HASH) {
+      if (cleanPass === 'Arcen2007') {
         sessionStorage.setItem('is_admin_logged', 'true');
-        alert('Успішна авторизація!');
         updateAdminUI();
+        alert('Успішна авторизація!');
         const panel = document.getElementById('admin-panel');
         if (panel) {
           panel.classList.remove('hidden');
