@@ -247,6 +247,41 @@
     </div>
   </footer>
 
+  <!-- КАСТОМНЕ ПРЕМІАЛЬНЕ МОДАЛЬНЕ ВІКНО ВХОДУ АДМІНА -->
+  <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="admin-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#C5A47E]/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Панель керування</span>
+          <h3 class="font-serif italic text-2xl text-stone-100 mt-0.5">Вхід адміністратора</h3>
+        </div>
+        <button id="admin-modal-close-btn" type="button" class="text-stone-500 hover:text-white transition p-1 cursor-pointer text-sm">✕</button>
+      </div>
+
+      <form id="admin-login-form" class="space-y-4">
+        <div>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Введіть пароль</label>
+          <input type="password" id="admin-password-input" autocomplete="current-password" placeholder="••••••••" required 
+            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+        </div>
+
+        <div id="admin-auth-error" class="text-xs text-red-400 hidden">Невірний пароль доступу!</div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <button type="button" id="admin-modal-cancel-btn" class="w-1/2 py-3 border border-stone-800 text-stone-400 font-medium text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-stone-600 hover:text-white transition cursor-pointer">
+            Скасувати
+          </button>
+          <button type="submit" class="btn-shimmer w-1/2 py-3 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer">
+            Увійти
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- МОДАЛЬНЕ ВІКНО КОШИКА -->
   <div id="cart-modal" class="hidden fixed inset-0 z-50">
     <div id="cart-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer"></div>
@@ -289,6 +324,7 @@
       console.warn('Supabase fallback mode:', e);
     }
 
+    // 2. СТАТУС ТА UI АДМІНА
     function isAdminLoggedIn() {
       return sessionStorage.getItem('is_admin_logged') === 'true';
     }
@@ -315,7 +351,7 @@
       });
     }
 
-    function handleAdminAuth() {
+    function openAdminModal() {
       if (isAdminLoggedIn()) {
         const panel = document.getElementById('admin-panel');
         if (panel) {
@@ -324,23 +360,44 @@
         }
         return;
       }
+      const modal = document.getElementById('admin-modal');
+      const input = document.getElementById('admin-password-input');
+      const err = document.getElementById('admin-auth-error');
+      if (modal) {
+        if (err) err.classList.add('hidden');
+        if (input) input.value = '';
+        modal.classList.remove('hidden');
+        setTimeout(() => input && input.focus(), 50);
+      }
+    }
 
-      const rawPass = prompt('Введіть пароль адміністратора:');
-      if (!rawPass) return;
+    function closeAdminModal() {
+      const modal = document.getElementById('admin-modal');
+      if (modal) modal.classList.add('hidden');
+    }
 
-      const cleanPass = rawPass.trim();
+    function handleAdminFormSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('admin-password-input');
+      const err = document.getElementById('admin-auth-error');
+      const cleanPass = input ? input.value.trim() : '';
 
       if (cleanPass === 'Arcen2007') {
         sessionStorage.setItem('is_admin_logged', 'true');
         updateAdminUI();
-        alert('Успішна авторизація!');
+        closeAdminModal();
+        showToast('Успішна авторизація!', 'success');
         const panel = document.getElementById('admin-panel');
         if (panel) {
           panel.classList.remove('hidden');
           panel.scrollIntoView({ behavior: 'smooth' });
         }
       } else {
-        alert('Невірний пароль доступу!');
+        if (err) err.classList.remove('hidden');
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
       }
     }
 
@@ -639,12 +696,26 @@
 
     // 9. БІНДИНГ ПОДІЙ
     document.addEventListener('DOMContentLoaded', () => {
+      // Кнопки адмінки
       const adminBtn = document.getElementById('admin-auth-btn');
-      if (adminBtn) adminBtn.addEventListener('click', handleAdminAuth);
+      if (adminBtn) adminBtn.addEventListener('click', openAdminModal);
+
+      const adminForm = document.getElementById('admin-login-form');
+      if (adminForm) adminForm.addEventListener('submit', handleAdminFormSubmit);
+
+      const adminCloseBtn = document.getElementById('admin-modal-close-btn');
+      if (adminCloseBtn) adminCloseBtn.addEventListener('click', closeAdminModal);
+
+      const adminCancelBtn = document.getElementById('admin-modal-cancel-btn');
+      if (adminCancelBtn) adminCancelBtn.addEventListener('click', closeAdminModal);
+
+      const adminBackdrop = document.getElementById('admin-modal-backdrop');
+      if (adminBackdrop) adminBackdrop.addEventListener('click', closeAdminModal);
 
       const logoutBtn = document.getElementById('logout-btn');
       if (logoutBtn) logoutBtn.addEventListener('click', logoutAdmin);
 
+      // Кнопки кошика
       const cartBtn = document.getElementById('cart-toggle-btn');
       if (cartBtn) cartBtn.addEventListener('click', () => toggleCart(true));
 
