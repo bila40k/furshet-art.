@@ -249,12 +249,12 @@
 
   <!-- МОДАЛЬНЕ ВІКНО КОШИКА -->
   <div id="cart-modal" class="hidden fixed inset-0 z-50">
-    <div id="cart-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"></div>
-    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-[#0c0c0c] border-l border-stone-800 p-6 flex flex-col justify-between pointer-events-auto transform translate-x-full transition-transform duration-300 shadow-2xl" id="cart-drawer">
+    <div id="cart-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer"></div>
+    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-[#0c0c0c] border-l border-stone-800 p-6 flex flex-col justify-between shadow-2xl z-10" id="cart-drawer">
       <div>
         <div class="flex items-center justify-between pb-4 border-b border-stone-800">
           <h3 class="font-serif italic text-2xl text-stone-100">Ваше замовлення</h3>
-          <button id="cart-close-btn" type="button" class="text-stone-500 hover:text-white transition cursor-pointer">✕</button>
+          <button id="cart-close-btn" type="button" class="text-stone-500 hover:text-white transition p-2 cursor-pointer">✕</button>
         </div>
         <div id="cart-items" class="py-6 space-y-4 max-h-[60vh] overflow-y-auto">
           <p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>
@@ -286,7 +286,7 @@
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
     } catch (e) {
-      console.warn('Supabase Client disabled, using local fallback mode:', e);
+      console.warn('Supabase fallback mode:', e);
     }
 
     // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (SHA-256 ДЛЯ Arcen2007)
@@ -297,12 +297,15 @@
         if (window.crypto && window.crypto.subtle) {
           const buffer = new TextEncoder().encode(str);
           const digest = await window.crypto.subtle.digest('SHA-256', buffer);
-          return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+          return Array.from(new Uint8Array(digest))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('')
+            .toLowerCase();
         }
       } catch (err) {
-        console.warn('Crypto API fallback:', err);
+        console.warn('Crypto error:', err);
       }
-      return str === "Arcen2007" ? ADMIN_PASSWORD_HASH : "invalid_hash";
+      return "";
     }
 
     function isAdminLoggedIn() {
@@ -341,14 +344,16 @@
         return;
       }
 
-      const pass = prompt('Введіть пароль адміністратора:');
-      if (!pass) return;
+      const rawPass = prompt('Введіть пароль адміністратора:');
+      if (!rawPass) return;
 
-      const hash = await hashString(pass.trim());
-      if (hash === ADMIN_PASSWORD_HASH) {
+      const cleanPass = rawPass.trim();
+      const hash = await hashString(cleanPass);
+
+      if (cleanPass === "Arcen2007" || hash === ADMIN_PASSWORD_HASH) {
         sessionStorage.setItem('is_admin_logged', 'true');
         updateAdminUI();
-        showToast('Успішна авторизація!', 'success');
+        alert('Успішна авторизація!');
         const panel = document.getElementById('admin-panel');
         if (panel) {
           panel.classList.remove('hidden');
@@ -471,20 +476,16 @@
     // 5. КОШИК
     let cart = [];
     const cartModal = document.getElementById('cart-modal');
-    const cartDrawer = document.getElementById('cart-drawer');
     const cartBadge = document.getElementById('cart-badge');
     const cartItemsEl = document.getElementById('cart-items');
     const cartTotalEl = document.getElementById('cart-total');
 
     function toggleCart(show) {
-      if (!cartModal || !cartDrawer) return;
+      if (!cartModal) return;
       if (show) {
-        cartModal.classList.remove('pointer-events-none', 'opacity-0');
-        cartDrawer.classList.remove('translate-x-full');
+        cartModal.classList.remove('hidden');
       } else {
-        cartDrawer.classList.add('translate-x-full');
-        cartModal.classList.add('opacity-0');
-        setTimeout(() => cartModal.classList.add('pointer-events-none'), 300);
+        cartModal.classList.add('hidden');
       }
     }
 
@@ -656,7 +657,7 @@
       }
     };
 
-    // 9. БІНДИНГ ПОДІЙ ПРИ СТАРТІ
+    // 9. БІНДИНГ ПОДІЙ
     document.addEventListener('DOMContentLoaded', () => {
       const adminBtn = document.getElementById('admin-auth-btn');
       if (adminBtn) adminBtn.addEventListener('click', handleAdminAuth);
