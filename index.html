@@ -352,8 +352,8 @@
 
       if (cleanPass === "Arcen2007" || hash === ADMIN_PASSWORD_HASH) {
         sessionStorage.setItem('is_admin_logged', 'true');
-        updateAdminUI();
         alert('Успішна авторизація!');
+        updateAdminUI();
         const panel = document.getElementById('admin-panel');
         if (panel) {
           panel.classList.remove('hidden');
