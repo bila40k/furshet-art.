@@ -379,13 +379,13 @@
 
   <!-- СКРИПТИ -->
   <script>
-    // 1. SUPABASE
-    const SUPABASE_URL = 'https://vdqgflfqqcslzrqgugvf.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkcWdmbGZxcWNzbHpycWd1Z3ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwNTAsImV4cCI6MjA1Njc5MzA1MH0.o-9R_c3N4i7_5Y9PZ2qUf_v5fB9Wz0y0wV8';
+    // 1. SUPABASE (ОНОВЛЕНО НА АКТИВНИЙ ПРОЄКТ)
+    const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
+    const SUPABASE_KEY = 'ВСТАВТЕ_СЮДИ_ANON_КЛЮЧ';
     
     let supabaseClient = null;
     try {
-      if (window.supabase && typeof window.supabase.createClient === 'function') {
+      if (window.supabase && typeof window.supabase.createClient === 'function' && !SUPABASE_KEY.includes('ВСТАВТЕ')) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
     } catch (e) {
