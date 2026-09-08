@@ -4,105 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Furshet Carving by Victoria Bilak — Ексклюзивний карвінг</title>
-
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Шрифти: Cormorant Garamond (Serif) + Montserrat (Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            gold: {
-              300: '#E5C38C',
-              400: '#D4AF37',
-              DEFAULT: '#C5A47E',
-              600: '#99784E',
-            },
-            dark: {
-              900: '#070707',
-              800: '#0D0D0D',
-              700: '#141414',
-            }
-          },
-          fontFamily: {
-            serif: ['"Cormorant Garamond"', 'serif'],
-            sans: ['"Montserrat"', 'sans-serif'],
-          }
-        }
-      }
+      theme: { extend: { colors: { gold: { 300: '#E5C38C', 400: '#D4AF37', DEFAULT: '#C5A47E', 600: '#99784E' }, dark: { 900: '#070707', 800: '#0D0D0D', 700: '#141414' } }, fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['"Montserrat"', 'sans-serif'] } } }
     }
   </script>
-
   <style>
-    body {
-      background-color: #050505;
-      color: #E6E6E6;
-      font-family: 'Montserrat', sans-serif;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .btn-shimmer {
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-shimmer::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        60deg,
-        transparent,
-        rgba(255, 255, 255, 0.15),
-        transparent
-      );
-      transform: rotate(25deg);
-      transition: transform 0.8s ease;
-    }
-    .btn-shimmer:hover::after {
-      transform: rotate(25deg) translate(80%, -80%);
-    }
-
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0a0a0a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #262626;
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #C5A47E;
-    }
+    body { background-color: #050505; color: #E6E6E6; font-family: 'Montserrat', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+    .btn-shimmer { position: relative; overflow: hidden; }
+    .btn-shimmer::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.15), transparent); transform: rotate(25deg); transition: transform 0.8s ease; }
+    .btn-shimmer:hover::after { transform: rotate(25deg) translate(80%, -80%); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #C5A47E; }
   </style>
 </head>
 <body class="relative min-h-screen selection:bg-[#C5A47E]/30 selection:text-white pb-safe">
 
-  <!-- ЖИВІ ШПАЛЕРИ: Canvas Particle System -->
   <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none -z-10 w-full h-full"></canvas>
-
-  <!-- Радіальне фонове підсвічування -->
   <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[700px] h-[300px] sm:h-[500px] bg-[#C5A47E]/[0.03] blur-[100px] sm:blur-[150px] pointer-events-none -z-10 rounded-full"></div>
 
-  <!-- ШАПКА (HEADER) -->
   <header class="sticky top-0 z-40 bg-[#070707]/95 backdrop-blur-md border-b border-stone-800/60 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-18 sm:h-24 flex items-center justify-between">
-      
-      <!-- БРЕНДИНГ ТА ЛОГОТИП -->
       <a href="#" class="flex items-center gap-2.5 sm:gap-3.5 group">
         <div class="relative w-9 h-9 sm:w-12 sm:h-12 rounded-full p-1 border border-[#C5A47E]/40 bg-[#0d0d0d] flex items-center justify-center shadow-[0_0_15px_rgba(197,164,126,0.2)] group-hover:border-[#C5A47E] transition-all duration-300">
           <svg viewBox="0 0 100 100" class="w-full h-full fill-[#C5A47E]" xmlns="http://www.w3.org/2000/svg">
@@ -120,28 +49,16 @@
             <path fill="url(#goldGrad)" d="M85 50 C72 47 62 38 59 25 C56 38 46 47 33 50 C46 53 56 62 59 75 C62 62 72 53 85 50 Z" opacity="0.75" />
           </svg>
         </div>
-
         <div class="flex flex-col text-left">
-          <span class="font-serif italic text-base sm:text-xl md:text-2xl tracking-wider text-stone-100 uppercase group-hover:text-[#C5A47E] transition-colors leading-tight">
-            Furshet Carving
-          </span>
-          <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-light">
-            by Victoria Bilak
-          </span>
+          <span class="font-serif italic text-base sm:text-xl md:text-2xl tracking-wider text-stone-100 uppercase group-hover:text-[#C5A47E] transition-colors leading-tight">Furshet Carving</span>
+          <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-light">by Victoria Bilak</span>
         </div>
       </a>
-
-      <!-- НАВІГАЦІЯ ТА ДІЇ -->
       <div class="flex items-center gap-3 sm:gap-6">
         <nav class="flex items-center gap-4 sm:gap-8 text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-stone-400">
           <a href="#catalog" class="hover:text-[#C5A47E] transition-colors py-1">Каталог</a>
-          
-          <button id="admin-auth-btn" type="button" class="hover:text-[#C5A47E] transition-colors flex items-center cursor-pointer text-stone-300 py-1">
-            <span id="admin-auth-text">Вхід Admin</span>
-          </button>
+          <a href="/admin" class="hover:text-[#C5A47E] transition-colors flex items-center cursor-pointer text-stone-300 py-1">Вхід Admin</a>
         </nav>
-
-        <!-- Кнопка Кошика -->
         <button id="cart-toggle-btn" type="button" aria-label="Відкрити кошик" class="relative p-2.5 rounded-full border border-stone-800 bg-[#0d0d0d] hover:border-[#C5A47E]/60 transition-all text-stone-300 hover:text-white cursor-pointer active:scale-95">
           <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -149,37 +66,21 @@
           <span id="cart-badge" class="absolute -top-1 -right-1 bg-[#C5A47E] text-black font-semibold text-[10px] w-4 h-4 rounded-full flex items-center justify-center scale-0 transition-transform">0</span>
         </button>
       </div>
-
     </div>
   </header>
 
-  <!-- HERO СЕКЦІЯ -->
   <section class="relative py-16 sm:py-28 md:py-36 px-4 sm:px-6 max-w-5xl mx-auto text-center">
     <div class="inline-block mb-3 sm:mb-4">
-      <span class="text-[9px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#C5A47E] font-medium border-b border-[#C5A47E]/40 pb-1">
-        Exclusive Fruit & Vegetable Art
-      </span>
+      <span class="text-[9px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#C5A47E] font-medium border-b border-[#C5A47E]/40 pb-1">Exclusive Fruit & Vegetable Art</span>
     </div>
-    
-    <h1 class="font-serif italic text-3xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-100 font-normal leading-[1.12] sm:leading-[1.08] tracking-tight mb-5 sm:mb-8">
-      Мистецтво, створене для особливих моментів
-    </h1>
-
-    <p class="text-stone-400 text-xs sm:text-base font-light max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-2">
-      Авторські карвінг-композиції Victoria Bilak. Ювелірна точність ліній, бездоганна свіжість і преміальна естетика сучасної фуршетної культури.
-    </p>
-
+    <h1 class="font-serif italic text-3xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-100 font-normal leading-[1.12] sm:leading-[1.08] tracking-tight mb-5 sm:mb-8">Мистецтво, створене для особливих моментів</h1>
+    <p class="text-stone-400 text-xs sm:text-base font-light max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-2">Авторські карвінг-композиції Victoria Bilak. Ювелірна точність ліній, бездоганна свіжість і преміальна естетика сучасної фуршетної культури.</p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 w-full max-w-xs sm:max-w-none mx-auto">
-      <a href="#catalog" class="btn-shimmer w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#C5A47E] text-black font-semibold sm:font-medium text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] rounded-lg sm:rounded-sm hover:bg-[#D4AF37] transition-all shadow-[0_0_25px_rgba(197,164,126,0.25)] text-center active:scale-[0.98]">
-        Переглянути каталог
-      </a>
-      <button type="button" id="custom-order-hero-btn" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-stone-800 text-stone-300 font-semibold sm:font-medium text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] rounded-lg sm:rounded-sm hover:border-[#C5A47E] hover:text-white transition-all bg-[#0a0a0a]/50 text-center cursor-pointer active:scale-[0.98]">
-        Індивідуальне замовлення
-      </button>
+      <a href="#catalog" class="btn-shimmer w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#C5A47E] text-black font-semibold sm:font-medium text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] rounded-lg sm:rounded-sm hover:bg-[#D4AF37] transition-all shadow-[0_0_25px_rgba(197,164,126,0.25)] text-center active:scale-[0.98]">Переглянути каталог</a>
+      <button type="button" id="custom-order-hero-btn" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-stone-800 text-stone-300 font-semibold sm:font-medium text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] rounded-lg sm:rounded-sm hover:border-[#C5A47E] hover:text-white transition-all bg-[#0a0a0a]/50 text-center cursor-pointer active:scale-[0.98]">Індивідуальне замовлення</button>
     </div>
   </section>
 
-  <!-- КАТАЛОГ -->
   <section id="catalog" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 border-t border-stone-900">
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-16 gap-2 sm:gap-4">
       <div>
@@ -188,84 +89,11 @@
       </div>
       <p class="text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-stone-500">Доступні до замовлення на вашу подію</p>
     </div>
-
-    <!-- Сітка карток -->
     <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 md:gap-10">
       <div class="text-center py-12 text-stone-500 col-span-full font-light">Завантаження каталогу...</div>
     </div>
   </section>
 
-  <!-- ПАНЕЛЬ АДМІНІСТРАТОРА -->
-  <section id="admin-panel" class="hidden py-16 sm:py-20 max-w-5xl mx-auto px-4 sm:px-6 border-t border-stone-900 space-y-8 sm:space-y-12">
-    <!-- Форма додавання товару -->
-    <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-5 sm:p-10 shadow-2xl relative overflow-hidden">
-      <div class="flex justify-between items-start mb-6 sm:mb-8">
-        <div>
-          <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#C5A47E]">Панель адміністратора</span>
-          <h3 class="font-serif italic text-xl sm:text-3xl text-stone-100 mt-1">Додати нову роботу в портфоліо</h3>
-        </div>
-        <button id="logout-btn" type="button" class="text-xs uppercase tracking-widest text-stone-500 hover:text-[#C5A47E] transition cursor-pointer p-1">
-          Вийти
-        </button>
-      </div>
-
-      <form id="add-product-form" class="space-y-5 sm:space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          <div>
-            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Назва композиції</label>
-            <input type="text" id="prod-name" required maxlength="100" placeholder="напр., Імператорський кавун" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
-          </div>
-          <div>
-            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Ціна (грн)</label>
-            <input type="number" id="prod-price" required min="1" max="1000000" placeholder="напр., 2500" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <div>
-            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Завантажити фото з телефону / ПК</label>
-            <input type="file" id="prod-file" accept="image/*" class="w-full text-xs text-stone-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:uppercase file:tracking-wider file:font-semibold file:bg-[#1f1f1f] file:text-[#C5A47E] border border-stone-800 rounded-lg bg-[#141414] p-2">
-          </div>
-
-          <div class="flex items-center gap-3">
-            <span class="h-[1px] flex-1 bg-stone-800"></span>
-            <span class="text-[9px] uppercase tracking-widest text-stone-500">або вставте посилання</span>
-            <span class="h-[1px] flex-1 bg-stone-800"></span>
-          </div>
-
-          <div>
-            <input type="url" id="prod-img" placeholder="https://..." class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
-          </div>
-
-          <div id="image-preview-wrapper" class="hidden items-center gap-3 p-3 bg-[#141414] border border-stone-800 rounded-lg">
-            <img id="image-preview" src="" alt="Прев'ю" class="w-14 h-14 object-cover rounded-md border border-stone-700">
-            <div class="text-xs text-stone-400 font-light">Фото успішно підготовлено</div>
-          </div>
-        </div>
-
-        <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-3.5 sm:py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition-all flex items-center justify-center cursor-pointer active:scale-[0.98]">
-          <span id="btn-add-text">Опублікувати в каталозі</span>
-          <span id="btn-add-loader" class="hidden">Завантаження...</span>
-        </button>
-      </form>
-    </div>
-
-    <!-- Блок замовлень -->
-    <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-5 sm:p-10 shadow-2xl">
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#C5A47E]">Історія заявок</span>
-          <h3 class="font-serif italic text-xl sm:text-3xl text-stone-100 mt-0.5">Замовлення клієнтів</h3>
-        </div>
-        <button id="refresh-orders-btn" type="button" class="text-xs uppercase tracking-widest text-[#C5A47E] hover:underline cursor-pointer p-1">Оновити</button>
-      </div>
-      <div id="orders-container" class="space-y-3 sm:space-y-4 max-h-[400px] overflow-y-auto pr-1">
-        <p class="text-stone-500 text-center font-light py-4">Завантаження замовлень...</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ФУТЕР -->
   <footer class="py-12 sm:py-16 border-t border-stone-900 bg-[#050505] text-stone-500 text-center text-xs">
     <div class="max-w-7xl mx-auto px-6 flex flex-col items-center gap-4 sm:gap-6">
       <div class="flex items-center gap-3">
@@ -277,7 +105,7 @@
     </div>
   </footer>
 
-  <!-- МОДАЛЬНЕ ВІКНО МЕСЕНДЖЕРІВ -->
+  <!-- Модальні вікна -->
   <div id="order-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div id="order-modal-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
     <div class="relative bg-[#0c0c0c] border-t sm:border border-[#C5A47E]/40 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
@@ -286,42 +114,18 @@
           <span class="text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-medium block">Зв'язок з майстром</span>
           <h3 class="font-serif italic text-2xl text-stone-100">Індивідуальне замовлення</h3>
         </div>
-        <button id="order-modal-close-btn" type="button" aria-label="Закрити" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
+        <button id="order-modal-close-btn" type="button" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
       </div>
-
-      <p class="text-xs text-stone-400 font-light leading-relaxed mb-5">
-        Оберіть зручний месенджер або зателефонуйте для обговорення вашої події:
-      </p>
-
+      <p class="text-xs text-stone-400 font-light leading-relaxed mb-5">Оберіть зручний месенджер або зателефонуйте для обговорення вашої події:</p>
       <div class="space-y-2.5">
-        <a href="https://t.me/+380501716025" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] active:bg-[#1a1a1a] transition">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#229ED9]/20 text-[#229ED9] flex items-center justify-center text-xs font-bold">TG</div>
-            <span class="text-xs uppercase tracking-wider text-stone-200">Написати в Telegram</span>
-          </div>
-          <span class="text-[#C5A47E]">→</span>
-        </a>
-
-        <a href="viber://chat?number=%2B380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] active:bg-[#1a1a1a] transition">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#7360F2]/20 text-[#7360F2] flex items-center justify-center text-xs font-bold">VB</div>
-            <span class="text-xs uppercase tracking-wider text-stone-200">Написати у Viber</span>
-          </div>
-          <span class="text-[#C5A47E]">→</span>
-        </a>
-
-        <a href="tel:+380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] active:bg-[#1a1a1a] transition">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#C5A47E]/20 text-[#C5A47E] flex items-center justify-center text-xs">📞</div>
-            <span class="text-xs uppercase tracking-wider text-stone-200">+380 50 171 60 25</span>
-          </div>
+        <a href="tel:+380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] transition">
+          <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-[#C5A47E]/20 text-[#C5A47E] flex items-center justify-center text-xs">📞</div><span class="text-xs uppercase tracking-wider text-stone-200">+380 50 171 60 25</span></div>
           <span class="text-[#C5A47E]">→</span>
         </a>
       </div>
     </div>
   </div>
 
-  <!-- МОДАЛЬНЕ ВІКНО ОФОРМЛЕННЯ ЗАМОВЛЕННЯ -->
   <div id="checkout-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div id="checkout-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
     <div class="relative bg-[#0c0c0c] border-t sm:border border-[#C5A47E]/40 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl z-10 max-h-[90dvh] overflow-y-auto">
@@ -330,927 +134,67 @@
           <span class="text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-medium block">Підтвердження</span>
           <h3 class="font-serif italic text-2xl text-stone-100">Оформлення заявки</h3>
         </div>
-        <button id="checkout-close-btn" type="button" aria-label="Закрити" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
+        <button id="checkout-close-btn" type="button" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
       </div>
-
       <form id="checkout-form" class="space-y-4">
-        <p class="text-xs text-stone-400 font-light leading-relaxed">
-          Введіть контакти для збереження замовлення. Майстер зв'яжеться з вами.
-        </p>
-
+        <p class="text-xs text-stone-400 font-light leading-relaxed">Введіть контакти для збереження замовлення. Майстер зв'яжеться з вами.</p>
         <div>
           <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Ваше ім'я</label>
-          <input type="text" id="client-name" required maxlength="100" placeholder="напр., Олена" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
+          <input type="text" id="client-name" required maxlength="100" placeholder="напр., Олена" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E]">
         </div>
-
         <div>
           <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Номер телефону</label>
-          <input type="tel" id="client-phone" required maxlength="20" placeholder="+380 (XX) XXX-XX-XX" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
+          <input type="tel" id="client-phone" required maxlength="20" placeholder="+380 (XX) XXX-XX-XX" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E]">
         </div>
-
         <div class="pt-2 flex items-center gap-3">
-          <button type="button" id="checkout-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">
-            Скасувати
-          </button>
+          <button type="button" id="checkout-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">Скасувати</button>
           <button type="submit" id="checkout-submit-btn" class="btn-shimmer w-1/2 py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-[#D4AF37] transition flex items-center justify-center active:scale-95">
-            <span id="checkout-btn-text">Підтвердити</span>
-            <span id="checkout-btn-loader" class="hidden text-[11px]">Збереження...</span>
+            <span id="checkout-btn-text">Підтвердити</span><span id="checkout-btn-loader" class="hidden text-[11px]">Збереження...</span>
           </button>
         </div>
       </form>
-
       <div id="checkout-success" class="hidden text-center py-4 space-y-4">
         <div class="w-12 h-12 mx-auto rounded-full bg-[#C5A47E]/20 text-[#C5A47E] flex items-center justify-center text-xl font-bold">✓</div>
-        <div>
-          <h4 class="font-serif italic text-2xl text-stone-100">Замовлення збережено!</h4>
-          <p class="text-xs text-stone-400 font-light mt-1.5 leading-relaxed">
-            Будь ласка, зателефонуйте майстру для узгодження деталей події.
-          </p>
-        </div>
-        <a href="tel:+380501716025" class="btn-shimmer block w-full py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition text-center active:scale-95">
-          Зателефонувати: +380 50 171 60 25
-        </a>
+        <h4 class="font-serif italic text-2xl text-stone-100">Замовлення збережено!</h4>
       </div>
     </div>
   </div>
 
-  <!-- МОДАЛЬНЕ ВІКНО АДМІНА -->
-  <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div id="admin-modal-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
-    <div class="relative bg-[#0c0c0c] border-t sm:border border-[#C5A47E]/40 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl z-10">
-      <div class="flex justify-between items-center mb-5">
-        <div>
-          <span class="text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-medium block">Безпечний доступ</span>
-          <h3 class="font-serif italic text-2xl text-stone-100">Вхід адміністратора</h3>
-        </div>
-        <button id="admin-modal-close-btn" type="button" aria-label="Закрити" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
-      </div>
-
-      <form id="admin-login-form" class="space-y-4">
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Email адміністратора</label>
-          <input type="email" id="admin-email-input" autocomplete="username" placeholder="admin@example.com" required 
-            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
-        </div>
-
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Пароль</label>
-          <input type="password" id="admin-password-input" autocomplete="current-password" placeholder="••••••••" required 
-            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
-        </div>
-
-        <div id="admin-auth-error" class="text-xs text-red-400 hidden">Невірний email або пароль!</div>
-
-        <div class="flex items-center gap-3 pt-2">
-          <button type="button" id="admin-modal-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">
-            Скасувати
-          </button>
-          <button type="submit" id="admin-login-submit" class="btn-shimmer w-1/2 py-3.5 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition flex items-center justify-center active:scale-95">
-            <span id="admin-login-text">Увійти</span>
-            <span id="admin-login-loader" class="hidden text-[10px]">Вхід...</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ВЛАСНЕ МОДАЛЬНЕ ВІКНО ПІДТВЕРДЖЕННЯ -->
   <div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div id="confirm-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
     <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 text-center">
-      <div class="w-12 h-12 mx-auto rounded-full bg-[#C5A47E]/10 border border-[#C5A47E]/30 text-[#C5A47E] flex items-center justify-center text-xl mb-4">
-        !
-      </div>
       <h3 id="confirm-title" class="font-serif italic text-2xl text-stone-100 mb-2">Підтвердження</h3>
-      <p id="confirm-message" class="text-xs text-stone-400 font-light leading-relaxed mb-6">
-        Ви впевнені, що хочете видалити цей запис?
-      </p>
+      <p id="confirm-message" class="text-xs text-stone-400 font-light leading-relaxed mb-6">Ви впевнені?</p>
       <div class="flex items-center gap-3">
-        <button type="button" id="confirm-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white hover:border-stone-600 transition">
-          Скасувати
-        </button>
-        <button type="button" id="confirm-ok-btn" class="w-1/2 py-3.5 bg-red-600/90 text-white font-semibold text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-red-500 transition active:scale-95 shadow-[0_0_20px_rgba(220,38,38,0.25)]">
-          Видалити
-        </button>
+        <button type="button" id="confirm-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">Скасувати</button>
+        <button type="button" id="confirm-ok-btn" class="w-1/2 py-3.5 bg-red-600/90 text-white text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-red-500 transition shadow-[0_0_20px_rgba(220,38,38,0.25)]">Видалити</button>
       </div>
     </div>
   </div>
 
-  <!-- БОКОВЕ ВІКНО КОШИКА (DRAWER) -->
   <div id="cart-modal" class="hidden fixed inset-0 z-50">
     <div id="cart-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm"></div>
     <div class="absolute right-0 top-0 h-[100dvh] w-full max-w-md bg-[#0c0c0c] border-l border-stone-800 p-5 sm:p-6 flex flex-col justify-between shadow-2xl z-10">
       <div class="flex flex-col min-h-0 flex-1">
         <div class="flex items-center justify-between pb-4 border-b border-stone-800 shrink-0">
           <h3 class="font-serif italic text-2xl text-stone-100">Ваше замовлення</h3>
-          <button id="cart-close-btn" type="button" aria-label="Закрити кошик" class="text-stone-500 hover:text-white transition p-2 text-lg">✕</button>
+          <button id="cart-close-btn" type="button" class="text-stone-500 hover:text-white transition p-2 text-lg">✕</button>
         </div>
-        <div id="cart-items" class="py-4 space-y-3 overflow-y-auto flex-1 pr-1">
-          <p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>
-        </div>
+        <div id="cart-items" class="py-4 space-y-3 overflow-y-auto flex-1 pr-1"></div>
       </div>
-      
       <div class="border-t border-stone-800 pt-4 shrink-0 mt-2">
         <div class="flex justify-between items-center mb-4">
           <span class="text-xs uppercase tracking-widest text-stone-400">Всього:</span>
           <span id="cart-total" class="font-serif text-2xl text-[#C5A47E]">0 грн</span>
         </div>
-        <button id="cart-checkout-btn" type="button" class="btn-shimmer w-full py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer active:scale-[0.98]">
-          Оформити замовлення
-        </button>
+        <button id="cart-checkout-btn" type="button" class="btn-shimmer w-full py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition">Оформити замовлення</button>
       </div>
     </div>
   </div>
 
   <div id="toast-container" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- СКРИПТИ -->
-  <script>
-    (function () {
-      'use strict';
-
-      const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzZ3d0eHVwaW9sZ3F1cHZybHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NDMwNjAsImV4cCI6MjEwNDIxOTA2MH0.WT0AGCa0sHzYpFwGYA_0Df7VQmpjDNJlDwHXZ0X9Khc';
-      
-      let supabaseClient = null;
-
-      try {
-        if (window.supabase && typeof window.supabase.createClient === 'function') {
-          supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        }
-      } catch (e) {
-        console.warn('Supabase fallback mode:', e);
-      }
-
-      let _validSession = null;
-
-      function escapeHTML(str) {
-        if (!str) return '';
-        return str.toString().replace(/[&<>'"]/g, tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        }[tag] || tag));
-      }
-
-      function showConfirmDialog(title, message) {
-        return new Promise((resolve) => {
-          const modal = document.getElementById('confirm-modal');
-          const titleEl = document.getElementById('confirm-title');
-          const msgEl = document.getElementById('confirm-message');
-          const okBtn = document.getElementById('confirm-ok-btn');
-          const cancelBtn = document.getElementById('confirm-cancel-btn');
-          const backdrop = document.getElementById('confirm-backdrop');
-
-          if (!modal || !okBtn || !cancelBtn) {
-            resolve(false);
-            return;
-          }
-
-          if (titleEl) titleEl.textContent = title;
-          if (msgEl) msgEl.textContent = message;
-
-          modal.classList.remove('hidden');
-
-          function cleanup(result) {
-            modal.classList.add('hidden');
-            okBtn.removeEventListener('click', onOk);
-            cancelBtn.removeEventListener('click', onCancel);
-            if (backdrop) backdrop.removeEventListener('click', onCancel);
-            resolve(result);
-          }
-
-          function onOk() { cleanup(true); }
-          function onCancel() { cleanup(false); }
-
-          okBtn.addEventListener('click', onOk);
-          cancelBtn.addEventListener('click', onCancel);
-          if (backdrop) backdrop.addEventListener('click', onCancel);
-        });
-      }
-
-      function isAdminLoggedIn() {
-        return Boolean(_validSession && _validSession.access_token && typeof _validSession.access_token === 'string');
-      }
-
-      async function checkAuthSession() {
-        if (!supabaseClient) return;
-        try {
-          const { data: { session }, error } = await supabaseClient.auth.getSession();
-          _validSession = (!error && session) ? session : null;
-          updateAdminUI();
-        } catch (err) {
-          _validSession = null;
-          updateAdminUI();
-        }
-      }
-
-      function updateAdminUI() {
-        const isAuth = isAdminLoggedIn();
-        const adminSection = document.getElementById('admin-panel');
-        const authText = document.getElementById('admin-auth-text');
-
-        if (adminSection) {
-          if (isAuth) {
-            adminSection.classList.remove('hidden');
-            loadOrders();
-          } else {
-            adminSection.classList.add('hidden');
-          }
-        }
-
-        if (authText) {
-          authText.textContent = isAuth ? 'Адмін (Активний)' : 'Вхід Admin';
-        }
-
-        document.querySelectorAll('.admin-delete-btn').forEach(btn => {
-          btn.style.display = isAuth ? 'inline-block' : 'none';
-        });
-      }
-
-      function openAdminModal() {
-        if (isAdminLoggedIn()) {
-          const panel = document.getElementById('admin-panel');
-          if (panel) {
-            panel.classList.remove('hidden');
-            panel.scrollIntoView({ behavior: 'smooth' });
-          }
-          return;
-        }
-        const modal = document.getElementById('admin-modal');
-        const emailInput = document.getElementById('admin-email-input');
-        const passInput = document.getElementById('admin-password-input');
-        const err = document.getElementById('admin-auth-error');
-        if (modal) {
-          if (err) err.classList.add('hidden');
-          if (passInput) passInput.value = '';
-          modal.classList.remove('hidden');
-          setTimeout(() => emailInput && emailInput.focus(), 50);
-        }
-      }
-
-      function closeAdminModal() {
-        const modal = document.getElementById('admin-modal');
-        if (modal) modal.classList.add('hidden');
-      }
-
-      async function handleAdminFormSubmit(e) {
-        e.preventDefault();
-        const email = document.getElementById('admin-email-input')?.value.trim();
-        const password = document.getElementById('admin-password-input')?.value.trim();
-        const err = document.getElementById('admin-auth-error');
-        const btnText = document.getElementById('admin-login-text');
-        const btnLoader = document.getElementById('admin-login-loader');
-
-        if (!email || !password) return;
-
-        if (btnText) btnText.classList.add('hidden');
-        if (btnLoader) btnLoader.classList.remove('hidden');
-        if (err) err.classList.add('hidden');
-
-        try {
-          if (!supabaseClient) throw new Error('Supabase не підключено');
-
-          const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-          });
-
-          if (error) throw error;
-
-          _validSession = data.session;
-          updateAdminUI();
-          closeAdminModal();
-          showToast('Успішна авторизація адміністратора!', 'success');
-          
-          const panel = document.getElementById('admin-panel');
-          if (panel) {
-            panel.classList.remove('hidden');
-            panel.scrollIntoView({ behavior: 'smooth' });
-          }
-        } catch (authError) {
-          if (err) {
-            err.textContent = 'Невірний email або пароль!';
-            err.classList.remove('hidden');
-          } else {
-            showToast('Помилка авторизації: ' + authError.message, 'error');
-          }
-        } finally {
-          if (btnText) btnText.classList.remove('hidden');
-          if (btnLoader) btnLoader.classList.add('hidden');
-        }
-      }
-
-      async function logoutAdmin() {
-        if (supabaseClient) {
-          await supabaseClient.auth.signOut();
-        }
-        _validSession = null;
-        updateAdminUI();
-        showToast('Ви вийшли з адмін-панелі', 'info');
-      }
-
-      function openOrderModal() {
-        const modal = document.getElementById('order-modal');
-        if (modal) modal.classList.remove('hidden');
-      }
-
-      function closeOrderModal() {
-        const modal = document.getElementById('order-modal');
-        if (modal) modal.classList.add('hidden');
-      }
-
-      function openCheckoutModal() {
-        if (cart.length === 0) {
-          showToast('Кошик порожній!', 'error');
-          return;
-        }
-        toggleCart(false);
-        const modal = document.getElementById('checkout-modal');
-        const form = document.getElementById('checkout-form');
-        const success = document.getElementById('checkout-success');
-        if (modal) {
-          if (form) form.classList.remove('hidden');
-          if (success) success.classList.add('hidden');
-          modal.classList.remove('hidden');
-        }
-      }
-
-      function closeCheckoutModal() {
-        const modal = document.getElementById('checkout-modal');
-        if (modal) modal.classList.add('hidden');
-      }
-
-      async function submitCheckout(e) {
-        e.preventDefault();
-        
-        const lastOrderTime = localStorage.getItem('lastOrderTime');
-        if (lastOrderTime && (Date.now() - parseInt(lastOrderTime) < 60000)) {
-          showToast('Ви вже оформили замовлення. Зачекайте хвилину.', 'error');
-          return;
-        }
-
-        const name = document.getElementById('client-name').value.trim();
-        const phone = document.getElementById('client-phone').value.trim();
-        const btnText = document.getElementById('checkout-btn-text');
-        const btnLoader = document.getElementById('checkout-btn-loader');
-
-        if (!name || !phone || cart.length === 0) return;
-
-        let totalPrice = 0;
-        const itemsList = cart.map(item => {
-          totalPrice += item.price;
-          return `${item.name} (${item.price} грн)`;
-        }).join(', ');
-
-        if (btnText) btnText.classList.add('hidden');
-        if (btnLoader) btnLoader.classList.remove('hidden');
-
-        try {
-          if (!supabaseClient) throw new Error('Supabase не підключено');
-
-          const { error } = await supabaseClient.from('orders').insert([{
-            client_name: escapeHTML(name),
-            client_phone: escapeHTML(phone),
-            items: itemsList,
-            total_price: totalPrice,
-            status: 'new'
-          }]);
-
-          if (error) throw error;
-
-          localStorage.setItem('lastOrderTime', Date.now().toString());
-
-          cart = [];
-          updateCartUI();
-
-          const form = document.getElementById('checkout-form');
-          const success = document.getElementById('checkout-success');
-          if (form) form.classList.add('hidden');
-          if (success) success.classList.remove('hidden');
-          showToast('Замовлення успішно збережено!', 'success');
-        } catch (err) {
-          showToast('Помилка: ' + err.message, 'error');
-        } finally {
-          if (btnText) btnText.classList.remove('hidden');
-          if (btnLoader) btnLoader.classList.add('hidden');
-        }
-      }
-
-      async function loadOrders() {
-        const container = document.getElementById('orders-container');
-        if (!container || !supabaseClient || !isAdminLoggedIn()) return;
-
-        try {
-          const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
-          if (error) throw error;
-
-          if (!data || data.length === 0) {
-            container.innerHTML = '<p class="text-stone-500 text-center font-light py-4">Ще немає замовлень</p>';
-            return;
-          }
-
-          container.innerHTML = '';
-          data.forEach(o => {
-            const date = new Date(o.created_at).toLocaleString('uk-UA');
-            const safeName = escapeHTML(o.client_name);
-            const safeItems = escapeHTML(o.items);
-            const safePhone = escapeHTML(o.client_phone);
-
-            const card = document.createElement('div');
-            card.className = 'bg-[#141414] border border-stone-800 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4';
-            card.innerHTML = `
-              <div class="space-y-1 w-full sm:w-auto">
-                <div class="flex items-center justify-between sm:justify-start gap-3">
-                  <span class="font-serif italic text-lg text-stone-100">${safeName}</span>
-                  <a href="tel:${safePhone}" class="text-xs text-[#C5A47E] bg-[#C5A47E]/10 px-2 py-0.5 rounded hover:bg-[#C5A47E]/20 transition">${safePhone}</a>
-                </div>
-                <div class="text-xs text-stone-400 font-light">Товари: <span class="text-stone-200">${safeItems}</span></div>
-                <div class="text-[10px] text-stone-500">${date}</div>
-              </div>
-              <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t border-stone-800/60 sm:border-0 pt-2 sm:pt-0">
-                <span class="font-serif text-lg text-[#C5A47E]">${o.total_price} грн</span>
-                <button type="button" class="del-order-btn text-stone-600 hover:text-red-400 text-xs uppercase tracking-wider transition cursor-pointer p-1">Видалити</button>
-              </div>
-            `;
-            const delBtn = card.querySelector('.del-order-btn');
-            if (delBtn) {
-              delBtn.addEventListener('click', () => deleteOrder(o.id));
-            }
-            container.appendChild(card);
-          });
-        } catch (err) {
-          console.warn('Помилка завантаження замовлень:', err);
-        }
-      }
-
-      async function deleteOrder(id) {
-        if (!isAdminLoggedIn()) return;
-        const confirmed = await showConfirmDialog('Видалення заявки', 'Видалити це замовлення з історії?');
-        if (!confirmed) return;
-
-        try {
-          const { error } = await supabaseClient.from('orders').delete().eq('id', id);
-          if (error) throw error;
-          showToast('Замовлення видалено', 'info');
-          loadOrders();
-        } catch (err) {
-          showToast('Помилка видалення', 'error');
-        }
-      }
-
-      function showToast(message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        if (!container) return;
-        const toast = document.createElement('div');
-        
-        const borderColor = type === 'error' ? 'border-red-500/60' : (type === 'success' ? 'border-[#C5A47E]' : 'border-stone-700');
-        const icon = type === 'error' ? '✕' : (type === 'success' ? '✓' : 'ℹ');
-
-        toast.className = `pointer-events-auto flex items-center gap-3 bg-[#111111]/95 border ${borderColor} text-stone-200 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md text-xs tracking-wide transform transition-all duration-300 translate-y-2 opacity-0 w-full sm:w-auto`;
-        toast.innerHTML = `
-          <span class="w-5 h-5 shrink-0 flex items-center justify-center rounded-full bg-stone-900 text-[#C5A47E] font-bold text-[11px]">${icon}</span>
-          <span class="flex-1">${message}</span>
-        `;
-
-        container.appendChild(toast);
-        requestAnimationFrame(() => {
-          toast.classList.remove('translate-y-2', 'opacity-0');
-        });
-
-        setTimeout(() => {
-          toast.classList.add('opacity-0', 'translate-y-2');
-          setTimeout(() => toast.remove(), 300);
-        }, 4000);
-      }
-
-      // 7. CANVAS PARTICLES
-      const canvas = document.getElementById('bg-canvas');
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-        let mouse = { x: -1000, y: -1000 };
-        const isMobile = window.innerWidth < 768;
-        const particleCount = isMobile ? 18 : 45;
-
-        function resizeCanvas() {
-          width = canvas.width = window.innerWidth;
-          height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas, { passive: true });
-        resizeCanvas();
-
-        if (!isMobile) {
-          window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-          }, { passive: true });
-        }
-
-        class Particle {
-          constructor() {
-            this.reset();
-          }
-          reset() {
-            this.x = Math.random() * width;
-            this.y = height + Math.random() * 50;
-            this.size = Math.random() * 1.8 + 0.6;
-            this.speedY = Math.random() * 0.35 + 0.12;
-            this.speedX = (Math.random() - 0.5) * 0.15;
-            this.alpha = Math.random() * 0.5 + 0.2;
-          }
-          update() {
-            this.y -= this.speedY;
-            this.x += this.speedX;
-
-            if (!isMobile) {
-              const dx = mouse.x - this.x;
-              const dy = mouse.y - this.y;
-              const dist = Math.sqrt(dx * dx + dy * dy);
-              if (dist < 100) {
-                const force = (100 - dist) / 100;
-                this.x -= (dx / dist) * force * 1.2;
-                this.y -= (dy / dist) * force * 1.2;
-              }
-            }
-
-            if (this.y < -10 || this.x < -10 || this.x > width + 10) {
-              this.reset();
-            }
-          }
-          draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(197, 164, 126, ${this.alpha})`;
-            ctx.fill();
-          }
-        }
-
-        for (let i = 0; i < particleCount; i++) {
-          const p = new Particle();
-          p.y = Math.random() * height;
-          particles.push(p);
-        }
-
-        function animateParticles() {
-          ctx.clearRect(0, 0, width, height);
-          particles.forEach(p => {
-            p.update();
-            p.draw();
-          });
-          requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-      }
-
-      // 8. КОШИК
-      let cart = [];
-      const cartModal = document.getElementById('cart-modal');
-      const cartBadge = document.getElementById('cart-badge');
-      const cartItemsEl = document.getElementById('cart-items');
-      const cartTotalEl = document.getElementById('cart-total');
-
-      function toggleCart(show) {
-        if (!cartModal) return;
-        if (show) {
-          cartModal.classList.remove('hidden');
-          document.body.style.overflow = 'hidden';
-        } else {
-          cartModal.classList.add('hidden');
-          document.body.style.overflow = '';
-        }
-      }
-
-      function updateCartUI() {
-        if (!cartBadge || !cartItemsEl || !cartTotalEl) return;
-        cartBadge.textContent = cart.length;
-        if (cart.length > 0) {
-          cartBadge.classList.remove('scale-0');
-        } else {
-          cartBadge.classList.add('scale-0');
-        }
-
-        if (cart.length === 0) {
-          cartItemsEl.innerHTML = '<p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>';
-          cartTotalEl.textContent = '0 грн';
-          return;
-        }
-
-        let total = 0;
-        cartItemsEl.innerHTML = '';
-        cart.forEach((item, idx) => {
-          total += item.price;
-          const row = document.createElement('div');
-          row.className = 'flex items-center justify-between bg-[#141414] p-3 rounded-lg border border-stone-800';
-          row.innerHTML = `
-            <div>
-              <div class="font-serif italic text-stone-200 text-sm sm:text-base">${escapeHTML(item.name)}</div>
-              <div class="text-[11px] text-[#C5A47E] font-medium">${item.price} грн</div>
-            </div>
-            <button type="button" class="del-cart-btn text-stone-600 hover:text-red-400 text-xs transition cursor-pointer p-1">Видалити</button>
-          `;
-          const delBtn = row.querySelector('.del-cart-btn');
-          if (delBtn) {
-            delBtn.addEventListener('click', () => removeFromCart(idx));
-          }
-          cartItemsEl.appendChild(row);
-        });
-
-        cartTotalEl.textContent = `${total} грн`;
-      }
-
-      function addToCart(name, price) {
-        cart.push({ name, price });
-        updateCartUI();
-        showToast(`Додано в кошик: "${name}"`, 'success');
-      }
-
-      function removeFromCart(idx) {
-        cart.splice(idx, 1);
-        updateCartUI();
-      }
-
-      // 9. ЗАВАНТАЖЕННЯ КАТАЛОГУ
-      async function loadProducts() {
-        const grid = document.getElementById('product-grid');
-        if (!grid) return;
-
-        if (!supabaseClient) {
-          renderFallbackProducts(grid);
-          return;
-        }
-
-        try {
-          const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-          if (error || !data || data.length === 0) {
-            renderFallbackProducts(grid);
-            return;
-          }
-
-          const isAuth = isAdminLoggedIn();
-          grid.innerHTML = '';
-          data.forEach(p => {
-            const safeName = escapeHTML(p.name);
-            const safeImgUrl = p.image_url ? encodeURI(p.image_url) : 'https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80';
-
-            const card = document.createElement('div');
-            card.className = 'group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-300 flex flex-col justify-between';
-            card.innerHTML = `
-              <div class="overflow-hidden aspect-square relative bg-stone-950">
-                <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100">
-              </div>
-              <div class="p-5 sm:p-6 flex flex-col justify-between flex-grow">
-                <div>
-                  <h3 class="font-serif italic text-lg sm:text-xl text-stone-100 group-hover:text-[#C5A47E] transition-colors leading-snug">${safeName}</h3>
-                  <p class="text-xs sm:text-sm font-light text-[#C5A47E] mt-1">${p.price} грн</p>
-                </div>
-                <div class="mt-5 flex items-center justify-between pt-3 border-t border-stone-900">
-                  <button type="button" class="buy-btn text-[11px] sm:text-xs uppercase tracking-widest text-stone-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer py-1">
-                    <span>Додати в кошик</span> →
-                  </button>
-                  <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer p-1" style="display: ${isAuth ? 'inline-block' : 'none'};">
-                    Видалити
-                  </button>
-                </div>
-              </div>
-            `;
-
-            const buyBtn = card.querySelector('.buy-btn');
-            if (buyBtn) {
-              buyBtn.addEventListener('click', () => addToCart(p.name, p.price));
-            }
-
-            const delBtn = card.querySelector('.admin-delete-btn');
-            if (delBtn) {
-              delBtn.addEventListener('click', () => deleteProduct(p.id));
-            }
-
-            grid.appendChild(card);
-          });
-        } catch (err) {
-          console.warn("Каталог переведено у локальний режим:", err);
-          renderFallbackProducts(grid);
-        }
-      }
-
-      function renderFallbackProducts(grid) {
-        grid.innerHTML = `
-          <div class="group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-300">
-            <div class="overflow-hidden aspect-square bg-stone-950">
-              <img src="https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80" alt="Золотий Лотос" loading="lazy" class="w-full h-full object-cover">
-            </div>
-            <div class="p-5 sm:p-6">
-              <h3 class="font-serif italic text-lg sm:text-xl text-stone-100">Композиція "Золотий Лотос"</h3>
-              <p class="text-xs sm:text-sm text-[#C5A47E] mt-1">2 800 грн</p>
-              <button type="button" id="fallback-cart-btn" class="mt-4 text-[11px] sm:text-xs uppercase tracking-widest text-stone-300 hover:text-white transition cursor-pointer">Додати в кошик →</button>
-            </div>
-          </div>
-        `;
-        const fbBtn = document.getElementById('fallback-cart-btn');
-        if (fbBtn) {
-          fbBtn.addEventListener('click', () => addToCart('Золотий Лотос', 2800));
-        }
-      }
-
-      // 10. ДОДАВАННЯ ТОВАРУ
-      const addForm = document.getElementById('add-product-form');
-      const fileInput = document.getElementById('prod-file');
-      const urlInput = document.getElementById('prod-img');
-      const previewWrapper = document.getElementById('image-preview-wrapper');
-      const previewImg = document.getElementById('image-preview');
-
-      let loadedBase64Image = '';
-
-      if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvasEl = document.createElement('canvas');
-              const maxDim = 900;
-              let w = img.width;
-              let h = img.height;
-
-              if (w > maxDim || h > maxDim) {
-                if (w > h) {
-                  h = Math.round((h * maxDim) / w);
-                  w = maxDim;
-                } else {
-                  w = Math.round((w * maxDim) / h);
-                  h = maxDim;
-                }
-              }
-
-              canvasEl.width = w;
-              canvasEl.height = h;
-              const ctx = canvasEl.getContext('2d');
-              ctx.drawImage(img, 0, 0, w, h);
-
-              loadedBase64Image = canvasEl.toDataURL('image/jpeg', 0.82);
-              if (previewImg && previewWrapper) {
-                previewImg.src = loadedBase64Image;
-                previewWrapper.classList.remove('hidden');
-                previewWrapper.classList.add('flex');
-              }
-              if (urlInput) urlInput.value = '';
-            };
-            img.src = event.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-
-      if (urlInput) {
-        urlInput.addEventListener('input', () => {
-          if (urlInput.value.trim() !== '') {
-            loadedBase64Image = '';
-            if (fileInput) fileInput.value = '';
-            if (previewWrapper) previewWrapper.classList.add('hidden');
-          }
-        });
-      }
-
-      if (addForm) {
-        addForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          if (!isAdminLoggedIn()) {
-            showToast('Потрібна авторизація!', 'error');
-            return;
-          }
-
-          const name = document.getElementById('prod-name').value.trim();
-          const price = parseFloat(document.getElementById('prod-price').value);
-          const imgUrl = urlInput ? urlInput.value.trim() : '';
-          const finalImage = loadedBase64Image || imgUrl || null;
-
-          if (!name || isNaN(price)) {
-            showToast('Заповніть назву та ціну!', 'error');
-            return;
-          }
-
-          const btnText = document.getElementById('btn-add-text');
-          const btnLoader = document.getElementById('btn-add-loader');
-          if (btnText) btnText.classList.add('hidden');
-          if (btnLoader) btnLoader.classList.remove('hidden');
-
-          try {
-            if (!supabaseClient) throw new Error('Supabase не підключено');
-            const { error } = await supabaseClient.from('products').insert([{
-              name: escapeHTML(name),
-              price: price,
-              image_url: finalImage,
-              status: 'available'
-            }]);
-
-            if (error) throw error;
-            showToast('Нову композицію опубліковано!', 'success');
-            addForm.reset();
-            loadedBase64Image = '';
-            if (previewWrapper) previewWrapper.classList.add('hidden');
-            loadProducts();
-          } catch (err) {
-            showToast(err.message || 'Помилка збереження', 'error');
-          } finally {
-            if (btnText) btnText.classList.remove('hidden');
-            if (btnLoader) btnLoader.classList.add('hidden');
-          }
-        });
-      }
-
-      async function deleteProduct(id) {
-        if (!isAdminLoggedIn()) {
-          showToast('Тільки адміністратор може видаляти!', 'error');
-          return;
-        }
-
-        const confirmed = await showConfirmDialog('Видалення роботи', 'Видалити цю роботу з каталогу?');
-        if (!confirmed) return;
-
-        try {
-          if (!supabaseClient) return;
-          const { error } = await supabaseClient.from('products').delete().eq('id', id);
-          if (error) throw error;
-          showToast('Роботу видалено', 'info');
-          loadProducts();
-        } catch (err) {
-          showToast('Помилка видалення', 'error');
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        checkAuthSession();
-
-        if (supabaseClient) {
-          supabaseClient.auth.onAuthStateChange((event, session) => {
-            _validSession = session;
-            updateAdminUI();
-          });
-        }
-
-        const heroOrderBtn = document.getElementById('custom-order-hero-btn');
-        if (heroOrderBtn) heroOrderBtn.addEventListener('click', openOrderModal);
-
-        const orderCloseBtn = document.getElementById('order-modal-close-btn');
-        if (orderCloseBtn) orderCloseBtn.addEventListener('click', closeOrderModal);
-
-        const orderBackdrop = document.getElementById('order-modal-backdrop');
-        if (orderBackdrop) orderBackdrop.addEventListener('click', closeOrderModal);
-
-        const adminBtn = document.getElementById('admin-auth-btn');
-        if (adminBtn) adminBtn.addEventListener('click', openAdminModal);
-
-        const adminForm = document.getElementById('admin-login-form');
-        if (adminForm) adminForm.addEventListener('submit', handleAdminFormSubmit);
-
-        const adminCloseBtn = document.getElementById('admin-modal-close-btn');
-        if (adminCloseBtn) adminCloseBtn.addEventListener('click', closeAdminModal);
-
-        const adminCancelBtn = document.getElementById('admin-modal-cancel-btn');
-        if (adminCancelBtn) adminCancelBtn.addEventListener('click', closeAdminModal);
-
-        const adminBackdrop = document.getElementById('admin-modal-backdrop');
-        if (adminBackdrop) adminBackdrop.addEventListener('click', closeAdminModal);
-
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) logoutBtn.addEventListener('click', logoutAdmin);
-
-        const refreshOrdersBtn = document.getElementById('refresh-orders-btn');
-        if (refreshOrdersBtn) refreshOrdersBtn.addEventListener('click', loadOrders);
-
-        const cartBtn = document.getElementById('cart-toggle-btn');
-        if (cartBtn) cartBtn.addEventListener('click', () => toggleCart(true));
-
-        const cartCloseBtn = document.getElementById('cart-close-btn');
-        if (cartCloseBtn) cartCloseBtn.addEventListener('click', () => toggleCart(false));
-
-        const backdrop = document.getElementById('cart-backdrop');
-        if (backdrop) backdrop.addEventListener('click', () => toggleCart(false));
-
-        const cartCheckoutBtn = document.getElementById('cart-checkout-btn');
-        if (cartCheckoutBtn) cartCheckoutBtn.addEventListener('click', openCheckoutModal);
-
-        const checkoutForm = document.getElementById('checkout-form');
-        if (checkoutForm) checkoutForm.addEventListener('submit', submitCheckout);
-
-        const checkoutCloseBtn = document.getElementById('checkout-close-btn');
-        if (checkoutCloseBtn) checkoutCloseBtn.addEventListener('click', closeCheckoutModal);
-
-        const checkoutCancelBtn = document.getElementById('checkout-cancel-btn');
-        if (checkoutCancelBtn) checkoutCancelBtn.addEventListener('click', closeCheckoutModal);
-
-        const checkoutBackdrop = document.getElementById('checkout-backdrop');
-        if (checkoutBackdrop) checkoutBackdrop.addEventListener('click', closeCheckoutModal);
-
-        loadProducts();
-      });
-    })();
-  </script>
+  <!-- Підключаємо наш окремий скрипт -->
+  <script src="/main.js"></script>
 </body>
 </html>

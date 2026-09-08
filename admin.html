@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uk" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адмін панель — Furshet Carving</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { gold: { DEFAULT: '#C5A47E' } }, fontFamily: { serif: ['"Cormorant Garamond"', 'serif'], sans: ['"Montserrat"', 'sans-serif'] } } } }
+  </script>
+  <style>
+    body { background-color: #050505; color: #E6E6E6; font-family: 'Montserrat', sans-serif; }
+    .btn-shimmer { position: relative; overflow: hidden; }
+    .btn-shimmer::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.15), transparent); transform: rotate(25deg); transition: transform 0.8s ease; }
+    .btn-shimmer:hover::after { transform: rotate(25deg) translate(80%, -80%); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <!-- Шапка адмінки -->
+  <header class="border-b border-stone-800/60 bg-[#070707]">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="text-[#C5A47E] font-serif italic text-xl">Furshet Admin</div>
+      <a href="/" class="text-xs uppercase tracking-widest text-stone-400 hover:text-white transition">← На головний сайт</a>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 mt-12">
+    
+    <!-- СЕКЦІЯ ЛОГІНУ (ВІДОБРАЖАЄТЬСЯ ДОКИ НЕ АВТОРИЗОВАНИЙ) -->
+    <section id="admin-login-section" class="max-w-sm mx-auto bg-[#0e0e0e] border border-stone-800 rounded-2xl p-8 shadow-2xl">
+      <div class="text-center mb-6">
+        <h3 class="font-serif italic text-2xl text-stone-100">Безпечний доступ</h3>
+      </div>
+      <form id="admin-login-form" class="space-y-4">
+        <div>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Email адміністратора</label>
+          <input type="email" id="admin-email-input" required class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:border-[#C5A47E] focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Пароль</label>
+          <input type="password" id="admin-password-input" required class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:border-[#C5A47E] focus:outline-none">
+        </div>
+        <div id="admin-auth-error" class="text-xs text-red-400 hidden">Невірний логін!</div>
+        <button type="submit" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-widest rounded-lg hover:bg-[#D4AF37] transition mt-4">
+          <span id="admin-login-text">Увійти</span>
+          <span id="admin-login-loader" class="hidden">Вхід...</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- ПАНЕЛЬ КЕРУВАННЯ (ВІДОБРАЖАЄТЬСЯ ТІЛЬКИ ПІСЛЯ ВХОДУ) -->
+    <section id="admin-dashboard-section" class="hidden space-y-12">
+      <!-- Блок Додавання -->
+      <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-8 shadow-xl">
+        <div class="flex justify-between items-start mb-6">
+          <h3 class="font-serif italic text-2xl text-stone-100">Додати нову роботу</h3>
+          <button id="logout-btn" class="text-xs uppercase tracking-widest text-stone-500 hover:text-[#C5A47E] transition">Вийти</button>
+        </div>
+        <form id="add-product-form" class="space-y-6">
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Назва</label>
+              <input type="text" id="prod-name" required class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:border-[#C5A47E] focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Ціна (грн)</label>
+              <input type="number" id="prod-price" required min="1" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:border-[#C5A47E] focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Фото</label>
+            <input type="file" id="prod-file" accept="image/*" class="w-full text-xs text-stone-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#1f1f1f] file:text-[#C5A47E] border border-stone-800 rounded-lg bg-[#141414] p-2">
+          </div>
+          <div id="image-preview-wrapper" class="hidden items-center gap-3 p-3 bg-[#141414] border border-stone-800 rounded-lg">
+            <img id="image-preview" src="" class="w-14 h-14 object-cover rounded-md border border-stone-700">
+            <div class="text-xs text-stone-400">Фото підготовлено</div>
+          </div>
+          <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-widest rounded-lg">
+            <span id="btn-add-text">Опублікувати</span><span id="btn-add-loader" class="hidden">Завантаження...</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Блок Замовлень -->
+      <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-8 shadow-xl">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="font-serif italic text-2xl text-stone-100">Замовлення клієнтів</h3>
+          <button id="refresh-orders-btn" class="text-xs uppercase tracking-widest text-[#C5A47E] hover:underline">Оновити</button>
+        </div>
+        <div id="orders-container" class="space-y-4 max-h-[500px] overflow-y-auto"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="confirm-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-sm w-full shadow-2xl z-10 text-center">
+      <h3 id="confirm-title" class="font-serif italic text-2xl text-stone-100 mb-2">Підтвердження</h3>
+      <p id="confirm-message" class="text-xs text-stone-400 mb-6">Ви впевнені?</p>
+      <div class="flex gap-3">
+        <button id="confirm-cancel-btn" class="w-1/2 py-3 border border-stone-800 text-stone-400 text-xs rounded-lg">Скасувати</button>
+        <button id="confirm-ok-btn" class="w-1/2 py-3 bg-red-600 text-white text-xs rounded-lg">Видалити</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col pointer-events-none"></div>
+
+  <!-- Підключаємо той самий скрипт -->
+  <script src="/main.js"></script>
+</body>
+</html>
