@@ -222,9 +222,28 @@
           </div>
         </div>
 
-        <div>
-          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Посилання на фото (Image URL)</label>
-          <input type="url" id="prod-img" placeholder="https://..." class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
+        <!-- Вибір файлу або введення посилання -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Завантажити фото з пристрою</label>
+            <input type="file" id="prod-file" accept="image/*" class="w-full text-xs text-stone-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:font-semibold file:bg-[#1f1f1f] file:text-[#C5A47E] hover:file:bg-[#2a2a2a] file:cursor-pointer border border-stone-800 rounded-lg bg-[#141414] p-2 transition-colors">
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="h-[1px] flex-1 bg-stone-800"></span>
+            <span class="text-[10px] uppercase tracking-widest text-stone-500">або вставте посилання</span>
+            <span class="h-[1px] flex-1 bg-stone-800"></span>
+          </div>
+
+          <div>
+            <input type="url" id="prod-img" placeholder="https://... (якщо фото вже в інтернеті)" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
+          </div>
+
+          <!-- Попередній перегляд обраного зображення -->
+          <div id="image-preview-wrapper" class="hidden items-center gap-4 p-3 bg-[#141414] border border-stone-800 rounded-lg">
+            <img id="image-preview" src="" alt="Прев'ю" class="w-16 h-16 object-cover rounded-md border border-stone-700">
+            <div class="text-xs text-stone-400 font-light">Фото обрано для публікації</div>
+          </div>
         </div>
 
         <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-lg hover:bg-[#D4AF37] transition-all flex items-center justify-center gap-2 cursor-pointer">
@@ -689,8 +708,69 @@
       `;
     }
 
-    // 8. ДОДАВАННЯ ТОВАРУ
+    // 8. ДОДАВАННЯ ТОВАРУ ТА ОБРОБКА ЗОБРАЖЕНЬ (FILE АБО URL)
     const addForm = document.getElementById('add-product-form');
+    const fileInput = document.getElementById('prod-file');
+    const urlInput = document.getElementById('prod-img');
+    const previewWrapper = document.getElementById('image-preview-wrapper');
+    const previewImg = document.getElementById('image-preview');
+
+    let loadedBase64Image = '';
+
+    // Стиснення та читання файлу з ПК / смартфона
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxDim = 900;
+            let w = img.width;
+            let h = img.height;
+
+            if (w > maxDim || h > maxDim) {
+              if (w > h) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+
+            loadedBase64Image = canvas.toDataURL('image/jpeg', 0.82);
+            if (previewImg && previewWrapper) {
+              previewImg.src = loadedBase64Image;
+              previewWrapper.classList.remove('hidden');
+              previewWrapper.classList.add('flex');
+            }
+            if (urlInput) urlInput.value = '';
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    if (urlInput) {
+      urlInput.addEventListener('input', () => {
+        if (urlInput.value.trim() !== '') {
+          loadedBase64Image = '';
+          if (fileInput) fileInput.value = '';
+          if (previewWrapper) previewWrapper.classList.add('hidden');
+        }
+      });
+    }
+
     if (addForm) {
       addForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -701,10 +781,11 @@
 
         const name = document.getElementById('prod-name').value.trim();
         const price = parseFloat(document.getElementById('prod-price').value);
-        const img = document.getElementById('prod-img').value.trim();
+        const imgUrl = urlInput ? urlInput.value.trim() : '';
+        const finalImage = loadedBase64Image || imgUrl || null;
 
         if (!name || isNaN(price)) {
-          showToast('Заповніть обов\'язкові поля!', 'error');
+          showToast('Заповніть назву та ціну!', 'error');
           return;
         }
 
@@ -718,13 +799,15 @@
           const { error } = await supabaseClient.from('products').insert([{
             name: name,
             price: price,
-            image_url: img || null,
+            image_url: finalImage,
             status: 'available'
           }]);
 
           if (error) throw error;
           showToast('Нову композицію опубліковано!', 'success');
           addForm.reset();
+          loadedBase64Image = '';
+          if (previewWrapper) previewWrapper.classList.add('hidden');
           loadProducts();
         } catch (err) {
           showToast(err.message || 'Помилка збереження', 'error');
