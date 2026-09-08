@@ -263,7 +263,7 @@
         </div>
         <button onclick="loadOrders()" class="text-xs uppercase tracking-widest text-[#C5A47E] hover:underline cursor-pointer">Оновити список</button>
       </div>
-      <div id="orders-container" class="space-y-4 max-h-[400px] overflow-y-auto">
+      <div id="orders-container" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
         <p class="text-stone-500 text-center font-light py-4">Завантаження замовлень...</p>
       </div>
     </div>
@@ -437,7 +437,7 @@
           <h3 class="font-serif italic text-2xl text-stone-100">Ваше замовлення</h3>
           <button id="cart-close-btn" type="button" class="text-stone-500 hover:text-white transition p-2 cursor-pointer">✕</button>
         </div>
-        <div id="cart-items" class="py-6 space-y-4 max-h-[60vh] overflow-y-auto">
+        <div id="cart-items" class="py-6 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           <p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>
         </div>
       </div>
@@ -468,6 +468,18 @@
       }
     } catch (e) {
       console.warn('Supabase fallback mode:', e);
+    }
+
+    // БАЗОВИЙ ЗАХИСТ ВІД XSS-АТАК
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.toString().replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
     }
 
     // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (SUPABASE AUTH)
@@ -628,6 +640,14 @@
 
     async function submitCheckout(e) {
       e.preventDefault();
+      
+      // ЗАХИСТ ВІД СПАМ-АТАК (DDoS)
+      const lastOrderTime = localStorage.getItem('lastOrderTime');
+      if (lastOrderTime && (Date.now() - parseInt(lastOrderTime) < 60000)) {
+        showToast('Ви вже оформили замовлення. Зачекайте хвилину.', 'error');
+        return;
+      }
+
       const name = document.getElementById('client-name').value.trim();
       const phone = document.getElementById('client-phone').value.trim();
       const btnText = document.getElementById('checkout-btn-text');
@@ -648,14 +668,17 @@
         if (!supabaseClient) throw new Error('Supabase не підключено');
 
         const { error } = await supabaseClient.from('orders').insert([{
-          client_name: name,
-          client_phone: phone,
+          client_name: escapeHTML(name),
+          client_phone: escapeHTML(phone),
           items: itemsList,
           total_price: totalPrice,
           status: 'new'
         }]);
 
         if (error) throw error;
+
+        // Встановлюємо час останнього замовлення для захисту від спаму
+        localStorage.setItem('lastOrderTime', Date.now().toString());
 
         cart = [];
         updateCartUI();
@@ -687,16 +710,21 @@
           return;
         }
 
+        // Використовуємо escapeHTML для захисту від XSS при виведенні імен клієнтів
         container.innerHTML = data.map(o => {
           const date = new Date(o.created_at).toLocaleString('uk-UA');
+          const safeName = escapeHTML(o.client_name);
+          const safeItems = escapeHTML(o.items);
+          const safePhone = escapeHTML(o.client_phone);
+
           return `
             <div class="bg-[#141414] border border-stone-800 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div class="space-y-1">
                 <div class="flex items-center gap-3">
-                  <span class="font-serif italic text-lg text-stone-100">${o.client_name}</span>
-                  <a href="tel:${o.client_phone}" class="text-xs text-[#C5A47E] bg-[#C5A47E]/10 px-2 py-0.5 rounded hover:bg-[#C5A47E]/20 transition">${o.client_phone}</a>
+                  <span class="font-serif italic text-lg text-stone-100">${safeName}</span>
+                  <a href="tel:${safePhone}" class="text-xs text-[#C5A47E] bg-[#C5A47E]/10 px-2 py-0.5 rounded hover:bg-[#C5A47E]/20 transition">${safePhone}</a>
                 </div>
-                <div class="text-xs text-stone-400 font-light">Товари: <span class="text-stone-200">${o.items}</span></div>
+                <div class="text-xs text-stone-400 font-light">Товари: <span class="text-stone-200">${safeItems}</span></div>
                 <div class="text-[10px] text-stone-500">${date}</div>
               </div>
               <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
@@ -863,7 +891,7 @@
         return `
           <div class="flex items-center justify-between bg-[#141414] p-3 rounded-lg border border-stone-800">
             <div>
-              <div class="font-serif italic text-stone-200">${item.name}</div>
+              <div class="font-serif italic text-stone-200">${escapeHTML(item.name)}</div>
               <div class="text-[10px] text-[#C5A47E]">${item.price} грн</div>
             </div>
             <button onclick="removeFromCart(${idx})" class="text-stone-600 hover:text-red-400 text-xs transition cursor-pointer">Видалити</button>
@@ -903,18 +931,23 @@
         }
 
         const isAuth = isAdminLoggedIn();
-        grid.innerHTML = data.map(p => `
+        grid.innerHTML = data.map(p => {
+          const safeName = escapeHTML(p.name);
+          // Використовуємо encodeURI для URL зображення щоб уникнути ін'єкцій через src
+          const safeImgUrl = p.image_url ? encodeURI(p.image_url) : 'https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80';
+
+          return `
           <div class="group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(197,164,126,0.12)] flex flex-col justify-between">
             <div class="overflow-hidden aspect-square relative bg-stone-950">
-              <img src="${p.image_url || 'https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80'}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+              <img src="${safeImgUrl}" alt="${safeName}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100">
             </div>
             <div class="p-6 flex flex-col justify-between flex-grow">
               <div>
-                <h3 class="font-serif italic text-xl text-stone-100 group-hover:text-[#C5A47E] transition-colors">${p.name}</h3>
+                <h3 class="font-serif italic text-xl text-stone-100 group-hover:text-[#C5A47E] transition-colors">${safeName}</h3>
                 <p class="text-sm font-light text-[#C5A47E] mt-1">${p.price} грн</p>
               </div>
               <div class="mt-6 flex items-center justify-between pt-4 border-t border-stone-900">
-                <button onclick="addToCart('${p.name}', ${p.price})" class="text-xs uppercase tracking-widest text-stone-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                <button onclick="addToCart('${safeName.replace(/'/g, "\\'")}', ${p.price})" class="text-xs uppercase tracking-widest text-stone-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
                   <span>Додати в кошик</span> →
                 </button>
                 <button onclick="deleteProduct('${p.id}')" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer" style="display: ${isAuth ? 'inline-block' : 'none'};">
@@ -923,7 +956,7 @@
               </div>
             </div>
           </div>
-        `).join('');
+        `}).join('');
       } catch (err) {
         console.warn("Каталог переведено у локальний режим:", err);
         renderFallbackProducts(grid);
@@ -1033,7 +1066,7 @@
         try {
           if (!supabaseClient) throw new Error('Supabase не підключено');
           const { error } = await supabaseClient.from('products').insert([{
-            name: name,
+            name: escapeHTML(name),
             price: price,
             image_url: finalImage,
             status: 'available'
