@@ -2,7 +2,7 @@
 <html lang="uk" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Furshet Carving by Victoria Bilak — Ексклюзивний карвінг</title>
 
   <!-- Tailwind CSS CDN -->
@@ -48,6 +48,7 @@
       color: #E6E6E6;
       font-family: 'Montserrat', sans-serif;
       overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .btn-shimmer {
@@ -75,7 +76,7 @@
     }
 
     ::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
     ::-webkit-scrollbar-track {
       background: #0a0a0a;
@@ -89,22 +90,22 @@
     }
   </style>
 </head>
-<body class="relative min-h-screen selection:bg-[#C5A47E]/30 selection:text-white">
+<body class="relative min-h-screen selection:bg-[#C5A47E]/30 selection:text-white pb-safe">
 
   <!-- ЖИВІ ШПАЛЕРИ: Canvas Particle System -->
   <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none -z-10 w-full h-full"></canvas>
 
   <!-- Радіальне фонове підсвічування -->
-  <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#C5A47E]/[0.03] blur-[150px] pointer-events-none -z-10 rounded-full"></div>
+  <div class="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[700px] h-[300px] sm:h-[500px] bg-[#C5A47E]/[0.03] blur-[100px] sm:blur-[150px] pointer-events-none -z-10 rounded-full"></div>
 
   <!-- ШАПКА (HEADER) -->
-  <header class="sticky top-0 z-40 bg-[#070707]/90 backdrop-blur-md border-b border-stone-800/60 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-[#070707]/95 backdrop-blur-md border-b border-stone-800/60 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-18 sm:h-24 flex items-center justify-between">
       
       <!-- БРЕНДИНГ ТА ЛОГОТИП -->
-      <a href="#" class="flex items-center gap-3.5 group">
-        <div class="relative w-12 h-12 rounded-full p-1 border border-[#C5A47E]/40 bg-[#0d0d0d] flex items-center justify-center shadow-[0_0_15px_rgba(197,164,126,0.2)] group-hover:border-[#C5A47E] group-hover:shadow-[0_0_22px_rgba(197,164,126,0.35)] transition-all duration-500">
-          <svg viewBox="0 0 100 100" class="w-full h-full fill-[#C5A47E] group-hover:scale-105 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg">
+      <a href="#" class="flex items-center gap-2.5 sm:gap-3.5 group">
+        <div class="relative w-9 h-9 sm:w-12 sm:h-12 rounded-full p-1 border border-[#C5A47E]/40 bg-[#0d0d0d] flex items-center justify-center shadow-[0_0_15px_rgba(197,164,126,0.2)] group-hover:border-[#C5A47E] transition-all duration-300">
+          <svg viewBox="0 0 100 100" class="w-full h-full fill-[#C5A47E]" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#E5C38C" />
@@ -121,29 +122,28 @@
         </div>
 
         <div class="flex flex-col text-left">
-          <span class="font-serif italic text-xl md:text-2xl tracking-wider text-stone-100 font-normal leading-none uppercase group-hover:text-[#C5A47E] transition-colors duration-300">
+          <span class="font-serif italic text-base sm:text-xl md:text-2xl tracking-wider text-stone-100 uppercase group-hover:text-[#C5A47E] transition-colors leading-tight">
             Furshet Carving
           </span>
-          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-light mt-1.5">
+          <span class="text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-light">
             by Victoria Bilak
           </span>
         </div>
       </a>
 
       <!-- НАВІГАЦІЯ ТА ДІЇ -->
-      <div class="flex items-center gap-6">
-        <nav class="flex items-center gap-6 md:gap-8 text-xs uppercase tracking-[0.2em] text-stone-400">
-          <a href="#catalog" class="hover:text-[#C5A47E] transition-colors">Каталог</a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <nav class="flex items-center gap-4 sm:gap-8 text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-stone-400">
+          <a href="#catalog" class="hover:text-[#C5A47E] transition-colors py-1">Каталог</a>
           
-          <!-- Кнопка авторизації адміна -->
-          <button id="admin-auth-btn" type="button" class="hover:text-[#C5A47E] transition-colors flex items-center gap-1.5 cursor-pointer text-stone-300">
+          <button id="admin-auth-btn" type="button" class="hover:text-[#C5A47E] transition-colors flex items-center cursor-pointer text-stone-300 py-1">
             <span id="admin-auth-text">Вхід Admin</span>
           </button>
         </nav>
 
         <!-- Кнопка Кошика -->
-        <button id="cart-toggle-btn" type="button" class="relative p-2.5 rounded-full border border-stone-800 bg-[#0d0d0d] hover:border-[#C5A47E]/60 transition-all text-stone-300 hover:text-white cursor-pointer">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button id="cart-toggle-btn" type="button" aria-label="Відкрити кошик" class="relative p-2.5 rounded-full border border-stone-800 bg-[#0d0d0d] hover:border-[#C5A47E]/60 transition-all text-stone-300 hover:text-white cursor-pointer active:scale-95">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
           <span id="cart-badge" class="absolute -top-1 -right-1 bg-[#C5A47E] text-black font-semibold text-[10px] w-4 h-4 rounded-full flex items-center justify-center scale-0 transition-transform">0</span>
@@ -154,313 +154,299 @@
   </header>
 
   <!-- HERO СЕКЦІЯ -->
-  <section class="relative py-28 md:py-36 px-6 max-w-5xl mx-auto text-center">
-    <div class="inline-block mb-4">
-      <span class="text-[10px] md:text-xs uppercase tracking-[0.35em] text-[#C5A47E] font-medium border-b border-[#C5A47E]/40 pb-1">
+  <section class="relative py-16 sm:py-28 md:py-36 px-4 sm:px-6 max-w-5xl mx-auto text-center">
+    <div class="inline-block mb-3 sm:mb-4">
+      <span class="text-[9px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#C5A47E] font-medium border-b border-[#C5A47E]/40 pb-1">
         Exclusive Fruit & Vegetable Art
       </span>
     </div>
     
-    <h1 class="font-serif italic text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-100 font-normal leading-[1.08] tracking-tight mb-8">
+    <h1 class="font-serif italic text-3xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-100 font-normal leading-[1.12] sm:leading-[1.08] tracking-tight mb-5 sm:mb-8">
       Мистецтво, створене для особливих моментів
     </h1>
 
-    <p class="text-stone-400 text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed mb-12">
+    <p class="text-stone-400 text-xs sm:text-base font-light max-w-2xl mx-auto leading-relaxed mb-8 sm:mb-12 px-2">
       Авторські карвінг-композиції Victoria Bilak. Ювелірна точність ліній, бездоганна свіжість і преміальна естетика сучасної фуршетної культури.
     </p>
 
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
-      <a href="#catalog" class="btn-shimmer w-full sm:w-auto px-8 py-4 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-sm hover:bg-[#D4AF37] transition-all shadow-[0_0_25px_rgba(197,164,126,0.25)] text-center">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 w-full max-w-xs sm:max-w-none mx-auto">
+      <a href="#catalog" class="btn-shimmer w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-[#C5A47E] text-black font-semibold sm:font-medium text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] rounded-lg sm:rounded-sm hover:bg-[#D4AF37] transition-all shadow-[0_0_25px_rgba(197,164,126,0.25)] text-center active:scale-[0.98]">
         Переглянути каталог
       </a>
-      <button type="button" id="custom-order-hero-btn" class="w-full sm:w-auto px-8 py-4 border border-stone-800 text-stone-300 font-medium text-xs uppercase tracking-[0.25em] rounded-sm hover:border-[#C5A47E] hover:text-white transition-all bg-[#0a0a0a]/50 text-center cursor-pointer">
+      <button type="button" id="custom-order-hero-btn" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-stone-800 text-stone-300 font-semibold sm:font-medium text-xs uppercase tracking-[0.2em] sm:tracking-[0.25em] rounded-lg sm:rounded-sm hover:border-[#C5A47E] hover:text-white transition-all bg-[#0a0a0a]/50 text-center cursor-pointer active:scale-[0.98]">
         Індивідуальне замовлення
       </button>
     </div>
   </section>
 
   <!-- КАТАЛОГ -->
-  <section id="catalog" class="py-24 max-w-7xl mx-auto px-6 border-t border-stone-900">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
+  <section id="catalog" class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 border-t border-stone-900">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-16 gap-2 sm:gap-4">
       <div>
-        <span class="text-[10px] uppercase tracking-[0.3em] text-[#C5A47E]">Exquisite Portfolio</span>
-        <h2 class="font-serif italic text-3xl md:text-5xl text-stone-100 mt-2">Вибрані композиції</h2>
+        <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#C5A47E]">Exquisite Portfolio</span>
+        <h2 class="font-serif italic text-2xl sm:text-4xl md:text-5xl text-stone-100 mt-1 sm:mt-2">Вибрані композиції</h2>
       </div>
-      <p class="text-xs uppercase tracking-[0.2em] text-stone-500">Доступні до замовлення на вашу подію</p>
+      <p class="text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] text-stone-500">Доступні до замовлення на вашу подію</p>
     </div>
 
     <!-- Сітка карток -->
-    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 md:gap-10">
       <div class="text-center py-12 text-stone-500 col-span-full font-light">Завантаження каталогу...</div>
     </div>
   </section>
 
-  <!-- ПАНЕЛЬ АДМІНІСТРАТОРА (ПРИХОВАНА ДО ВХОДУ) -->
-  <section id="admin-panel" class="hidden py-20 max-w-5xl mx-auto px-6 border-t border-stone-900 space-y-12">
+  <!-- ПАНЕЛЬ АДМІНІСТРАТОРА -->
+  <section id="admin-panel" class="hidden py-16 sm:py-20 max-w-5xl mx-auto px-4 sm:px-6 border-t border-stone-900 space-y-8 sm:space-y-12">
     <!-- Форма додавання товару -->
-    <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-8 md:p-10 shadow-2xl relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-[#C5A47E]/[0.05] rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="flex justify-between items-start mb-8">
+    <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-5 sm:p-10 shadow-2xl relative overflow-hidden">
+      <div class="flex justify-between items-start mb-6 sm:mb-8">
         <div>
-          <span class="text-[10px] uppercase tracking-[0.25em] text-[#C5A47E]">Панель адміністратора</span>
-          <h3 class="font-serif italic text-2xl md:text-3xl text-stone-100 mt-1">Додати нову роботу в портфоліо</h3>
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#C5A47E]">Панель адміністратора</span>
+          <h3 class="font-serif italic text-xl sm:text-3xl text-stone-100 mt-1">Додати нову роботу в портфоліо</h3>
         </div>
-        <button id="logout-btn" type="button" class="text-xs uppercase tracking-widest text-stone-500 hover:text-[#C5A47E] transition cursor-pointer">
+        <button id="logout-btn" type="button" class="text-xs uppercase tracking-widest text-stone-500 hover:text-[#C5A47E] transition cursor-pointer p-1">
           Вийти
         </button>
       </div>
 
-      <form id="add-product-form" class="space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <form id="add-product-form" class="space-y-5 sm:space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
-            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Назва композиції</label>
-            <input type="text" id="prod-name" required placeholder="напр., Імператорський кавун" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
+            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Назва композиції</label>
+            <input type="text" id="prod-name" required placeholder="напр., Імператорський кавун" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
           </div>
           <div>
-            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Ціна (грн)</label>
-            <input type="number" id="prod-price" required placeholder="напр., 2500" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
+            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Ціна (грн)</label>
+            <input type="number" id="prod-price" required placeholder="напр., 2500" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
           </div>
         </div>
 
-        <!-- Вибір файлу або введення посилання -->
         <div class="space-y-4">
           <div>
-            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Завантажити фото з пристрою</label>
-            <input type="file" id="prod-file" accept="image/*" class="w-full text-xs text-stone-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:font-semibold file:bg-[#1f1f1f] file:text-[#C5A47E] hover:file:bg-[#2a2a2a] file:cursor-pointer border border-stone-800 rounded-lg bg-[#141414] p-2 transition-colors">
+            <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Завантажити фото з телефону / ПК</label>
+            <input type="file" id="prod-file" accept="image/*" class="w-full text-xs text-stone-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:uppercase file:tracking-wider file:font-semibold file:bg-[#1f1f1f] file:text-[#C5A47E] border border-stone-800 rounded-lg bg-[#141414] p-2">
           </div>
 
           <div class="flex items-center gap-3">
             <span class="h-[1px] flex-1 bg-stone-800"></span>
-            <span class="text-[10px] uppercase tracking-widest text-stone-500">або вставте посилання</span>
+            <span class="text-[9px] uppercase tracking-widest text-stone-500">або вставте посилання</span>
             <span class="h-[1px] flex-1 bg-stone-800"></span>
           </div>
 
           <div>
-            <input type="url" id="prod-img" placeholder="https://... (якщо фото вже в інтернеті)" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
+            <input type="url" id="prod-img" placeholder="https://..." class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 focus:outline-none focus:border-[#C5A47E] transition-colors">
           </div>
 
-          <!-- Попередній перегляд обраного зображення -->
-          <div id="image-preview-wrapper" class="hidden items-center gap-4 p-3 bg-[#141414] border border-stone-800 rounded-lg">
-            <img id="image-preview" src="" alt="Прев'ю" class="w-16 h-16 object-cover rounded-md border border-stone-700">
-            <div class="text-xs text-stone-400 font-light">Фото обрано для публікації</div>
+          <div id="image-preview-wrapper" class="hidden items-center gap-3 p-3 bg-[#141414] border border-stone-800 rounded-lg">
+            <img id="image-preview" src="" alt="Прев'ю" class="w-14 h-14 object-cover rounded-md border border-stone-700">
+            <div class="text-xs text-stone-400 font-light">Фото успішно підготовлено</div>
           </div>
         </div>
 
-        <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-medium text-xs uppercase tracking-[0.25em] rounded-lg hover:bg-[#D4AF37] transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <button type="submit" id="btn-add-submit" class="btn-shimmer w-full py-3.5 sm:py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition-all flex items-center justify-center cursor-pointer active:scale-[0.98]">
           <span id="btn-add-text">Опублікувати в каталозі</span>
           <span id="btn-add-loader" class="hidden">Завантаження...</span>
         </button>
       </form>
     </div>
 
-    <!-- Блок перегляду замовлень клієнтів -->
-    <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-8 md:p-10 shadow-2xl">
+    <!-- Блок замовлень -->
+    <div class="bg-[#0e0e0e] border border-[#C5A47E]/30 rounded-2xl p-5 sm:p-10 shadow-2xl">
       <div class="flex justify-between items-center mb-6">
         <div>
-          <span class="text-[10px] uppercase tracking-[0.25em] text-[#C5A47E]">Історія заявок</span>
-          <h3 class="font-serif italic text-2xl md:text-3xl text-stone-100 mt-1">Замовлення клієнтів</h3>
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-[#C5A47E]">Історія заявок</span>
+          <h3 class="font-serif italic text-xl sm:text-3xl text-stone-100 mt-0.5">Замовлення клієнтів</h3>
         </div>
-        <button id="refresh-orders-btn" type="button" class="text-xs uppercase tracking-widest text-[#C5A47E] hover:underline cursor-pointer">Оновити список</button>
+        <button id="refresh-orders-btn" type="button" class="text-xs uppercase tracking-widest text-[#C5A47E] hover:underline cursor-pointer p-1">Оновити</button>
       </div>
-      <div id="orders-container" class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+      <div id="orders-container" class="space-y-3 sm:space-y-4 max-h-[400px] overflow-y-auto pr-1">
         <p class="text-stone-500 text-center font-light py-4">Завантаження замовлень...</p>
       </div>
     </div>
   </section>
 
   <!-- ФУТЕР -->
-  <footer class="py-16 border-t border-stone-900 bg-[#050505] text-stone-500 text-center text-xs">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col items-center gap-6">
+  <footer class="py-12 sm:py-16 border-t border-stone-900 bg-[#050505] text-stone-500 text-center text-xs">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col items-center gap-4 sm:gap-6">
       <div class="flex items-center gap-3">
-        <span class="font-serif italic text-lg text-stone-300">Furshet Carving</span>
+        <span class="font-serif italic text-base sm:text-lg text-stone-300">Furshet Carving</span>
         <span class="text-stone-700">|</span>
         <span class="text-[9px] uppercase tracking-widest text-[#C5A47E]">by Victoria Bilak</span>
       </div>
-      <p class="font-light tracking-wider">&copy; 2026 Всі права захищено. Створено для особливих моментів.</p>
+      <p class="font-light tracking-wider text-[11px] sm:text-xs">&copy; 2026 Всі права захищено. Створено для особливих моментів.</p>
     </div>
   </footer>
 
-  <!-- МОДАЛЬНЕ ВІКНО ЗВ'ЯЗКУ / МЕСЕНДЖЕРИ ДЛЯ ІНДИВІДУАЛЬНОГО ЗАМОВЛЕННЯ -->
-  <div id="order-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div id="order-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#C5A47E]/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div class="flex justify-between items-center mb-6">
+  <!-- МОДАЛЬНЕ ВІКНО МЕСЕНДЖЕРІВ -->
+  <div id="order-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="order-modal-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div class="relative bg-[#0c0c0c] border-t sm:border border-[#C5A47E]/40 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
+      <div class="flex justify-between items-center mb-5">
         <div>
-          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Зв'язок з майстром</span>
-          <h3 class="font-serif italic text-2xl text-stone-100 mt-0.5">Індивідуальне замовлення</h3>
+          <span class="text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-medium block">Зв'язок з майстром</span>
+          <h3 class="font-serif italic text-2xl text-stone-100">Індивідуальне замовлення</h3>
         </div>
-        <button id="order-modal-close-btn" type="button" class="text-stone-500 hover:text-white transition p-1 cursor-pointer text-sm">✕</button>
+        <button id="order-modal-close-btn" type="button" aria-label="Закрити" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
       </div>
 
-      <p class="text-xs text-stone-400 font-light leading-relaxed mb-6">
-        Оберіть зручний спосіб для обговорення деталей, тематики та оформлення вашої події:
+      <p class="text-xs text-stone-400 font-light leading-relaxed mb-5">
+        Оберіть зручний месенджер або зателефонуйте для обговорення вашої події:
       </p>
 
-      <div class="space-y-3">
-        <!-- Telegram -->
-        <a href="https://t.me/+380501716025" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] hover:bg-[#1a1a1a] transition group cursor-pointer">
+      <div class="space-y-2.5">
+        <a href="https://t.me/+380501716025" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] active:bg-[#1a1a1a] transition">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[#229ED9]/20 text-[#229ED9] flex items-center justify-center text-xs font-bold">TG</div>
-            <span class="text-xs uppercase tracking-widest text-stone-200 group-hover:text-white">Написати в Telegram</span>
+            <span class="text-xs uppercase tracking-wider text-stone-200">Написати в Telegram</span>
           </div>
-          <span class="text-[#C5A47E] group-hover:translate-x-1 transition-transform">→</span>
+          <span class="text-[#C5A47E]">→</span>
         </a>
 
-        <!-- Viber -->
-        <a href="viber://chat?number=%2B380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] hover:bg-[#1a1a1a] transition group cursor-pointer">
+        <a href="viber://chat?number=%2B380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] active:bg-[#1a1a1a] transition">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[#7360F2]/20 text-[#7360F2] flex items-center justify-center text-xs font-bold">VB</div>
-            <span class="text-xs uppercase tracking-widest text-stone-200 group-hover:text-white">Написати у Viber</span>
+            <span class="text-xs uppercase tracking-wider text-stone-200">Написати у Viber</span>
           </div>
-          <span class="text-[#C5A47E] group-hover:translate-x-1 transition-transform">→</span>
+          <span class="text-[#C5A47E]">→</span>
         </a>
 
-        <!-- Дзвінок -->
-        <a href="tel:+380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] hover:bg-[#1a1a1a] transition group cursor-pointer">
+        <a href="tel:+380501716025" class="flex items-center justify-between p-3.5 rounded-xl border border-stone-800 bg-[#141414] hover:border-[#C5A47E] active:bg-[#1a1a1a] transition">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-[#C5A47E]/20 text-[#C5A47E] flex items-center justify-center text-xs">📞</div>
-            <span class="text-xs uppercase tracking-widest text-stone-200 group-hover:text-white">+380 50 171 60 25</span>
+            <span class="text-xs uppercase tracking-wider text-stone-200">+380 50 171 60 25</span>
           </div>
-          <span class="text-[#C5A47E] group-hover:translate-x-1 transition-transform">→</span>
+          <span class="text-[#C5A47E]">→</span>
         </a>
       </div>
     </div>
   </div>
 
   <!-- МОДАЛЬНЕ ВІКНО ОФОРМЛЕННЯ ЗАМОВЛЕННЯ -->
-  <div id="checkout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div id="checkout-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#C5A47E]/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div class="flex justify-between items-center mb-6">
+  <div id="checkout-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="checkout-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div class="relative bg-[#0c0c0c] border-t sm:border border-[#C5A47E]/40 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl z-10 max-h-[90dvh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-5">
         <div>
-          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Підтвердження</span>
-          <h3 class="font-serif italic text-2xl text-stone-100 mt-0.5">Оформлення заявки</h3>
+          <span class="text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-medium block">Підтвердження</span>
+          <h3 class="font-serif italic text-2xl text-stone-100">Оформлення заявки</h3>
         </div>
-        <button id="checkout-close-btn" type="button" class="text-stone-500 hover:text-white transition p-1 cursor-pointer text-sm">✕</button>
+        <button id="checkout-close-btn" type="button" aria-label="Закрити" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
       </div>
 
       <form id="checkout-form" class="space-y-4">
         <p class="text-xs text-stone-400 font-light leading-relaxed">
-          Введіть ваші дані, щоб зафіксувати замовлення в базі. Після цього зателефонуйте майстру для уточнення деталей події.
+          Введіть контакти для збереження замовлення. Майстер зв'яжеться з вами або ви зможете зателефонувати самостійно.
         </p>
 
         <div>
           <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Ваше ім'я</label>
-          <input type="text" id="client-name" required placeholder="напр., Олена" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+          <input type="text" id="client-name" required placeholder="напр., Олена" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
         </div>
 
         <div>
           <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Номер телефону</label>
-          <input type="tel" id="client-phone" required placeholder="+380 (XX) XXX-XX-XX" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+          <input type="tel" id="client-phone" required placeholder="+380 (XX) XXX-XX-XX" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
         </div>
 
         <div class="pt-2 flex items-center gap-3">
-          <button type="button" id="checkout-cancel-btn" class="w-1/2 py-3 border border-stone-800 text-stone-400 font-medium text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-stone-600 hover:text-white transition cursor-pointer">
+          <button type="button" id="checkout-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">
             Скасувати
           </button>
-          <button type="submit" id="checkout-submit-btn" class="btn-shimmer w-1/2 py-3 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer flex items-center justify-center">
+          <button type="submit" id="checkout-submit-btn" class="btn-shimmer w-1/2 py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-[#D4AF37] transition flex items-center justify-center active:scale-95">
             <span id="checkout-btn-text">Підтвердити</span>
-            <span id="checkout-btn-loader" class="hidden text-[10px]">Збереження...</span>
+            <span id="checkout-btn-loader" class="hidden text-[11px]">Збереження...</span>
           </button>
         </div>
       </form>
 
-      <!-- Екран успіху з кнопкою дзвінка -->
-      <div id="checkout-success" class="hidden text-center py-4 space-y-5">
+      <div id="checkout-success" class="hidden text-center py-4 space-y-4">
         <div class="w-12 h-12 mx-auto rounded-full bg-[#C5A47E]/20 text-[#C5A47E] flex items-center justify-center text-xl font-bold">✓</div>
         <div>
-          <h4 class="font-serif italic text-2xl text-stone-100">Замовлення прийнято!</h4>
-          <p class="text-xs text-stone-400 font-light mt-2 leading-relaxed">
-            Вашу заявку успішно збережено. Зателефонуйте майстру для остаточного узгодження деталей.
+          <h4 class="font-serif italic text-2xl text-stone-100">Замовлення збережено!</h4>
+          <p class="text-xs text-stone-400 font-light mt-1.5 leading-relaxed">
+            Будь ласка, зателефонуйте майстру для узгодження деталей події.
           </p>
         </div>
-        <a href="tel:+380501716025" class="btn-shimmer block w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition text-center">
+        <a href="tel:+380501716025" class="btn-shimmer block w-full py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition text-center active:scale-95">
           Зателефонувати: +380 50 171 60 25
         </a>
       </div>
     </div>
   </div>
 
-  <!-- КАСТОМНЕ ПРЕМІАЛЬНЕ МОДАЛЬНЕ ВІКНО ВХОДУ АДМІНА (SUPABASE AUTH) -->
-  <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div id="admin-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#C5A47E]/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div class="flex justify-between items-center mb-6">
+  <!-- МОДАЛЬНЕ ВІКНО АДМІНА -->
+  <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div id="admin-modal-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div class="relative bg-[#0c0c0c] border-t sm:border border-[#C5A47E]/40 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl z-10">
+      <div class="flex justify-between items-center mb-5">
         <div>
-          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Безпечний доступ</span>
-          <h3 class="font-serif italic text-2xl text-stone-100 mt-0.5">Вхід адміністратора</h3>
+          <span class="text-[9px] uppercase tracking-[0.25em] text-[#C5A47E] font-medium block">Безпечний доступ</span>
+          <h3 class="font-serif italic text-2xl text-stone-100">Вхід адміністратора</h3>
         </div>
-        <button id="admin-modal-close-btn" type="button" class="text-stone-500 hover:text-white transition p-1 cursor-pointer text-sm">✕</button>
+        <button id="admin-modal-close-btn" type="button" aria-label="Закрити" class="text-stone-500 hover:text-white transition p-2 text-base">✕</button>
       </div>
 
       <form id="admin-login-form" class="space-y-4">
         <div>
-          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Email адміністратора</label>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Email адміністратора</label>
           <input type="email" id="admin-email-input" autocomplete="username" placeholder="admin@example.com" required 
-            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
         </div>
 
         <div>
-          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Пароль</label>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Пароль</label>
           <input type="password" id="admin-password-input" autocomplete="current-password" placeholder="••••••••" required 
-            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
         </div>
 
         <div id="admin-auth-error" class="text-xs text-red-400 hidden">Невірний email або пароль!</div>
 
         <div class="flex items-center gap-3 pt-2">
-          <button type="button" id="admin-modal-cancel-btn" class="w-1/2 py-3 border border-stone-800 text-stone-400 font-medium text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-stone-600 hover:text-white transition cursor-pointer">
+          <button type="button" id="admin-modal-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">
             Скасувати
           </button>
-          <button type="submit" id="admin-login-submit" class="btn-shimmer w-1/2 py-3 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer flex items-center justify-center">
+          <button type="submit" id="admin-login-submit" class="btn-shimmer w-1/2 py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.15em] rounded-lg hover:bg-[#D4AF37] transition flex items-center justify-center active:scale-95">
             <span id="admin-login-text">Увійти</span>
-            <span id="admin-login-loader" class="hidden text-[10px]">Вхід...</span>
+            <span id="admin-login-loader" class="hidden text-[11px]">Вхід...</span>
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- МОДАЛЬНЕ ВІКНО КОШИКА -->
+  <!-- БОКОВЕ ВІКНО КОШИКА (DRAWER) -->
   <div id="cart-modal" class="hidden fixed inset-0 z-50">
-    <div id="cart-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer"></div>
-    <div class="absolute right-0 top-0 h-full w-full max-w-md bg-[#0c0c0c] border-l border-stone-800 p-6 flex flex-col justify-between shadow-2xl z-10" id="cart-drawer">
-      <div>
-        <div class="flex items-center justify-between pb-4 border-b border-stone-800">
+    <div id="cart-backdrop" class="fixed inset-0 bg-black/70 backdrop-blur-sm"></div>
+    <div class="absolute right-0 top-0 h-[100dvh] w-full max-w-md bg-[#0c0c0c] border-l border-stone-800 p-5 sm:p-6 flex flex-col justify-between shadow-2xl z-10">
+      <div class="flex flex-col min-h-0 flex-1">
+        <div class="flex items-center justify-between pb-4 border-b border-stone-800 shrink-0">
           <h3 class="font-serif italic text-2xl text-stone-100">Ваше замовлення</h3>
-          <button id="cart-close-btn" type="button" class="text-stone-500 hover:text-white transition p-2 cursor-pointer">✕</button>
+          <button id="cart-close-btn" type="button" aria-label="Закрити кошик" class="text-stone-500 hover:text-white transition p-2 text-lg">✕</button>
         </div>
-        <div id="cart-items" class="py-6 space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div id="cart-items" class="py-4 space-y-3 overflow-y-auto flex-1 pr-1">
           <p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>
         </div>
       </div>
-      <div class="border-t border-stone-800 pt-4">
+      
+      <div class="border-t border-stone-800 pt-4 shrink-0 mt-2">
         <div class="flex justify-between items-center mb-4">
           <span class="text-xs uppercase tracking-widest text-stone-400">Всього:</span>
           <span id="cart-total" class="font-serif text-2xl text-[#C5A47E]">0 грн</span>
         </div>
-        <button id="cart-checkout-btn" type="button" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm hover:bg-[#D4AF37] transition cursor-pointer">
+        <button id="cart-checkout-btn" type="button" class="btn-shimmer w-full py-4 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer active:scale-[0.98]">
           Оформити замовлення
         </button>
       </div>
     </div>
   </div>
 
-  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+  <div id="toast-container" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- СКРИПТИ -->
   <script>
     (function () {
       'use strict';
 
-      // 1. SUPABASE CLIENT
       const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzZ3d0eHVwaW9sZ3F1cHZybHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NDMwNjAsImV4cCI6MjEwNDIxOTA2MH0.WT0AGCa0sHzYpFwGYA_0Df7VQmpjDNJlDwHXZ0X9Khc';
       
@@ -473,7 +459,6 @@
         console.warn('Supabase fallback mode:', e);
       }
 
-      // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (ПРИВАТНА ОБЛАСТЬ ВИДИМОСТІ)
       let _validSession = null;
 
       function escapeHTML(str) {
@@ -495,11 +480,7 @@
         if (!supabaseClient) return;
         try {
           const { data: { session }, error } = await supabaseClient.auth.getSession();
-          if (error || !session) {
-            _validSession = null;
-          } else {
-            _validSession = session;
-          }
+          _validSession = (!error && session) ? session : null;
           updateAdminUI();
         } catch (err) {
           _validSession = null;
@@ -612,7 +593,6 @@
         showToast('Ви вийшли з адмін-панелі', 'info');
       }
 
-      // 3. МОДАЛЬНЕ ВІКНО ІНДИВІДУАЛЬНОГО ЗАМОВЛЕННЯ
       function openOrderModal() {
         const modal = document.getElementById('order-modal');
         if (modal) modal.classList.remove('hidden');
@@ -623,7 +603,6 @@
         if (modal) modal.classList.add('hidden');
       }
 
-      // 4. ОФОРМЛЕННЯ ЗАМОВЛЕННЯ ТА ЗБЕРЕЖЕННЯ В SUPABASE
       function openCheckoutModal() {
         if (cart.length === 0) {
           showToast('Кошик порожній!', 'error');
@@ -692,16 +671,15 @@
           const success = document.getElementById('checkout-success');
           if (form) form.classList.add('hidden');
           if (success) success.classList.remove('hidden');
-          showToast('Замовлення успішно збережено в базі!', 'success');
+          showToast('Замовлення збережено!', 'success');
         } catch (err) {
-          showToast('Помилка збереження замовлення: ' + err.message, 'error');
+          showToast('Помилка: ' + err.message, 'error');
         } finally {
           if (btnText) btnText.classList.remove('hidden');
           if (btnLoader) btnLoader.classList.add('hidden');
         }
       }
 
-      // 5. ЗАВАНТАЖЕННЯ І КЕРУВАННЯ ЗАМОВЛЕННЯМИ В АДМІНЦІ
       async function loadOrders() {
         const container = document.getElementById('orders-container');
         if (!container || !supabaseClient || !isAdminLoggedIn()) return;
@@ -723,19 +701,19 @@
             const safePhone = escapeHTML(o.client_phone);
 
             const card = document.createElement('div');
-            card.className = 'bg-[#141414] border border-stone-800 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4';
+            card.className = 'bg-[#141414] border border-stone-800 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4';
             card.innerHTML = `
-              <div class="space-y-1">
-                <div class="flex items-center gap-3">
+              <div class="space-y-1 w-full sm:w-auto">
+                <div class="flex items-center justify-between sm:justify-start gap-3">
                   <span class="font-serif italic text-lg text-stone-100">${safeName}</span>
                   <a href="tel:${safePhone}" class="text-xs text-[#C5A47E] bg-[#C5A47E]/10 px-2 py-0.5 rounded hover:bg-[#C5A47E]/20 transition">${safePhone}</a>
                 </div>
                 <div class="text-xs text-stone-400 font-light">Товари: <span class="text-stone-200">${safeItems}</span></div>
                 <div class="text-[10px] text-stone-500">${date}</div>
               </div>
-              <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+              <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end border-t border-stone-800/60 sm:border-0 pt-2 sm:pt-0">
                 <span class="font-serif text-lg text-[#C5A47E]">${o.total_price} грн</span>
-                <button type="button" class="del-order-btn text-stone-600 hover:text-red-400 text-xs uppercase tracking-wider transition cursor-pointer">Видалити</button>
+                <button type="button" class="del-order-btn text-stone-600 hover:text-red-400 text-xs uppercase tracking-wider transition cursor-pointer p-1">Видалити</button>
               </div>
             `;
             const delBtn = card.querySelector('.del-order-btn');
@@ -761,7 +739,6 @@
         }
       }
 
-      // 6. TOAST ПОВІДОМЛЕННЯ
       function showToast(message, type = 'info') {
         const container = document.getElementById('toast-container');
         if (!container) return;
@@ -770,15 +747,15 @@
         const borderColor = type === 'error' ? 'border-red-500/60' : (type === 'success' ? 'border-[#C5A47E]' : 'border-stone-700');
         const icon = type === 'error' ? '✕' : (type === 'success' ? '✓' : 'ℹ');
 
-        toast.className = `pointer-events-auto flex items-center gap-3 bg-[#111111]/95 border ${borderColor} text-stone-200 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md text-xs tracking-wide transform transition-all duration-300 translate-y-4 opacity-0`;
+        toast.className = `pointer-events-auto flex items-center gap-3 bg-[#111111]/95 border ${borderColor} text-stone-200 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md text-xs tracking-wide transform transition-all duration-300 translate-y-2 opacity-0 w-full sm:w-auto`;
         toast.innerHTML = `
-          <span class="w-5 h-5 flex items-center justify-center rounded-full bg-stone-900 text-[#C5A47E] font-bold text-[11px]">${icon}</span>
-          <span>${message}</span>
+          <span class="w-5 h-5 shrink-0 flex items-center justify-center rounded-full bg-stone-900 text-[#C5A47E] font-bold text-[11px]">${icon}</span>
+          <span class="flex-1">${message}</span>
         `;
 
         container.appendChild(toast);
         requestAnimationFrame(() => {
-          toast.classList.remove('translate-y-4', 'opacity-0');
+          toast.classList.remove('translate-y-2', 'opacity-0');
         });
 
         setTimeout(() => {
@@ -787,25 +764,29 @@
         }, 4000);
       }
 
-      // 7. CANVAS PARTICLES
+      // 7. CANVAS PARTICLES (Оптимізовано для мобільних)
       const canvas = document.getElementById('bg-canvas');
       if (canvas) {
         const ctx = canvas.getContext('2d');
         let width, height;
         let particles = [];
         let mouse = { x: -1000, y: -1000 };
+        const isMobile = window.innerWidth < 768;
+        const particleCount = isMobile ? 18 : 45;
 
         function resizeCanvas() {
           width = canvas.width = window.innerWidth;
           height = canvas.height = window.innerHeight;
         }
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas, { passive: true });
         resizeCanvas();
 
-        window.addEventListener('mousemove', (e) => {
-          mouse.x = e.clientX;
-          mouse.y = e.clientY;
-        });
+        if (!isMobile) {
+          window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+          }, { passive: true });
+        }
 
         class Particle {
           constructor() {
@@ -814,22 +795,24 @@
           reset() {
             this.x = Math.random() * width;
             this.y = height + Math.random() * 50;
-            this.size = Math.random() * 2 + 0.8;
-            this.speedY = Math.random() * 0.4 + 0.15;
-            this.speedX = (Math.random() - 0.5) * 0.2;
-            this.alpha = Math.random() * 0.6 + 0.2;
+            this.size = Math.random() * 1.8 + 0.6;
+            this.speedY = Math.random() * 0.35 + 0.12;
+            this.speedX = (Math.random() - 0.5) * 0.15;
+            this.alpha = Math.random() * 0.5 + 0.2;
           }
           update() {
             this.y -= this.speedY;
             this.x += this.speedX;
 
-            const dx = mouse.x - this.x;
-            const dy = mouse.y - this.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 120) {
-              const force = (120 - dist) / 120;
-              this.x -= (dx / dist) * force * 1.5;
-              this.y -= (dy / dist) * force * 1.5;
+            if (!isMobile) {
+              const dx = mouse.x - this.x;
+              const dy = mouse.y - this.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 100) {
+                const force = (100 - dist) / 100;
+                this.x -= (dx / dist) * force * 1.2;
+                this.y -= (dy / dist) * force * 1.2;
+              }
             }
 
             if (this.y < -10 || this.x < -10 || this.x > width + 10) {
@@ -840,14 +823,11 @@
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(197, 164, 126, ${this.alpha})`;
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = '#C5A47E';
             ctx.fill();
-            ctx.shadowBlur = 0;
           }
         }
 
-        for (let i = 0; i < 45; i++) {
+        for (let i = 0; i < particleCount; i++) {
           const p = new Particle();
           p.y = Math.random() * height;
           particles.push(p);
@@ -875,8 +855,10 @@
         if (!cartModal) return;
         if (show) {
           cartModal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
         } else {
           cartModal.classList.add('hidden');
+          document.body.style.overflow = '';
         }
       }
 
@@ -903,10 +885,10 @@
           row.className = 'flex items-center justify-between bg-[#141414] p-3 rounded-lg border border-stone-800';
           row.innerHTML = `
             <div>
-              <div class="font-serif italic text-stone-200">${escapeHTML(item.name)}</div>
-              <div class="text-[10px] text-[#C5A47E]">${item.price} грн</div>
+              <div class="font-serif italic text-stone-200 text-sm sm:text-base">${escapeHTML(item.name)}</div>
+              <div class="text-[11px] text-[#C5A47E] font-medium">${item.price} грн</div>
             </div>
-            <button type="button" class="del-cart-btn text-stone-600 hover:text-red-400 text-xs transition cursor-pointer">Видалити</button>
+            <button type="button" class="del-cart-btn text-stone-600 hover:text-red-400 text-xs transition cursor-pointer p-1">Видалити</button>
           `;
           const delBtn = row.querySelector('.del-cart-btn');
           if (delBtn) {
@@ -953,21 +935,21 @@
             const safeImgUrl = p.image_url ? encodeURI(p.image_url) : 'https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80';
 
             const card = document.createElement('div');
-            card.className = 'group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(197,164,126,0.12)] flex flex-col justify-between';
+            card.className = 'group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-300 flex flex-col justify-between';
             card.innerHTML = `
               <div class="overflow-hidden aspect-square relative bg-stone-950">
-                <img src="${safeImgUrl}" alt="${safeName}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100">
+                <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100">
               </div>
-              <div class="p-6 flex flex-col justify-between flex-grow">
+              <div class="p-5 sm:p-6 flex flex-col justify-between flex-grow">
                 <div>
-                  <h3 class="font-serif italic text-xl text-stone-100 group-hover:text-[#C5A47E] transition-colors">${safeName}</h3>
-                  <p class="text-sm font-light text-[#C5A47E] mt-1">${p.price} грн</p>
+                  <h3 class="font-serif italic text-lg sm:text-xl text-stone-100 group-hover:text-[#C5A47E] transition-colors leading-snug">${safeName}</h3>
+                  <p class="text-xs sm:text-sm font-light text-[#C5A47E] mt-1">${p.price} грн</p>
                 </div>
-                <div class="mt-6 flex items-center justify-between pt-4 border-t border-stone-900">
-                  <button type="button" class="buy-btn text-xs uppercase tracking-widest text-stone-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                <div class="mt-5 flex items-center justify-between pt-3 border-t border-stone-900">
+                  <button type="button" class="buy-btn text-[11px] sm:text-xs uppercase tracking-widest text-stone-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer py-1">
                     <span>Додати в кошик</span> →
                   </button>
-                  <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer" style="display: ${isAuth ? 'inline-block' : 'none'};">
+                  <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer p-1" style="display: ${isAuth ? 'inline-block' : 'none'};">
                     Видалити
                   </button>
                 </div>
@@ -994,14 +976,14 @@
 
       function renderFallbackProducts(grid) {
         grid.innerHTML = `
-          <div class="group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-500 hover:shadow-[0_0_30px_rgba(197,164,126,0.12)]">
+          <div class="group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-300">
             <div class="overflow-hidden aspect-square bg-stone-950">
-              <img src="https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+              <img src="https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80" alt="Золотий Лотос" loading="lazy" class="w-full h-full object-cover">
             </div>
-            <div class="p-6">
-              <h3 class="font-serif italic text-xl text-stone-100">Композиція "Золотий Лотос"</h3>
-              <p class="text-sm text-[#C5A47E] mt-1">2 800 грн</p>
-              <button type="button" id="fallback-cart-btn" class="mt-4 text-xs uppercase tracking-widest text-stone-300 hover:text-white transition cursor-pointer">Додати в кошик →</button>
+            <div class="p-5 sm:p-6">
+              <h3 class="font-serif italic text-lg sm:text-xl text-stone-100">Композиція "Золотий Лотос"</h3>
+              <p class="text-xs sm:text-sm text-[#C5A47E] mt-1">2 800 грн</p>
+              <button type="button" id="fallback-cart-btn" class="mt-4 text-[11px] sm:text-xs uppercase tracking-widest text-stone-300 hover:text-white transition cursor-pointer">Додати в кошик →</button>
             </div>
           </div>
         `;
@@ -1011,7 +993,7 @@
         }
       }
 
-      // 10. ДОДАВАННЯ ТОВАРУ ТА ОБРОБКА ЗОБРАЖЕНЬ
+      // 10. ДОДАВАННЯ ТОВАРУ
       const addForm = document.getElementById('add-product-form');
       const fileInput = document.getElementById('prod-file');
       const urlInput = document.getElementById('prod-img');
@@ -1077,7 +1059,7 @@
         addForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           if (!isAdminLoggedIn()) {
-            showToast('Потрібна авторизація адміністратора!', 'error');
+            showToast('Потрібна авторизація!', 'error');
             return;
           }
 
@@ -1120,10 +1102,9 @@
         });
       }
 
-      // 11. ВИДАЛЕННЯ ТОВАРУ
       async function deleteProduct(id) {
         if (!isAdminLoggedIn()) {
-          showToast('Тільки адміністратор може видаляти позиції!', 'error');
+          showToast('Тільки адміністратор може видаляти!', 'error');
           return;
         }
 
@@ -1139,7 +1120,6 @@
         }
       }
 
-      // 12. ПРИВ'ЯЗКА ПОДІЙ
       document.addEventListener('DOMContentLoaded', () => {
         checkAuthSession();
 
