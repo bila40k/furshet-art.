@@ -315,7 +315,7 @@
     </div>
   </div>
 
-  <!-- КАСТОМНЕ ПРЕМІАЛЬНЕ МОДАЛЬНЕ ВІКНО ВХОДУ АДМІНА -->
+  <!-- КАСТОМНЕ ПРЕМІАЛЬНЕ МОДАЛЬНЕ ВІКНО ВХОДУ АДМІНА (SUPABASE AUTH) -->
   <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div id="admin-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
     <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
@@ -323,7 +323,7 @@
 
       <div class="flex justify-between items-center mb-6">
         <div>
-          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Панель керування</span>
+          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Безпечний доступ</span>
           <h3 class="font-serif italic text-2xl text-stone-100 mt-0.5">Вхід адміністратора</h3>
         </div>
         <button id="admin-modal-close-btn" type="button" class="text-stone-500 hover:text-white transition p-1 cursor-pointer text-sm">✕</button>
@@ -331,19 +331,26 @@
 
       <form id="admin-login-form" class="space-y-4">
         <div>
-          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Введіть пароль</label>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Email адміністратора</label>
+          <input type="email" id="admin-email-input" autocomplete="username" placeholder="admin@example.com" required 
+            class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-2">Пароль</label>
           <input type="password" id="admin-password-input" autocomplete="current-password" placeholder="••••••••" required 
             class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
         </div>
 
-        <div id="admin-auth-error" class="text-xs text-red-400 hidden">Невірний пароль доступу!</div>
+        <div id="admin-auth-error" class="text-xs text-red-400 hidden">Невірний email або пароль!</div>
 
         <div class="flex items-center gap-3 pt-2">
           <button type="button" id="admin-modal-cancel-btn" class="w-1/2 py-3 border border-stone-800 text-stone-400 font-medium text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-stone-600 hover:text-white transition cursor-pointer">
             Скасувати
           </button>
-          <button type="submit" class="btn-shimmer w-1/2 py-3 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer">
-            Увійти
+          <button type="submit" id="admin-login-submit" class="btn-shimmer w-1/2 py-3 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer flex items-center justify-center">
+            <span id="admin-login-text">Увійти</span>
+            <span id="admin-login-loader" class="hidden text-[10px]">Вхід...</span>
           </button>
         </div>
       </form>
@@ -379,7 +386,7 @@
 
   <!-- СКРИПТИ -->
   <script>
-    // 1. SUPABASE (ОНОВЛЕНО НА АКТИВНИЙ ПРОЄКТ ТА ВАШ КЛЮЧ)
+    // 1. SUPABASE CLIENT
     const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzZ3d0eHVwaW9sZ3F1cHZybHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NDMwNjAsImV4cCI6MjEwNDIxOTA2MH0.WT0AGCa0sHzYpFwGYA_0Df7VQmpjDNJlDwHXZ0X9Khc';
     
@@ -392,9 +399,22 @@
       console.warn('Supabase fallback mode:', e);
     }
 
-    // 2. СТАТУС ТА UI АДМІНА
+    // 2. БЕЗПЕЧНА АВТОРИЗАЦІЯ (SUPABASE AUTH)
+    let currentUser = null;
+
+    async function checkAuthSession() {
+      if (!supabaseClient) return;
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        currentUser = session ? session.user : null;
+        updateAdminUI();
+      } catch (err) {
+        console.warn('Помилка перевірки сесії:', err);
+      }
+    }
+
     function isAdminLoggedIn() {
-      return sessionStorage.getItem('is_admin_logged') === 'true';
+      return currentUser !== null;
     }
 
     function updateAdminUI() {
@@ -411,7 +431,7 @@
       }
 
       if (authText) {
-        authText.textContent = isAuth ? 'Панель Admin (Активна)' : 'Вхід Admin';
+        authText.textContent = isAuth ? 'Адмін (Активний)' : 'Вхід Admin';
       }
 
       document.querySelectorAll('.admin-delete-btn').forEach(btn => {
@@ -429,13 +449,14 @@
         return;
       }
       const modal = document.getElementById('admin-modal');
-      const input = document.getElementById('admin-password-input');
+      const emailInput = document.getElementById('admin-email-input');
+      const passInput = document.getElementById('admin-password-input');
       const err = document.getElementById('admin-auth-error');
       if (modal) {
         if (err) err.classList.add('hidden');
-        if (input) input.value = '';
+        if (passInput) passInput.value = '';
         modal.classList.remove('hidden');
-        setTimeout(() => input && input.focus(), 50);
+        setTimeout(() => emailInput && emailInput.focus(), 50);
       }
     }
 
@@ -444,33 +465,58 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    function handleAdminFormSubmit(e) {
+    async function handleAdminFormSubmit(e) {
       e.preventDefault();
-      const input = document.getElementById('admin-password-input');
+      const email = document.getElementById('admin-email-input')?.value.trim();
+      const password = document.getElementById('admin-password-input')?.value.trim();
       const err = document.getElementById('admin-auth-error');
-      const cleanPass = input ? input.value.trim() : '';
+      const btnText = document.getElementById('admin-login-text');
+      const btnLoader = document.getElementById('admin-login-loader');
 
-      if (cleanPass === 'Arcen2007') {
-        sessionStorage.setItem('is_admin_logged', 'true');
+      if (!email || !password) return;
+
+      if (btnText) btnText.classList.add('hidden');
+      if (btnLoader) btnLoader.classList.remove('hidden');
+      if (err) err.classList.add('hidden');
+
+      try {
+        if (!supabaseClient) throw new Error('Supabase не підключено');
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) throw error;
+
+        currentUser = data.user;
         updateAdminUI();
         closeAdminModal();
-        showToast('Успішна авторизація!', 'success');
+        showToast('Успішна авторизація адміністратора!', 'success');
+        
         const panel = document.getElementById('admin-panel');
         if (panel) {
           panel.classList.remove('hidden');
           panel.scrollIntoView({ behavior: 'smooth' });
         }
-      } else {
-        if (err) err.classList.remove('hidden');
-        if (input) {
-          input.value = '';
-          input.focus();
+      } catch (authError) {
+        if (err) {
+          err.textContent = 'Невірний email або пароль!';
+          err.classList.remove('hidden');
+        } else {
+          alert('Помилка авторизації: ' + authError.message);
         }
+      } finally {
+        if (btnText) btnText.classList.remove('hidden');
+        if (btnLoader) btnLoader.classList.add('hidden');
       }
     }
 
-    function logoutAdmin() {
-      sessionStorage.removeItem('is_admin_logged');
+    async function logoutAdmin() {
+      if (supabaseClient) {
+        await supabaseClient.auth.signOut();
+      }
+      currentUser = null;
       updateAdminUI();
       showToast('Ви вийшли з адмін-панелі', 'info');
     }
@@ -486,7 +532,7 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // 4. TOAST
+    // 4. TOAST ПОВІДОМЛЕННЯ
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -512,7 +558,7 @@
       }, 4000);
     }
 
-    // 5. CANVAS
+    // 5. CANVAS PARTICLES
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
       const ctx = canvas.getContext('2d');
@@ -833,12 +879,23 @@
         showToast('Роботу видалено', 'info');
         loadProducts();
       } catch (err) {
-        showToast('Помилка видалення', 'error');
+        showToast(err.message || 'Помилка видалення', 'error');
       }
     };
 
     // 10. БІНДИНГ ПОДІЙ
     document.addEventListener('DOMContentLoaded', () => {
+      // Перевірка активної сесії адміна
+      checkAuthSession();
+
+      // Слухач зміни стану авторизації Supabase
+      if (supabaseClient) {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+          currentUser = session ? session.user : null;
+          updateAdminUI();
+        });
+      }
+
       // Кнопка відкриття модалки замовлення у Hero
       const heroOrderBtn = document.getElementById('custom-order-hero-btn');
       if (heroOrderBtn) heroOrderBtn.addEventListener('click', openOrderModal);
@@ -886,7 +943,6 @@
         });
       }
 
-      updateAdminUI();
       loadProducts();
     });
   </script>
