@@ -8,9 +8,6 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Cloudflare Turnstile API скрипт -->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
   <!-- Шрифти: Cormorant Garamond (Serif) + Montserrat (Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -338,7 +335,7 @@
 
       <form id="checkout-form" class="space-y-4">
         <p class="text-xs text-stone-400 font-light leading-relaxed">
-          Введіть контакти для збереження замовлення. Захищено Cloudflare Turnstile.
+          Введіть контакти для збереження замовлення. Майстер зв'яжеться з вами.
         </p>
 
         <div>
@@ -350,9 +347,6 @@
           <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Номер телефону</label>
           <input type="tel" id="client-phone" required maxlength="20" placeholder="+380 (XX) XXX-XX-XX" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-base sm:text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E]">
         </div>
-
-        <!-- Динамічний контейнер для невидимої капчі -->
-        <div id="turnstile-container" class="my-2 flex justify-center"></div>
 
         <div class="pt-2 flex items-center gap-3">
           <button type="button" id="checkout-cancel-btn" class="w-1/2 py-3.5 border border-stone-800 text-stone-400 font-medium text-xs uppercase tracking-[0.15em] rounded-lg hover:text-white transition">
@@ -477,10 +471,8 @@
 
       const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzZ3d0eHVwaW9sZ3F1cHZybHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NDMwNjAsImV4cCI6MjEwNDIxOTA2MH0.WT0AGCa0sHzYpFwGYA_0Df7VQmpjDNJlDwHXZ0X9Khc';
-      const TURNSTILE_SITE_KEY = '0x4AAAAAAAx3SgebItniHekn';
       
       let supabaseClient = null;
-      let turnstileWidgetId = null;
 
       try {
         if (window.supabase && typeof window.supabase.createClient === 'function') {
@@ -683,36 +675,12 @@
           if (form) form.classList.remove('hidden');
           if (success) success.classList.add('hidden');
           modal.classList.remove('hidden');
-
-          // Динамічний рендеринг невидимої капчі при відкритті модалки
-          setTimeout(() => {
-            const container = document.getElementById('turnstile-container');
-            if (container) {
-              container.innerHTML = '';
-              turnstileWidgetId = null;
-            }
-            if (container && window.turnstile) {
-              try {
-                turnstileWidgetId = window.turnstile.render('#turnstile-container', {
-                  sitekey: TURNSTILE_SITE_KEY,
-                  size: 'invisible',
-                });
-              } catch (err) {
-                console.warn('Turnstile render error:', err);
-              }
-            }
-          }, 150);
         }
       }
 
       function closeCheckoutModal() {
         const modal = document.getElementById('checkout-modal');
         if (modal) modal.classList.add('hidden');
-        if (window.turnstile && turnstileWidgetId !== null) {
-          try {
-            window.turnstile.reset(turnstileWidgetId);
-          } catch (e) {}
-        }
       }
 
       async function submitCheckout(e) {
@@ -731,28 +699,6 @@
 
         if (!name || !phone || cart.length === 0) return;
 
-        let turnstileToken = '';
-        if (window.turnstile && turnstileWidgetId !== null) {
-          try {
-            turnstileToken = window.turnstile.getResponse(turnstileWidgetId);
-          } catch (e) {}
-        }
-
-        // Запасний пошук токена, якщо перший метод не спрацював
-        if (!turnstileToken) {
-          try {
-            const responseInput = document.querySelector('[name="cf-turnstile-response"]');
-            if (responseInput) {
-              turnstileToken = responseInput.value;
-            }
-          } catch (e) {}
-        }
-
-        if (!turnstileToken) {
-          showToast('Підтвердіть безпеку (зачекайте секунду або оновіть сторінку)', 'error');
-          return;
-        }
-
         let totalPrice = 0;
         const itemsList = cart.map(item => {
           totalPrice += item.price;
@@ -765,18 +711,15 @@
         try {
           if (!supabaseClient) throw new Error('Supabase не підключено');
 
-          const { data, error } = await supabaseClient.functions.invoke('process-order', {
-            body: {
-              client_name: escapeHTML(name),
-              client_phone: escapeHTML(phone),
-              items: itemsList,
-              total_price: totalPrice,
-              turnstileToken: turnstileToken
-            }
-          });
+          const { error } = await supabaseClient.from('orders').insert([{
+            client_name: escapeHTML(name),
+            client_phone: escapeHTML(phone),
+            items: itemsList,
+            total_price: totalPrice,
+            status: 'new'
+          }]);
 
           if (error) throw error;
-          if (data && data.error) throw new Error(data.error);
 
           localStorage.setItem('lastOrderTime', Date.now().toString());
 
@@ -789,10 +732,7 @@
           if (success) success.classList.remove('hidden');
           showToast('Замовлення успішно збережено!', 'success');
         } catch (err) {
-          showToast('Помилка: ' + (err.message || 'Збій перевірки безпеки'), 'error');
-          if (window.turnstile && turnstileWidgetId !== null) {
-            window.turnstile.reset(turnstileWidgetId);
-          }
+          showToast('Помилка: ' + err.message, 'error');
         } finally {
           if (btnText) btnText.classList.remove('hidden');
           if (btnLoader) btnLoader.classList.add('hidden');
