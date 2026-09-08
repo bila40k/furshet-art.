@@ -315,6 +315,61 @@
     </div>
   </div>
 
+  <!-- МОДАЛЬНЕ ВІКНО ОФОРМЛЕННЯ ЗАМОВЛЕННЯ -->
+  <div id="checkout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="checkout-backdrop" onclick="closeCheckoutModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-md w-full shadow-[0_0_50px_rgba(0,0,0,0.9)] z-10 overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#C5A47E]/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <span class="text-[9px] uppercase tracking-[0.3em] text-[#C5A47E] font-medium block">Підтвердження</span>
+          <h3 class="font-serif italic text-2xl text-stone-100 mt-0.5">Оформлення заявки</h3>
+        </div>
+        <button onclick="closeCheckoutModal()" type="button" class="text-stone-500 hover:text-white transition p-1 cursor-pointer text-sm">✕</button>
+      </div>
+
+      <form id="checkout-form" onsubmit="submitCheckout(event)" class="space-y-4">
+        <p class="text-xs text-stone-400 font-light leading-relaxed">
+          Введіть ваші дані, щоб зафіксувати замовлення. Після цього зателефонуйте майстру для уточнення деталей події.
+        </p>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Ваше ім'я</label>
+          <input type="text" id="client-name" required placeholder="напр., Олена" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5">Номер телефону</label>
+          <input type="tel" id="client-phone" required placeholder="+380 (XX) XXX-XX-XX" class="w-full bg-[#141414] border border-stone-800 rounded-lg px-4 py-3 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#C5A47E] transition-colors">
+        </div>
+
+        <div class="pt-2 flex items-center gap-3">
+          <button type="button" onclick="closeCheckoutModal()" class="w-1/2 py-3 border border-stone-800 text-stone-400 font-medium text-[11px] uppercase tracking-[0.2em] rounded-lg hover:border-stone-600 hover:text-white transition cursor-pointer">
+            Скасувати
+          </button>
+          <button type="submit" class="btn-shimmer w-1/2 py-3 bg-[#C5A47E] text-black font-semibold text-[11px] uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition cursor-pointer">
+            Підтвердити
+          </button>
+        </div>
+      </form>
+
+      <!-- Екран успіху з кнопкою дзвінка -->
+      <div id="checkout-success" class="hidden text-center py-4 space-y-5">
+        <div class="w-12 h-12 mx-auto rounded-full bg-[#C5A47E]/20 text-[#C5A47E] flex items-center justify-center text-xl font-bold">✓</div>
+        <div>
+          <h4 class="font-serif italic text-2xl text-stone-100">Замовлення прийнято!</h4>
+          <p class="text-xs text-stone-400 font-light mt-2 leading-relaxed">
+            Будь ласка, зателефонуйте майстру для остаточного узгодження деталей та часу події.
+          </p>
+        </div>
+        <a href="tel:+380501716025" class="btn-shimmer block w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-lg hover:bg-[#D4AF37] transition text-center">
+          Зателефонувати: +380 50 171 60 25
+        </a>
+      </div>
+    </div>
+  </div>
+
   <!-- КАСТОМНЕ ПРЕМІАЛЬНЕ МОДАЛЬНЕ ВІКНО ВХОДУ АДМІНА (SUPABASE AUTH) -->
   <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div id="admin-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
@@ -375,7 +430,7 @@
           <span class="text-xs uppercase tracking-widest text-stone-400">Всього:</span>
           <span id="cart-total" class="font-serif text-2xl text-[#C5A47E]">0 грн</span>
         </div>
-        <button id="cart-checkout-btn" type="button" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm hover:bg-[#D4AF37] transition cursor-pointer">
+        <button id="cart-checkout-btn" type="button" onclick="openCheckoutModal()" class="btn-shimmer w-full py-3.5 bg-[#C5A47E] text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm hover:bg-[#D4AF37] transition cursor-pointer">
           Оформити замовлення
         </button>
       </div>
@@ -532,7 +587,45 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    // 4. TOAST ПОВІДОМЛЕННЯ
+    // 4. ОФОРМЛЕННЯ ЗАМОВЛЕННЯ З КОШИКА
+    function openCheckoutModal() {
+      if (cart.length === 0) {
+        showToast('Кошик порожній!', 'error');
+        return;
+      }
+      toggleCart(false);
+      const modal = document.getElementById('checkout-modal');
+      const form = document.getElementById('checkout-form');
+      const success = document.getElementById('checkout-success');
+      if (modal) {
+        if (form) form.classList.remove('hidden');
+        if (success) success.classList.add('hidden');
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeCheckoutModal() {
+      const modal = document.getElementById('checkout-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function submitCheckout(e) {
+      e.preventDefault();
+      const name = document.getElementById('client-name').value.trim();
+      const phone = document.getElementById('client-phone').value.trim();
+
+      if (!name || !phone) return;
+
+      cart = [];
+      updateCartUI();
+
+      const form = document.getElementById('checkout-form');
+      const success = document.getElementById('checkout-success');
+      if (form) form.classList.add('hidden');
+      if (success) success.classList.remove('hidden');
+    }
+
+    // 5. TOAST ПОВІДОМЛЕННЯ
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -558,7 +651,7 @@
       }, 4000);
     }
 
-    // 5. CANVAS PARTICLES
+    // 6. CANVAS PARTICLES
     const canvas = document.getElementById('bg-canvas');
     if (canvas) {
       const ctx = canvas.getContext('2d');
@@ -635,7 +728,7 @@
       animateParticles();
     }
 
-    // 6. КОШИК
+    // 7. КОШИК
     let cart = [];
     const cartModal = document.getElementById('cart-modal');
     const cartBadge = document.getElementById('cart-badge');
@@ -694,7 +787,7 @@
       updateCartUI();
     };
 
-    // 7. ЗАВАНТАЖЕННЯ КАТАЛОГУ
+    // 8. ЗАВАНТАЖЕННЯ КАТАЛОГУ
     async function loadProducts() {
       const grid = document.getElementById('product-grid');
       if (!grid) return;
@@ -754,7 +847,7 @@
       `;
     }
 
-    // 8. ДОДАВАННЯ ТОВАРУ ТА ОБРОБКА ЗОБРАЖЕНЬ (FILE АБО URL)
+    // 9. ДОДАВАННЯ ТОВАРУ ТА ОБРОБКА ЗОБРАЖЕНЬ (FILE АБО URL)
     const addForm = document.getElementById('add-product-form');
     const fileInput = document.getElementById('prod-file');
     const urlInput = document.getElementById('prod-img');
@@ -864,7 +957,7 @@
       });
     }
 
-    // 9. ВИДАЛЕННЯ ТОВАРУ
+    // 10. ВИДАЛЕННЯ ТОВАРУ
     window.deleteProduct = async function(id) {
       if (!isAdminLoggedIn()) {
         showToast('Тільки адміністратор може видаляти позиції!', 'error');
@@ -883,7 +976,7 @@
       }
     };
 
-    // 10. БІНДИНГ ПОДІЙ
+    // 11. БІНДИНГ ПОДІЙ
     document.addEventListener('DOMContentLoaded', () => {
       // Перевірка активної сесії адміна
       checkAuthSession();
@@ -935,13 +1028,6 @@
 
       const backdrop = document.getElementById('cart-backdrop');
       if (backdrop) backdrop.addEventListener('click', () => toggleCart(false));
-
-      const checkoutBtn = document.getElementById('cart-checkout-btn');
-      if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-          showToast('Замовлення оформлено! Ми зв\'яжемося з вами.', 'success');
-        });
-      }
 
       loadProducts();
     });
