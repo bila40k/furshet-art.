@@ -684,10 +684,14 @@
           if (success) success.classList.add('hidden');
           modal.classList.remove('hidden');
 
-          // Рендеримо невидиму капчу Turnstile
+          // Примусовий рендеринг капчі Turnstile
           setTimeout(() => {
             const container = document.getElementById('turnstile-container');
-            if (container && window.turnstile && turnstileWidgetId === null) {
+            if (container) {
+              container.innerHTML = '';
+              turnstileWidgetId = null;
+            }
+            if (container && window.turnstile) {
               try {
                 turnstileWidgetId = window.turnstile.render('#turnstile-container', {
                   sitekey: TURNSTILE_SITE_KEY,
@@ -697,7 +701,7 @@
                 console.warn('Turnstile render error:', err);
               }
             }
-          }, 100);
+          }, 200);
         }
       }
 
@@ -727,7 +731,6 @@
 
         if (!name || !phone || cart.length === 0) return;
 
-        // Отримуємо токен від Cloudflare Turnstile
         let turnstileToken = '';
         if (window.turnstile && turnstileWidgetId !== null) {
           try {
@@ -752,7 +755,6 @@
         try {
           if (!supabaseClient) throw new Error('Supabase не підключено');
 
-          // Викликаємо наш безпечний мікросервер у Supabase (Edge Function)
           const { data, error } = await supabaseClient.functions.invoke('process-order', {
             body: {
               client_name: escapeHTML(name),
