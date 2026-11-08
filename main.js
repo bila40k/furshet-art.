@@ -18,6 +18,21 @@
   let cart = [];
 
   // 2. УТИЛІТИ ТА UI
+  // Заглушка, якщо фото роботи немає або воно не завантажилось
+  const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><radialGradient id="g" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#1b1712"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient></defs><rect width="400" height="500" fill="url(#g)"/><path fill="#C9A876" opacity=".55" d="M200 205c3 15 13 26 28 29-15 3-25 14-28 29-3-15-13-26-28-29 15-3 25-14 28-29z"/><text x="200" y="310" fill="#C9A876" opacity=".5" font-family="Georgia,serif" font-style="italic" font-size="20" text-anchor="middle">Furshet Carving</text></svg>'
+  );
+
+  // Плавна поява блоків при прокрутці
+  const revealObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+    : null;
+  function observeReveal(el) {
+    if (revealObserver) revealObserver.observe(el); else el.classList.add('in');
+  }
+
   function escapeHTML(str) {
     if (!str) return '';
     return str.toString().replace(/[&<>'"]/g, tag => ({
@@ -168,47 +183,60 @@
     }
   }
 
+  const formatPrice = (n) => `${Number(n).toLocaleString('uk-UA')} грн`;
+  const cartCount = () => cart.reduce((s, i) => s + i.qty, 0);
+  const cartTotal = () => cart.reduce((s, i) => s + i.price * i.qty, 0);
+
   function updateCartUI() {
     const cartBadge = document.getElementById('cart-badge');
     const cartItemsEl = document.getElementById('cart-items');
     const cartTotalEl = document.getElementById('cart-total');
-    
+
     if (!cartBadge || !cartItemsEl || !cartTotalEl) return;
-    
-    cartBadge.textContent = cart.length;
-    if (cart.length > 0) cartBadge.classList.remove('scale-0');
+
+    const count = cartCount();
+    cartBadge.textContent = count;
+    if (count > 0) cartBadge.classList.remove('scale-0');
     else cartBadge.classList.add('scale-0');
 
     if (cart.length === 0) {
-      cartItemsEl.innerHTML = '<p class="text-stone-500 text-center font-light py-8">Кошик порожній</p>';
+      cartItemsEl.innerHTML = '<p class="text-stone-500 text-center font-light py-12 font-serif italic text-xl">Кошик порожній</p>';
       cartTotalEl.textContent = '0 грн';
       return;
     }
 
-    let total = 0;
     cartItemsEl.innerHTML = '';
     cart.forEach((item, idx) => {
-      total += item.price;
       const row = document.createElement('div');
-      row.className = 'flex items-center justify-between bg-[#141414] p-3 rounded-lg border border-stone-800';
+      row.className = 'flex items-center justify-between gap-4 bg-[#111] p-4 border border-stone-800';
       row.innerHTML = `
-        <div>
-          <div class="font-serif italic text-stone-200 text-sm sm:text-base">${escapeHTML(item.name)}</div>
-          <div class="text-[11px] text-[#C5A47E] font-medium">${item.price} грн</div>
+        <div class="min-w-0">
+          <div class="font-serif italic text-stone-100 text-lg leading-snug truncate">${escapeHTML(item.name)}</div>
+          <div class="text-[11px] text-gold mt-0.5">${formatPrice(item.price)}</div>
         </div>
-        <button type="button" class="del-cart-btn text-stone-600 hover:text-red-400 text-xs transition cursor-pointer p-1">Видалити</button>
+        <div class="flex items-center gap-1 shrink-0">
+          <button type="button" data-act="dec" aria-label="Менше" class="w-8 h-8 border border-stone-800 text-stone-400 hover:text-white hover:border-stone-600 transition">−</button>
+          <span class="w-7 text-center text-sm text-stone-200">${item.qty}</span>
+          <button type="button" data-act="inc" aria-label="Більше" class="w-8 h-8 border border-stone-800 text-stone-400 hover:text-white hover:border-stone-600 transition">+</button>
+        </div>
       `;
-      const delBtn = row.querySelector('.del-cart-btn');
-      if (delBtn) delBtn.addEventListener('click', () => { cart.splice(idx, 1); updateCartUI(); });
+      row.querySelector('[data-act="dec"]').addEventListener('click', () => {
+        item.qty -= 1;
+        if (item.qty <= 0) cart.splice(idx, 1);
+        updateCartUI();
+      });
+      row.querySelector('[data-act="inc"]').addEventListener('click', () => { item.qty += 1; updateCartUI(); });
       cartItemsEl.appendChild(row);
     });
-    cartTotalEl.textContent = `${total} грн`;
+    cartTotalEl.textContent = formatPrice(cartTotal());
   }
 
   function addToCart(name, price) {
-    cart.push({ name, price });
+    const existing = cart.find(i => i.name === name && i.price === price);
+    if (existing) existing.qty += 1;
+    else cart.push({ name, price, qty: 1 });
     updateCartUI();
-    showToast(`Додано в кошик: "${name}"`, 'success');
+    showToast(`Додано до замовлення: «${escapeHTML(name)}»`, 'success');
   }
 
   function openCheckoutModal() {
@@ -243,11 +271,10 @@
 
     if (!name || !phone || cart.length === 0) return;
 
-    let totalPrice = 0;
-    const itemsList = cart.map(item => {
-      totalPrice += item.price;
-      return `${item.name} (${item.price} грн)`;
-    }).join(', ');
+    const totalPrice = cartTotal();
+    const itemsList = cart.map(item =>
+      item.qty > 1 ? `${item.name} ×${item.qty} (${item.price * item.qty} грн)` : `${item.name} (${item.price} грн)`
+    ).join(', ');
 
     if (btnText) btnText.classList.add('hidden');
     if (btnLoader) btnLoader.classList.remove('hidden');
@@ -263,6 +290,15 @@
       }]);
 
       if (error) throw error;
+
+      // Сповіщення майстру в Telegram (не блокує клієнта, якщо щось піде не так)
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, items: itemsList, total: totalPrice }),
+        keepalive: true
+      }).catch(() => {});
+
       localStorage.setItem('lastOrderTime', Date.now().toString());
       cart = []; updateCartUI();
 
@@ -294,37 +330,43 @@
 
       const isAuth = isAdminLoggedIn();
       grid.innerHTML = '';
-      data.forEach(p => {
+      data.forEach((p, i) => {
         const safeName = escapeHTML(p.name);
-        const safeImgUrl = p.image_url ? encodeURI(p.image_url) : 'https://images.unsplash.com/photo-1546548970-71785318a17b?auto=format&fit=crop&w=600&q=80';
+        const safeImgUrl = p.image_url ? encodeURI(p.image_url) : PLACEHOLDER_IMG;
+        const num = String(i + 1).padStart(2, '0');
 
-        const card = document.createElement('div');
-        card.className = 'group relative bg-[#0d0d0d] border border-stone-800/80 rounded-xl overflow-hidden hover:border-[#C5A47E]/60 transition-all duration-300 flex flex-col justify-between';
+        const card = document.createElement('article');
+        card.className = `reveal ${['', 'd1', 'd2'][i % 3]} group flex flex-col`;
         card.innerHTML = `
-          <div class="overflow-hidden aspect-square relative bg-stone-950">
-            <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100">
+          <div class="relative overflow-hidden aspect-[4/5] bg-[#0e0e0e]">
+            <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" class="product-img w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/10 pointer-events-none"></div>
+            <div class="absolute inset-3 sm:inset-4 border border-gold/0 group-hover:border-gold/40 transition-colors duration-700 pointer-events-none"></div>
+            <span class="absolute top-5 left-5 sm:top-6 sm:left-6 font-serif italic text-gold/90 text-lg">№ ${num}</span>
           </div>
-          <div class="p-5 sm:p-6 flex flex-col justify-between flex-grow">
-            <div>
-              <h3 class="font-serif italic text-lg sm:text-xl text-stone-100 group-hover:text-[#C5A47E] transition-colors leading-snug">${safeName}</h3>
-              <p class="text-xs sm:text-sm font-light text-[#C5A47E] mt-1">${p.price} грн</p>
-            </div>
-            <div class="mt-5 flex items-center justify-between pt-3 border-t border-stone-900">
-              <button type="button" class="buy-btn text-[11px] sm:text-xs uppercase tracking-widest text-stone-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer py-1">
-                <span>Додати в кошик</span> →
-              </button>
-              <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer p-1" style="display: ${isAuth ? 'inline-block' : 'none'};">Видалити</button>
-            </div>
+          <div class="pt-5 sm:pt-6 flex items-start justify-between gap-4">
+            <h3 class="font-serif text-2xl sm:text-[26px] leading-tight text-stone-100 group-hover:text-gold-200 transition-colors">${safeName}</h3>
+            <p class="font-serif text-xl sm:text-2xl text-gold whitespace-nowrap pt-0.5">${formatPrice(p.price)}</p>
+          </div>
+          <div class="mt-5 flex items-center justify-between gap-3">
+            <button type="button" class="buy-btn flex-1 py-3.5 border border-stone-800 text-[10.5px] uppercase tracking-[0.28em] text-stone-300 hover:border-gold hover:text-black hover:bg-gold transition-colors duration-500 active:scale-[0.99]">
+              Додати до замовлення
+            </button>
+            <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer p-1" style="display: ${isAuth ? 'inline-block' : 'none'};">Видалити</button>
           </div>
         `;
 
+        const img = card.querySelector('.product-img');
+        if (img) img.addEventListener('error', () => { img.src = PLACEHOLDER_IMG; }, { once: true });
+
         const buyBtn = card.querySelector('.buy-btn');
         if (buyBtn) buyBtn.addEventListener('click', () => addToCart(p.name, p.price));
-        
+
         const delBtn = card.querySelector('.admin-delete-btn');
         if (delBtn) delBtn.addEventListener('click', () => deleteProduct(p.id));
 
         grid.appendChild(card);
+        observeReveal(card);
       });
     } catch (err) {
       console.warn("Помилка завантаження каталогу:", err);
@@ -468,13 +510,33 @@
     const checkoutBackdrop = document.getElementById('checkout-backdrop');
     if (checkoutBackdrop) checkoutBackdrop.addEventListener('click', closeCheckoutModal);
 
-    const heroOrderBtn = document.getElementById('custom-order-hero-btn');
     const orderModal = document.getElementById('order-modal');
-    if (heroOrderBtn && orderModal) {
-      heroOrderBtn.addEventListener('click', () => orderModal.classList.remove('hidden'));
+    if (orderModal) {
+      document.querySelectorAll('.open-order-modal').forEach(btn =>
+        btn.addEventListener('click', () => orderModal.classList.remove('hidden')));
       document.getElementById('order-modal-close-btn')?.addEventListener('click', () => orderModal.classList.add('hidden'));
       document.getElementById('order-modal-backdrop')?.addEventListener('click', () => orderModal.classList.add('hidden'));
     }
+
+    // Escape закриває будь-яке відкрите вікно
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      orderModal?.classList.add('hidden');
+      closeCheckoutModal();
+      toggleCart(false);
+    });
+
+    // Шапка стає матовою при прокрутці
+    const header = document.getElementById('site-header');
+    if (header) {
+      const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 24);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+
+    document.querySelectorAll('.reveal').forEach(observeReveal);
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
 
     loadProducts();
 
