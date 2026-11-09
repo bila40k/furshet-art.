@@ -5,14 +5,54 @@
   const SUPABASE_URL = 'https://bsgwtxupiolgqupvrlyt.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzZ3d0eHVwaW9sZ3F1cHZybHl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2NDMwNjAsImV4cCI6MjEwNDIxOTA2MH0.WT0AGCa0sHzYpFwGYA_0Df7VQmpjDNJlDwHXZ0X9Khc';
   
-  let supabaseClient = null;
-  try {
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-  } catch (e) {
-    console.warn('Supabase fallback mode:', e);
+  const SUPABASE_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+  const AUTH_STORAGE_KEY = 'sb-bsgwtxupiolgqupvrlyt-auth-token';
+  const BUCKET = 'product-images';
+  const IS_ADMIN_PAGE = !!document.getElementById('admin-login-section');
+
+  // Звичайним відвідувачам бібліотека Supabase не потрібна: каталог і заявки йдуть напряму через REST.
+  // Бібліотеку підвантажуємо лише для адміна (вхід, додавання/видалення робіт, перегляд заявок).
+  let clientPromise = null;
+  function getClient() {
+    if (clientPromise) return clientPromise;
+    clientPromise = new Promise((resolve, reject) => {
+      const create = () => {
+        try { resolve(window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)); }
+        catch (e) { clientPromise = null; reject(e); }
+      };
+      if (window.supabase && typeof window.supabase.createClient === 'function') return create();
+      const s = document.createElement('script');
+      s.src = SUPABASE_JS;
+      s.async = true;
+      s.onload = create;
+      s.onerror = () => { clientPromise = null; reject(new Error('Не вдалося завантажити Supabase')); };
+      document.head.appendChild(s);
+    });
+    return clientPromise;
   }
+
+  const hasStoredSession = () => {
+    try { return !!localStorage.getItem(AUTH_STORAGE_KEY); } catch (e) { return false; }
+  };
+
+  async function rest(path, options = {}) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      ...options,
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, ...(options.headers || {}) }
+    });
+    if (!res.ok) {
+      let msg = `HTTP ${res.status}`;
+      try { const j = await res.json(); msg = j.message || msg; } catch (e) { /* без тіла */ }
+      throw new Error(msg);
+    }
+    return res;
+  }
+
+  const PRODUCTS_QUERY = 'products?select=id,name,price,image_url&order=created_at.desc';
+  const fetchProducts = () => rest(PRODUCTS_QUERY).then(r => r.json());
+  // Починаємо вантажити каталог одразу, не чекаючи решти сторінки
+  let productsPrefetch = document.getElementById('product-grid') ? fetchProducts() : null;
+  if (productsPrefetch) productsPrefetch.catch(() => {});
 
   let _validSession = null;
   let cart = [];
@@ -33,6 +73,56 @@
     if (revealObserver) revealObserver.observe(el); else el.classList.add('in');
   }
 
+  const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lenis = null; // плавна прокрутка (створюється нижче, якщо доступна)
+
+  // Розбиваємо заголовки на слова, щоб вони «виїжджали» з-під маски по черзі
+  function splitHeading(el) {
+    if (el.classList.contains('split-ready')) return;
+    if (REDUCED_MOTION) { el.classList.add('split-ready', 'in'); return; }
+    let i = 0;
+    const walk = (node, cls) => {
+      const frag = document.createDocumentFragment();
+      Array.from(node.childNodes).forEach(child => {
+        if (child.nodeType === 3) {
+          child.textContent.split(/(\s+)/).forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+            const word = document.createElement('span');
+            word.className = 'split-word';
+            const inner = document.createElement('span');
+            inner.className = ('split-inner ' + cls).trim();
+            inner.style.setProperty('--i', i++);
+            inner.textContent = part;
+            word.appendChild(inner);
+            frag.appendChild(word);
+          });
+        } else if (child.nodeName === 'BR') {
+          frag.appendChild(child.cloneNode(false));
+        } else if (child.nodeType === 1) {
+          const childCls = (cls + ' ' + child.className.replace(/\bpr-\d+\b/g, '')).trim();
+          frag.appendChild(walk(child, childCls));
+        }
+      });
+      return frag;
+    };
+    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+    const frag = walk(el, '');
+    el.textContent = '';
+    el.appendChild(frag);
+    el.querySelectorAll('.split-word').forEach(w => w.setAttribute('aria-hidden', 'true'));
+    el.classList.add('split-ready');
+  }
+  document.querySelectorAll('[data-split]').forEach(el => {
+    splitHeading(el);
+    if (el.hasAttribute('data-split-now')) {
+      el.style.setProperty('--base', '150ms');
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+    } else {
+      observeReveal(el);
+    }
+  });
+
   // Плавне відкриття/закриття вікон (працює і для вікон без анімації — просто показ/приховування)
   const MODAL_CLOSE_MS = 650;
   let openModalsCount = 0;
@@ -46,6 +136,7 @@
     if (wasHidden) {
       openModalsCount++;
       document.documentElement.style.overflow = 'hidden';
+      if (lenis) lenis.stop();
     }
     const focusTarget = el.querySelector('.close-x, button, a, input');
     if (focusTarget) setTimeout(() => focusTarget.focus({ preventScroll: true }), 60);
@@ -57,7 +148,10 @@
     el._closeTimer = setTimeout(() => {
       el.classList.add('hidden');
       openModalsCount = Math.max(0, openModalsCount - 1);
-      if (openModalsCount === 0) document.documentElement.style.overflow = '';
+      if (openModalsCount === 0) {
+        document.documentElement.style.overflow = '';
+        if (lenis) lenis.start();
+      }
     }, delay);
   }
 
@@ -136,10 +230,17 @@
     return Boolean(_validSession && _validSession.access_token && typeof _validSession.access_token === 'string');
   }
 
+  let authListenerAttached = false;
   async function checkAuthSession() {
-    if (!supabaseClient) return;
+    // На головній без збереженого входу нічого не вантажимо — відвідувач точно не адмін
+    if (!IS_ADMIN_PAGE && !hasStoredSession()) { _validSession = null; return; }
     try {
-      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      const client = await getClient();
+      if (!authListenerAttached) {
+        authListenerAttached = true;
+        client.auth.onAuthStateChange((event, session) => { _validSession = session; updateAdminUI(); });
+      }
+      const { data: { session }, error } = await client.auth.getSession();
       _validSession = (!error && session) ? session : null;
       updateAdminUI();
     } catch (err) {
@@ -185,8 +286,8 @@
     if (err) err.classList.add('hidden');
 
     try {
-      if (!supabaseClient) throw new Error('Supabase не підключено');
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      const client = await getClient();
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
       _validSession = data.session;
       updateAdminUI();
@@ -205,7 +306,7 @@
   }
 
   async function logoutAdmin() {
-    if (supabaseClient) await supabaseClient.auth.signOut();
+    try { const client = await getClient(); await client.auth.signOut(); } catch (e) { /* все одно виходимо локально */ }
     _validSession = null;
     updateAdminUI();
     showToast('Ви вийшли з панелі', 'info');
@@ -315,16 +416,12 @@
     if (btnLoader) btnLoader.classList.remove('hidden');
 
     try {
-      if (!supabaseClient) throw new Error('Supabase не підключено');
-      const { error } = await supabaseClient.from('orders').insert([{
-        client_name: escapeHTML(name),
-        client_phone: escapeHTML(phone),
-        items: itemsList,
-        total_price: totalPrice,
-        status: 'new'
-      }]);
-
-      if (error) throw error;
+      // Текст зберігаємо як є — екранування робиться при виводі
+      await rest('orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify([{ client_name: name, client_phone: phone, items: itemsList, total_price: totalPrice, status: 'new' }])
+      });
 
       // Сповіщення майстру в Telegram (не блокує клієнта, якщо щось піде не так)
       fetch('/api/notify', {
@@ -354,11 +451,12 @@
   async function loadProducts() {
     const grid = document.getElementById('product-grid');
     if (!grid) return;
-    if (!supabaseClient) return;
 
     try {
-      const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-      if (error || !data || data.length === 0) {
+      let data;
+      if (productsPrefetch) { data = await productsPrefetch; productsPrefetch = null; }
+      else data = await fetchProducts();
+      if (!Array.isArray(data) || data.length === 0) {
         grid.innerHTML = '<div class="text-center py-12 text-stone-500 col-span-full font-light">Каталог порожній</div>';
         return;
       }
@@ -373,8 +471,8 @@
         const card = document.createElement('article');
         card.className = `reveal ${['', 'd1', 'd2'][i % 3]} group flex flex-col`;
         card.innerHTML = `
-          <div class="relative overflow-hidden aspect-[4/5] bg-[#0e0e0e]">
-            <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" class="product-img w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]">
+          <div class="curtain relative overflow-hidden aspect-[4/5] bg-[#0e0e0e]">
+            <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" decoding="async" width="800" height="1000" class="product-img w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]">
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/10 pointer-events-none"></div>
             <div class="absolute inset-3 sm:inset-4 border border-gold/0 group-hover:border-gold/40 transition-colors duration-700 pointer-events-none"></div>
             <span class="absolute top-5 left-5 sm:top-6 sm:left-6 font-serif italic text-gold/90 text-lg">№ ${num}</span>
@@ -398,7 +496,7 @@
         if (buyBtn) buyBtn.addEventListener('click', () => addToCart(p.name, p.price));
 
         const delBtn = card.querySelector('.admin-delete-btn');
-        if (delBtn) delBtn.addEventListener('click', () => deleteProduct(p.id));
+        if (delBtn) delBtn.addEventListener('click', () => deleteProduct(p));
 
         grid.appendChild(card);
         observeReveal(card);
@@ -416,8 +514,7 @@
     const price = parseFloat(document.getElementById('prod-price').value);
     const urlInput = document.getElementById('prod-img');
     const imgUrl = urlInput ? urlInput.value.trim() : '';
-    // loadedBase64Image handled globally below
-    const finalImage = window.loadedBase64Image || imgUrl || null;
+    const imageBlob = window.loadedImageBlob || null;
 
     if (!name || isNaN(price)) { showToast('Заповніть назву та ціну!', 'error'); return; }
 
@@ -427,14 +524,28 @@
     if (btnLoader) btnLoader.classList.remove('hidden');
 
     try {
-      if (!supabaseClient) throw new Error('Supabase не підключено');
-      const { error } = await supabaseClient.from('products').insert([{
-        name: escapeHTML(name), price: price, image_url: finalImage, status: 'available'
+      const client = await getClient();
+      let finalImage = imgUrl || null;
+
+      // Фото завантажуємо у сховище (Storage), а в базу пишемо лише посилання —
+      // так каталог вантажиться швидко, а фото кешуються браузером
+      if (imageBlob) {
+        const ext = imageBlob.type === 'image/webp' ? 'webp' : 'jpg';
+        const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const { error: upErr } = await client.storage.from(BUCKET).upload(path, imageBlob, {
+          contentType: imageBlob.type, cacheControl: '31536000', upsert: false
+        });
+        if (upErr) throw new Error('Не вдалося завантажити фото: ' + upErr.message);
+        finalImage = client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+      }
+
+      const { error } = await client.from('products').insert([{
+        name: name, price: price, image_url: finalImage, status: 'available'
       }]);
       if (error) throw error;
       showToast('Нову композицію опубліковано!', 'success');
       e.target.reset();
-      window.loadedBase64Image = '';
+      window.loadedImageBlob = null;
       const previewWrapper = document.getElementById('image-preview-wrapper');
       if (previewWrapper) previewWrapper.classList.add('hidden');
       loadProducts();
@@ -446,14 +557,20 @@
     }
   }
 
-  async function deleteProduct(id) {
+  async function deleteProduct(product) {
     if (!isAdminLoggedIn()) return;
     const confirmed = await showConfirmDialog('Видалення роботи', 'Видалити цю роботу з каталогу?');
     if (!confirmed) return;
     try {
-      if (!supabaseClient) return;
-      const { error } = await supabaseClient.from('products').delete().eq('id', id);
+      const client = await getClient();
+      const { error } = await client.from('products').delete().eq('id', product.id);
       if (error) throw error;
+      // Прибираємо і сам файл фото зі сховища, щоб не займав місце
+      const marker = `/storage/v1/object/public/${BUCKET}/`;
+      if (product.image_url && product.image_url.includes(marker)) {
+        const path = decodeURIComponent(product.image_url.split(marker)[1].split('?')[0]);
+        client.storage.from(BUCKET).remove([path]).catch(() => {});
+      }
       showToast('Роботу видалено', 'info');
       loadProducts();
     } catch (err) { showToast('Помилка видалення', 'error'); }
@@ -462,10 +579,11 @@
   // 6. ЗАМОВЛЕННЯ (АДМІН)
   async function loadOrders() {
     const container = document.getElementById('orders-container');
-    if (!container || !supabaseClient || !isAdminLoggedIn()) return;
+    if (!container || !isAdminLoggedIn()) return;
 
     try {
-      const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+      const client = await getClient();
+      const { data, error } = await client.from('orders').select('*').order('created_at', { ascending: false });
       if (error) throw error;
 
       if (!data || data.length === 0) {
@@ -504,7 +622,8 @@
     const confirmed = await showConfirmDialog('Видалення заявки', 'Видалити це замовлення з історії?');
     if (!confirmed) return;
     try {
-      const { error } = await supabaseClient.from('orders').delete().eq('id', id);
+      const client = await getClient();
+      const { error } = await client.from('orders').delete().eq('id', id);
       if (error) throw error;
       showToast('Замовлення видалено', 'info');
       loadOrders();
@@ -514,11 +633,6 @@
   // ІНІЦІАЛІЗАЦІЯ ПІД ЧАС ЗАВАНТАЖЕННЯ
   document.addEventListener('DOMContentLoaded', () => {
     checkAuthSession();
-    if (supabaseClient) {
-      supabaseClient.auth.onAuthStateChange((event, session) => {
-        _validSession = session; updateAdminUI();
-      });
-    }
 
     // Слухачі для головної сторінки (index.html)
     const cartBtn = document.getElementById('cart-toggle-btn');
@@ -561,6 +675,48 @@
       toggleCart(false);
     });
 
+    // Плавна інерційна прокрутка (на компʼютері; на телефоні лишається рідна прокрутка)
+    if (window.Lenis && !REDUCED_MOTION && document.getElementById('site-header')) {
+      try {
+        lenis = new window.Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+        const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+        requestAnimationFrame(raf);
+        document.documentElement.classList.remove('scroll-smooth');
+      } catch (e) { lenis = null; }
+    }
+
+    // Посилання-якорі (#catalog, #about…) — плавно і з урахуванням висоти шапки
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a || !lenis) return;
+      const id = a.getAttribute('href');
+      const target = (id === '#' || id === '#top') ? 0 : document.querySelector(id);
+      if (target === null) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: target === 0 ? 0 : -72, duration: 1.6 });
+      if (id.length > 1) history.replaceState(null, '', id);
+    });
+
+    // Легкий паралакс фото (фото повільніше рухається за прокруткою)
+    const parallaxEls = REDUCED_MOTION ? [] : Array.from(document.querySelectorAll('[data-parallax]'));
+    if (parallaxEls.length) {
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const vh = window.innerHeight;
+        parallaxEls.forEach(img => {
+          const r = img.parentElement.getBoundingClientRect();
+          if (r.bottom < -100 || r.top > vh + 100) return;
+          const offset = (r.top + r.height / 2 - vh / 2) * parseFloat(img.dataset.parallax);
+          img.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0) scale(1.14)`;
+        });
+      };
+      const onScrollPx = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      window.addEventListener('scroll', onScrollPx, { passive: true });
+      window.addEventListener('resize', onScrollPx, { passive: true });
+      update();
+    }
+
     // Шапка стає матовою при прокрутці
     const header = document.getElementById('site-header');
     if (header) {
@@ -589,47 +745,59 @@
     if (addForm) addForm.addEventListener('submit', handleAddProduct);
 
     // Логіка підготовки фото для адмінки
-    window.loadedBase64Image = '';
+    // Фото стискаємо прямо в браузері (до 1400px, формат WebP) — і лише потім вантажимо у сховище
+    window.loadedImageBlob = null;
     const fileInput = document.getElementById('prod-file');
     const urlInput = document.getElementById('prod-img');
     const previewWrapper = document.getElementById('image-preview-wrapper');
     const previewImg = document.getElementById('image-preview');
+    const submitBtn = document.getElementById('btn-add-submit');
 
     if (fileInput) {
       fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
+        window.loadedImageBlob = null;
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvasEl = document.createElement('canvas');
-            const maxDim = 900;
-            let w = img.width, h = img.height;
-            if (w > maxDim || h > maxDim) {
-              if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; } 
-              else { w = Math.round((w * maxDim) / h); h = maxDim; }
-            }
-            canvasEl.width = w; canvasEl.height = h;
-            canvasEl.getContext('2d').drawImage(img, 0, 0, w, h);
-            window.loadedBase64Image = canvasEl.toDataURL('image/jpeg', 0.82);
+        if (submitBtn) submitBtn.disabled = true; // поки фото готується
+        const srcUrl = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1400;
+          let w = img.naturalWidth, h = img.naturalHeight;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          const canvasEl = document.createElement('canvas');
+          canvasEl.width = w; canvasEl.height = h;
+          canvasEl.getContext('2d').drawImage(img, 0, 0, w, h);
+          URL.revokeObjectURL(srcUrl);
+          const done = (blob) => {
+            if (submitBtn) submitBtn.disabled = false;
+            if (!blob) { showToast('Не вдалося обробити фото', 'error'); return; }
+            window.loadedImageBlob = blob;
             if (previewImg && previewWrapper) {
-              previewImg.src = window.loadedBase64Image;
+              previewImg.src = URL.createObjectURL(blob);
               previewWrapper.classList.remove('hidden');
               previewWrapper.classList.add('flex');
             }
             if (urlInput) urlInput.value = '';
           };
-          img.src = event.target.result;
+          // WebP легший за JPEG; якщо браузер не вміє WebP — беремо JPEG
+          canvasEl.toBlob((blob) => {
+            if (blob && blob.type === 'image/webp') done(blob);
+            else canvasEl.toBlob(done, 'image/jpeg', 0.85);
+          }, 'image/webp', 0.84);
         };
-        reader.readAsDataURL(file);
+        img.onerror = () => { if (submitBtn) submitBtn.disabled = false; showToast('Цей файл не схожий на фото', 'error'); };
+        img.src = srcUrl;
       });
     }
 
     if (urlInput) {
       urlInput.addEventListener('input', () => {
         if (urlInput.value.trim() !== '') {
-          window.loadedBase64Image = '';
+          window.loadedImageBlob = null;
           if (fileInput) fileInput.value = '';
           if (previewWrapper) previewWrapper.classList.add('hidden');
         }
@@ -642,7 +810,7 @@
       const ctx = canvas.getContext('2d');
       let width, height;
       let particles = [];
-      const particleCount = window.innerWidth < 768 ? 18 : 45;
+      const particleCount = REDUCED_MOTION ? 0 : (window.innerWidth < 768 ? 16 : 40);
 
       function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
       window.addEventListener('resize', resizeCanvas, { passive: true });
