@@ -33,6 +33,47 @@
     if (revealObserver) revealObserver.observe(el); else el.classList.add('in');
   }
 
+  // Плавне відкриття/закриття вікон (працює і для вікон без анімації — просто показ/приховування)
+  const MODAL_CLOSE_MS = 650;
+  let openModalsCount = 0;
+  function openModal(el) {
+    if (!el || el.classList.contains('is-open')) return;
+    clearTimeout(el._closeTimer);
+    const wasHidden = el.classList.contains('hidden');
+    el.classList.remove('hidden');
+    void el.offsetWidth; // перерахунок стилів, щоб анімація стартувала з початкового стану
+    el.classList.add('is-open');
+    if (wasHidden) {
+      openModalsCount++;
+      document.documentElement.style.overflow = 'hidden';
+    }
+    const focusTarget = el.querySelector('.close-x, button, a, input');
+    if (focusTarget) setTimeout(() => focusTarget.focus({ preventScroll: true }), 60);
+  }
+  function closeModal(el) {
+    if (!el || el.classList.contains('hidden') || !el.classList.contains('is-open')) return;
+    el.classList.remove('is-open');
+    const delay = el.classList.contains('modal') ? MODAL_CLOSE_MS : 0;
+    el._closeTimer = setTimeout(() => {
+      el.classList.add('hidden');
+      openModalsCount = Math.max(0, openModalsCount - 1);
+      if (openModalsCount === 0) document.documentElement.style.overflow = '';
+    }, delay);
+  }
+
+  // Мʼяка «хвиля» від натискання на золоті та контурні кнопки
+  document.addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest('.btn-gold, .btn-outline');
+    if (!btn || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const r = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height) * 2.2;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - r.left}px;top:${e.clientY - r.top}px`;
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 800);
+  });
+
   function escapeHTML(str) {
     if (!str) return '';
     return str.toString().replace(/[&<>'"]/g, tag => ({
@@ -71,10 +112,10 @@
 
       if (titleEl) titleEl.textContent = title;
       if (msgEl) msgEl.textContent = message;
-      modal.classList.remove('hidden');
+      openModal(modal);
 
       function cleanup(result) {
-        modal.classList.add('hidden');
+        closeModal(modal);
         okBtn.removeEventListener('click', onOk);
         cancelBtn.removeEventListener('click', onCancel);
         if (backdrop) backdrop.removeEventListener('click', onCancel);
@@ -174,13 +215,7 @@
   function toggleCart(show) {
     const cartModal = document.getElementById('cart-modal');
     if (!cartModal) return;
-    if (show) {
-      cartModal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    } else {
-      cartModal.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
+    if (show) openModal(cartModal); else closeModal(cartModal);
   }
 
   const formatPrice = (n) => `${Number(n).toLocaleString('uk-UA')} грн`;
@@ -248,13 +283,13 @@
     if (modal) {
       if (form) form.classList.remove('hidden');
       if (success) success.classList.add('hidden');
-      modal.classList.remove('hidden');
+      // Кошик спершу відʼїжджає, потім зʼявляється вікно оформлення
+      setTimeout(() => openModal(modal), 260);
     }
   }
 
   function closeCheckoutModal() {
-    const modal = document.getElementById('checkout-modal');
-    if (modal) modal.classList.add('hidden');
+    closeModal(document.getElementById('checkout-modal'));
   }
 
   async function submitCheckout(e) {
@@ -349,7 +384,7 @@
             <p class="font-serif text-xl sm:text-2xl text-gold whitespace-nowrap pt-0.5">${formatPrice(p.price)}</p>
           </div>
           <div class="mt-5 flex items-center justify-between gap-3">
-            <button type="button" class="buy-btn flex-1 py-3.5 border border-stone-800 text-[10.5px] uppercase tracking-[0.28em] text-stone-300 hover:border-gold hover:text-black hover:bg-gold transition-colors duration-500 active:scale-[0.99]">
+            <button type="button" class="buy-btn btn-outline flex-1 py-3.5 border border-stone-800 text-[10.5px] uppercase tracking-[0.28em] text-stone-300">
               Додати до замовлення
             </button>
             <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer p-1" style="display: ${isAuth ? 'inline-block' : 'none'};">Видалити</button>
@@ -513,15 +548,15 @@
     const orderModal = document.getElementById('order-modal');
     if (orderModal) {
       document.querySelectorAll('.open-order-modal').forEach(btn =>
-        btn.addEventListener('click', () => orderModal.classList.remove('hidden')));
-      document.getElementById('order-modal-close-btn')?.addEventListener('click', () => orderModal.classList.add('hidden'));
-      document.getElementById('order-modal-backdrop')?.addEventListener('click', () => orderModal.classList.add('hidden'));
+        btn.addEventListener('click', () => openModal(orderModal)));
+      document.getElementById('order-modal-close-btn')?.addEventListener('click', () => closeModal(orderModal));
+      document.getElementById('order-modal-backdrop')?.addEventListener('click', () => closeModal(orderModal));
     }
 
     // Escape закриває будь-яке відкрите вікно
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
-      orderModal?.classList.add('hidden');
+      closeModal(orderModal);
       closeCheckoutModal();
       toggleCart(false);
     });
