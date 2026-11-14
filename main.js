@@ -60,7 +60,7 @@
   // 2. УТИЛІТИ ТА UI
   // Заглушка, якщо фото роботи немає або воно не завантажилось
   const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><radialGradient id="g" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#1b1712"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient></defs><rect width="400" height="500" fill="url(#g)"/><path fill="#C9A876" opacity=".55" d="M200 205c3 15 13 26 28 29-15 3-25 14-28 29-3-15-13-26-28-29 15-3 25-14 28-29z"/><text x="200" y="310" fill="#C9A876" opacity=".5" font-family="Georgia,serif" font-style="italic" font-size="20" text-anchor="middle">Furshet Carving</text></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><radialGradient id="g" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#EAD3BD"/><stop offset="1" stop-color="#C6A58D"/></radialGradient></defs><rect width="400" height="500" fill="url(#g)"/><path fill="#C9A876" opacity=".55" d="M200 205c3 15 13 26 28 29-15 3-25 14-28 29-3-15-13-26-28-29 15-3 25-14 28-29z"/><text x="200" y="310" fill="#C9A876" opacity=".5" font-family="Georgia,serif" font-style="italic" font-size="20" text-anchor="middle">Furshet Carving</text></svg>'
   );
 
   // Плавна поява блоків при прокрутці

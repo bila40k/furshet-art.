@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Furshet Carving by Victoria Bilak — Авторський фруктовий карвінг</title>
   <meta name="description" content="Авторські карвінг-композиції з фруктів та овочів від Victoria Bilak. Ручна робота для весіль, ювілеїв, корпоративів і фуршетів. Замовлення в Telegram, Viber або за телефоном.">
-  <meta name="theme-color" content="#070707">
+  <meta name="theme-color" content="#4B2E2A">
   <link rel="canonical" href="https://furshet-art.vercel.app/">
 
   <!-- Превʼю посилання в месенджерах і соцмережах -->
@@ -179,6 +179,73 @@
     ::-webkit-scrollbar-thumb { background: #2a2622; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #C9A876; }
     ::selection { background: rgba(201,168,118,.3); color: #fff; }
+  </style>
+  <!-- Тема Mocha Silk: кремовий фон, шоколадна шапка/футер, карамельні кнопки -->
+  <style id="mocha-theme">
+    :root { --espresso:#4B2E2A; --coffee:#7A5645; --caramel:#C6A58D; --cream:#EFE3D6; --offwhite:#F6ECE1; --latte:#E4CDB8; --gold-deep:#9A7448; }
+    body { background-color: var(--latte) !important; color: var(--espresso); }
+    .grain { opacity: .025; }
+
+    /* Поверхні */
+    .bg-\[\#0b0b0b\], .bg-\[\#101010\], .bg-\[\#111\], .bg-\[\#121212\], .bg-\[\#141414\], .bg-\[\#0e0e0e\], .bg-stone-900 { background-color: var(--offwhite); }
+    .bg-\[\#111111\]\/95 { background-color: rgb(250 246 241 / .96); }
+    .bg-black\/40 { background-color: rgb(250 246 241 / .7); }
+    [class*="#0b0b0b_70%"] { background: radial-gradient(ellipse at 30% 20%, #f7eee4 0%, #e6d3c1 70%); }
+    .border-stone-900, .border-stone-800, .border-stone-800\/70, .border-stone-800\/60, .border-stone-700, .border-stone-600 { border-color: rgb(122 86 69 / .22); }
+
+    /* Текст */
+    .text-white, .text-stone-100, .text-stone-200 { color: var(--espresso); }
+    .text-stone-300, .text-stone-400 { color: var(--coffee); }
+    .text-stone-500, .text-stone-500\/80, .text-stone-600 { color: #957464; }
+    .text-gold, .text-gold\/90, .text-gold\/80, .text-\[\#C5A47E\] { color: var(--gold-deep); }
+    .text-gold\/70 { color: rgb(154 116 72 / .85); }
+    .gold-text { background-image: linear-gradient(100deg, #7A5645 0%, #A67C52 40%, #8C6340 70%, #B08A5E 100%); }
+    .hairline { background: linear-gradient(90deg, transparent, rgba(122,86,69,.35), transparent); }
+    ::selection { background: rgba(198,165,141,.45); color: var(--espresso); }
+
+    /* Кнопки */
+    .btn-gold { background: linear-gradient(135deg, #C6A58D 0%, #A9805F 55%, #7A5645 100%); color: #FAF3EA; }
+    .btn-outline { border-color: var(--coffee) !important; color: var(--espresso) !important; }
+    .btn-outline::before { background: linear-gradient(135deg, #D4B79F 0%, #C6A58D 55%, #AE8B72 100%); }
+    @media (hover: hover) { .btn-outline:hover { color: var(--espresso) !important; border-color: var(--caramel) !important; } }
+
+    /* Шоколадна шапка і футер */
+    #site-header, #site-header.scrolled { background: rgba(75,46,42,.97); border-color: rgba(198,165,141,.2); }
+    footer.bg-\[\#050505\] { background-color: var(--espresso); }
+    #site-header .text-white, #site-header .text-stone-100, #site-header .text-stone-200, footer .text-stone-100, footer .text-stone-200 { color: var(--cream); }
+    #site-header .text-stone-300, #site-header .text-stone-400, #site-header .text-stone-500, footer .text-stone-400, footer .text-stone-500, footer .text-stone-600 { color: #cdb5a3; }
+    #site-header .text-gold, footer .text-gold, #site-header .text-gold\/70, footer .text-gold\/70 { color: var(--caramel); }
+    #site-header .border-stone-800, #site-header .border-stone-700 { border-color: rgba(239,227,214,.25); }
+    #site-header .bg-\[\#0b0b0b\] { background-color: var(--espresso); }
+    #site-header .btn-outline, footer .btn-outline { color: var(--cream) !important; border-color: var(--caramel) !important; }
+    footer .gold-text, #site-header .gold-text { background-image: linear-gradient(100deg, #C6A58D, #EFE3D6 45%, #C6A58D); }
+
+    /* Кроки */
+    .process-dot { background: var(--latte); border-color: rgba(122,86,69,.25); color: #957464; }
+    .process.in .process-dot { border-color: var(--caramel); color: var(--gold-deep); box-shadow: 0 0 0 6px var(--latte), 0 0 28px rgba(198,165,141,.35); }
+    .modal-glow { background: radial-gradient(ellipse at center, rgba(198,165,141,.25), transparent 70%); }
+
+    ::-webkit-scrollbar-track { background: var(--cream); }
+    ::-webkit-scrollbar-thumb { background: var(--caramel); }
+
+    /* Дрібні виправлення */
+    .bg-black\/30 { background-color: transparent; }
+    .bg-\[\#080808\]\/80 { background-color: var(--caramel); border-color: transparent; }
+    .bg-\[\#080808\]\/80 .marquee-track { color: var(--espresso); } .bg-\[\#080808\]\/80 .text-gold\/70 { color: var(--espresso); }
+    .divide-stone-800\/70 > :not([hidden]) ~ :not([hidden]), .divide-stone-900 > :not([hidden]) ~ :not([hidden]) { border-color: rgb(122 86 69 / .22); }
+    .bg-gradient-to-t.from-black\/60 { background: linear-gradient(to top, rgba(75,46,42,.16), transparent 45%); }
+
+    /* Кавово-коричневі секції */
+    #about, #contacts { background-color: var(--coffee); border-color: transparent; }
+    #about .text-white, #about .text-stone-100, #about .text-stone-200, #contacts .text-white, #contacts .text-stone-100, #contacts .text-stone-200 { color: var(--cream); }
+    #about .text-stone-300, #about .text-stone-400, #about .text-stone-500, #about .text-stone-600, #contacts .text-stone-300, #contacts .text-stone-400, #contacts .text-stone-500, #contacts .text-stone-600 { color: #E4CDB8; }
+    #about .text-gold, #about .text-gold\/70, #about .text-gold\/80, #about .text-gold\/90, #contacts .text-gold, #contacts .text-gold\/70, #contacts .text-gold\/80, #contacts .text-gold\/90 { color: var(--caramel); }
+    #about .gold-text, #contacts .gold-text { background-image: linear-gradient(100deg, #C6A58D, #F3E2CC 45%, #D9B894); }
+    #about [class*="border-"], #contacts [class*="border-"] { border-color: rgba(239,227,214,.22); }
+    #about [class*="#0b0b0b_70%"] { background: radial-gradient(ellipse at 30% 20%, #D9BDA5 0%, #A9805F 75%); }
+    #contacts .bg-black\/40 { background-color: rgba(75,46,42,.35); }
+    #contacts .btn-outline, #about .btn-outline { color: var(--cream) !important; border-color: var(--caramel) !important; }
+    #process { border-color: transparent; }
   </style>
 </head>
 <body class="relative min-h-screen">
@@ -560,6 +627,6 @@
   <div id="toast-container" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto z-[70] flex flex-col gap-2 pointer-events-none"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
-  <script src="/main.js?v=05f0d818" defer></script>
+  <script src="/main.js?v=ba545217" defer></script>
 </body>
 </html>
