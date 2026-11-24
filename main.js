@@ -60,7 +60,7 @@
   // 2. УТИЛІТИ ТА UI
   // Заглушка, якщо фото роботи немає або воно не завантажилось
   const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><radialGradient id="g" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#EAD3BD"/><stop offset="1" stop-color="#C6A58D"/></radialGradient></defs><rect width="400" height="500" fill="url(#g)"/><path fill="#C9A876" opacity=".55" d="M200 205c3 15 13 26 28 29-15 3-25 14-28 29-3-15-13-26-28-29 15-3 25-14 28-29z"/><text x="200" y="310" fill="#C9A876" opacity=".5" font-family="Georgia,serif" font-style="italic" font-size="20" text-anchor="middle">Furshet Carving</text></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><rect width="400" height="500" fill="#e7dfcf"/><path fill="#8c6418" opacity=".5" d="M200 205c3 15 13 26 28 29-15 3-25 14-28 29-3-15-13-26-28-29 15-3 25-14 28-29z"/><text x="200" y="310" fill="#675e51" font-family="Georgia,serif" font-size="20" text-anchor="middle">Furshet Art</text></svg>'
   );
 
   // Плавна поява блоків при прокрутці
@@ -74,7 +74,6 @@
   }
 
   const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let lenis = null; // плавна прокрутка (створюється нижче, якщо доступна)
 
   // Розбиваємо заголовки на слова, щоб вони «виїжджали» з-під маски по черзі
   function splitHeading(el) {
@@ -136,7 +135,6 @@
     if (wasHidden) {
       openModalsCount++;
       document.documentElement.style.overflow = 'hidden';
-      if (lenis) lenis.stop();
     }
     const focusTarget = el.querySelector('.close-x, button, a, input');
     if (focusTarget) setTimeout(() => focusTarget.focus({ preventScroll: true }), 60);
@@ -150,7 +148,6 @@
       openModalsCount = Math.max(0, openModalsCount - 1);
       if (openModalsCount === 0) {
         document.documentElement.style.overflow = '';
-        if (lenis) lenis.start();
       }
     }, delay);
   }
@@ -344,7 +341,7 @@
     cartItemsEl.innerHTML = '';
     cart.forEach((item, idx) => {
       const row = document.createElement('div');
-      row.className = 'flex items-center justify-between gap-4 bg-[#111] p-4 border border-stone-800';
+      row.className = 'cart-row flex items-center justify-between gap-4 bg-[#111] p-4 border border-stone-800';
       row.innerHTML = `
         <div class="min-w-0">
           <div class="font-serif italic text-stone-100 text-lg leading-snug truncate">${escapeHTML(item.name)}</div>
@@ -456,36 +453,26 @@
       let data;
       if (productsPrefetch) { data = await productsPrefetch; productsPrefetch = null; }
       else data = await fetchProducts();
-      if (!Array.isArray(data) || data.length === 0) {
-        grid.innerHTML = '<div class="text-center py-12 text-stone-500 col-span-full font-light">Каталог порожній</div>';
-        return;
-      }
+      // Порожній каталог не показуємо взагалі: секція й кошик лишаються схованими
+      if (!Array.isArray(data) || data.length === 0) return;
+      const section = document.getElementById('catalog');
+      if (section) section.hidden = false;
+      document.getElementById('cart-toggle-btn')?.classList.remove('hidden');
 
       const isAuth = isAdminLoggedIn();
       grid.innerHTML = '';
-      data.forEach((p, i) => {
+      data.forEach((p) => {
         const safeName = escapeHTML(p.name);
         const safeImgUrl = p.image_url ? encodeURI(p.image_url) : PLACEHOLDER_IMG;
-        const num = String(i + 1).padStart(2, '0');
 
         const card = document.createElement('article');
-        card.className = `reveal ${['', 'd1', 'd2'][i % 3]} group flex flex-col`;
+        card.className = 'prod span-3';
         card.innerHTML = `
-          <div class="curtain relative overflow-hidden aspect-[4/5] bg-[#0e0e0e]">
-            <img src="${safeImgUrl}" alt="${safeName}" loading="lazy" decoding="async" width="800" height="1000" class="product-img w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/10 pointer-events-none"></div>
-            <div class="absolute inset-3 sm:inset-4 border border-gold/0 group-hover:border-gold/40 transition-colors duration-700 pointer-events-none"></div>
-            <span class="absolute top-5 left-5 sm:top-6 sm:left-6 font-serif italic text-gold/90 text-lg">№ ${num}</span>
-          </div>
-          <div class="pt-5 sm:pt-6 flex items-start justify-between gap-4">
-            <h3 class="font-serif text-2xl sm:text-[26px] leading-tight text-stone-100 group-hover:text-gold-200 transition-colors">${safeName}</h3>
-            <p class="font-serif text-xl sm:text-2xl text-gold whitespace-nowrap pt-0.5">${formatPrice(p.price)}</p>
-          </div>
-          <div class="mt-5 flex items-center justify-between gap-3">
-            <button type="button" class="buy-btn btn-outline flex-1 py-3.5 border border-stone-800 text-[10.5px] uppercase tracking-[0.28em] text-stone-300">
-              Додати до замовлення
-            </button>
-            <button type="button" class="admin-delete-btn text-[10px] uppercase tracking-widest text-stone-600 hover:text-red-400 transition cursor-pointer p-1" style="display: ${isAuth ? 'inline-block' : 'none'};">Видалити</button>
+          <div class="prod__img"><img src="${safeImgUrl}" alt="${safeName}" loading="lazy" decoding="async" width="800" height="1000" class="product-img"></div>
+          <div class="prod__row"><h3 class="t-card">${safeName}</h3><span class="prod__price">${formatPrice(p.price)}</span></div>
+          <div class="prod__actions">
+            <button type="button" class="buy-btn btn btn--secondary">Додати до замовлення</button>
+            <button type="button" class="admin-delete-btn link" style="display: ${isAuth ? 'inline-block' : 'none'};">Видалити</button>
           </div>
         `;
 
@@ -499,7 +486,6 @@
         if (delBtn) delBtn.addEventListener('click', () => deleteProduct(p));
 
         grid.appendChild(card);
-        observeReveal(card);
       });
     } catch (err) {
       console.warn("Помилка завантаження каталогу:", err);
@@ -675,28 +661,6 @@
       toggleCart(false);
     });
 
-    // Плавна інерційна прокрутка (на компʼютері; на телефоні лишається рідна прокрутка)
-    if (window.Lenis && !REDUCED_MOTION && document.getElementById('site-header')) {
-      try {
-        lenis = new window.Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
-        const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
-        requestAnimationFrame(raf);
-        document.documentElement.classList.remove('scroll-smooth');
-      } catch (e) { lenis = null; }
-    }
-
-    // Посилання-якорі (#catalog, #about…) — плавно і з урахуванням висоти шапки
-    document.addEventListener('click', (e) => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a || !lenis) return;
-      const id = a.getAttribute('href');
-      const target = (id === '#' || id === '#top') ? 0 : document.querySelector(id);
-      if (target === null) return;
-      e.preventDefault();
-      lenis.scrollTo(target, { offset: target === 0 ? 0 : -72, duration: 1.6 });
-      if (id.length > 1) history.replaceState(null, '', id);
-    });
-
     // Легкий паралакс фото (фото повільніше рухається за прокруткою)
     const parallaxEls = REDUCED_MOTION ? [] : Array.from(document.querySelectorAll('[data-parallax]'));
     if (parallaxEls.length) {
@@ -802,45 +766,6 @@
           if (previewWrapper) previewWrapper.classList.add('hidden');
         }
       });
-    }
-
-    // Живі шпалери (тільки там, де є canvas)
-    const canvas = document.getElementById('bg-canvas');
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      let width, height;
-      let particles = [];
-      const particleCount = REDUCED_MOTION ? 0 : (window.innerWidth < 768 ? 16 : 40);
-
-      function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-      window.addEventListener('resize', resizeCanvas, { passive: true });
-      resizeCanvas();
-
-      class Particle {
-        constructor() { this.reset(); this.y = Math.random() * height; }
-        reset() {
-          this.x = Math.random() * width; this.y = height + Math.random() * 50;
-          this.size = Math.random() * 1.8 + 0.6;
-          this.speedY = Math.random() * 0.35 + 0.12; this.speedX = (Math.random() - 0.5) * 0.15;
-          this.alpha = Math.random() * 0.5 + 0.2;
-        }
-        update() {
-          this.y -= this.speedY; this.x += this.speedX;
-          if (this.y < -10 || this.x < -10 || this.x > width + 10) this.reset();
-        }
-        draw() {
-          ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(197, 164, 126, ${this.alpha})`; ctx.fill();
-        }
-      }
-
-      for (let i = 0; i < particleCount; i++) particles.push(new Particle());
-      function animateParticles() {
-        ctx.clearRect(0, 0, width, height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animateParticles);
-      }
-      animateParticles();
     }
   });
 })();
