@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адмін панель — Furshet Carving: photograph credits</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css?v=9390f738">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <style>
+    body { background-color: #050505; color: #E6E6E6; font-family: 'Montserrat', sans-serif; }
+    .btn-shimmer { position: relative; overflow: hidden; }
+    .btn-shimmer::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.15), transparent); transform: rotate(25deg); transition: transform 0.8s ease; }
+    .btn-shimmer:hover::after { transform: rotate(25deg) translate(80%, -80%); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <!-- Шапка адмінки -->
+  <header class="border-b border-stone-800/60 bg-[#070707]">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="text-[#C5A47E] font-serif italic text-xl">Furshet Admin</div>
+      <a href="/" class="text-xs uppercase tracking-widest text-stone-400 hover:text-white transition">← На головний сайт</a>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 mt-12">
+  <p><a class="link" href="index.html">Адмін панель — Furshet Carving</a></p>
+  <section class="credits-list" id="credits" aria-labelledby="credits-h">
+    <h1 id="credits-h">Photograph credits</h1>
+    <ul>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Thai_fruit_carving.jpg">ศีลงูสาวสวยปาแหวน</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Fruit_carving_(watermelon).jpg">Pauloleong2002</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Chocolate_covered_strawberries_(13498474903).jpg">James Petts from London, England</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Chocolate_enrobed_marzipans.jpg">Prillen</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Small_Chocolate_Fountain.JPG">Alexander Klink</a>, <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Dried_fruit,_decoration_(1).jpg">Armineaghayan</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Ringier_175_Jahre_Jubil%C3%A4um_(2499873203)_(2).jpg">Chris Schaer from Zofingen, Schweiz</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Dried_fruit_production_in_Armenia.jpg">Narek Avetisyan /Narek75/</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:202408031308_IMG_9943.jpg">ウィ貴公子</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Canapes_selection_(3383451823).jpg">Geoff Peters from Vancouver, BC, Canada</a>, <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Charcuterie_board_with_various_cheeses_meats_olives_and_vegetables_arranged.jpg">Shixart1985</a>, <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a></li>
+      <li><a href="https://commons.wikimedia.org/wiki/File:Fruit_platter_with_grapes.jpg">Jane Cooper</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></li>
+    </ul>
+  </section>
+</main>
+
+  <div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="confirm-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div class="relative bg-[#0c0c0c] border border-[#C5A47E]/40 rounded-2xl p-8 max-w-sm w-full shadow-2xl z-10 text-center">
+      <h3 id="confirm-title" class="font-serif italic text-2xl text-stone-100 mb-2">Підтвердження</h3>
+      <p id="confirm-message" class="text-xs text-stone-400 mb-6">Ви впевнені?</p>
+      <div class="flex gap-3">
+        <button id="confirm-cancel-btn" class="w-1/2 py-3 border border-stone-800 text-stone-400 text-xs rounded-lg">Скасувати</button>
+        <button id="confirm-ok-btn" class="w-1/2 py-3 bg-red-600 text-white text-xs rounded-lg">Видалити</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col pointer-events-none"></div>
+
+  <!-- Підключаємо той самий скрипт -->
+  <script src="/main.js?v=ba545217"></script>
+</body>
+</html>

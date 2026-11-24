@@ -457,7 +457,8 @@
       if (productsPrefetch) { data = await productsPrefetch; productsPrefetch = null; }
       else data = await fetchProducts();
       if (!Array.isArray(data) || data.length === 0) {
-        grid.innerHTML = '<div class="text-center py-12 text-stone-500 col-span-full font-light">Каталог порожній</div>';
+        // Порожній каталог не показуємо, щоб на сторінці не висів пустий розділ
+        document.getElementById('catalog')?.setAttribute('hidden', '');
         return;
       }
 
@@ -503,6 +504,8 @@
       });
     } catch (err) {
       console.warn("Помилка завантаження каталогу:", err);
+      // База недоступна: ховаємо розділ замість вічного «Завантаження…»
+      document.getElementById('catalog')?.setAttribute('hidden', '');
     }
   }
 

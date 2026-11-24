@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://bsgwtxupiolgqupvrlyt.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/site.css?v=9390f738">
+  <link rel="stylesheet" href="/assets/site.css?v=c128941b">
   <script>
     document.documentElement.classList.add('js');
     // Страховка: якщо скрипт сайту не завантажиться, заголовки все одно стануть видимими
@@ -246,6 +246,15 @@
     #contacts .bg-black\/40 { background-color: rgba(75,46,42,.35); }
     #contacts .btn-outline, #about .btn-outline { color: var(--cream) !important; border-color: var(--caramel) !important; }
     #process { border-color: transparent; }
+
+    /* Покращення: читабельність, підписи, арка в першому екрані */
+    .eyebrow { display: inline-block; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; font-weight: 500; }
+    .text-stone-500, .text-stone-500\/80, .text-stone-600 { color: #7d5f50; }
+    .text-stone-300, .text-stone-400 { color: #6b4a3c; }
+    .arch { border-radius: 999px 999px 6px 6px; }
+    #about .text-stone-300, #about .text-stone-400, #contacts .text-stone-300, #contacts .text-stone-400 { color: #F3E6D8; }
+    footer .text-stone-500, footer .text-stone-600 { color: #d8c2b1; }
+    #catalog .product-img { border-radius: 2px; }
   </style>
 </head>
 <body class="relative min-h-screen">
@@ -286,8 +295,8 @@
         </span>
       </a>
 
-      <nav class="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[0.25em] text-stone-400">
-        <a href="#catalog" class="link-line hover:text-stone-100 py-1">Колекція</a>
+      <nav class="hidden md:flex items-center gap-9 text-[12px] uppercase tracking-[0.2em] text-stone-400">
+        <a href="#menu" class="link-line hover:text-stone-100 py-1">Меню</a>
         <a href="#about" class="link-line hover:text-stone-100 py-1">Про майстра</a>
         <a href="#process" class="link-line hover:text-stone-100 py-1">Як замовити</a>
         <a href="#contacts" class="link-line hover:text-stone-100 py-1">Контакти</a>
@@ -305,35 +314,41 @@
 
   <main id="top">
     <!-- ===== ПЕРШИЙ ЕКРАН ===== -->
-    <section class="relative min-h-[86svh] sm:min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-8 pt-24 pb-16 sm:pb-20 text-center">
-      <div class="rise flex items-center gap-4 mb-7 sm:mb-9">
-        <span class="hidden sm:block w-12 h-px bg-gradient-to-r from-transparent to-gold/60"></span>
-        <span class="text-[9.5px] sm:text-[11px] uppercase tracking-[0.42em] text-gold">Exclusive Fruit &amp; Vegetable Art</span>
-        <span class="hidden sm:block w-12 h-px bg-gradient-to-l from-transparent to-gold/60"></span>
+    <section class="relative min-h-[100svh] flex items-center pt-24 sm:pt-28 pb-14 sm:pb-20">
+      <div class="max-w-7xl w-full mx-auto px-5 sm:px-8 grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-center">
+        <div class="text-center lg:text-left">
+          <div class="rise flex items-center justify-center lg:justify-start gap-4 mb-6 sm:mb-8">
+            <span class="hidden sm:block lg:hidden w-10 h-px bg-gradient-to-r from-transparent to-gold/60"></span>
+            <span class="eyebrow text-gold">Мукачево · ручна робота</span>
+            <span class="hidden sm:block w-10 h-px bg-gradient-to-l from-transparent to-gold/60"></span>
+          </div>
+          <h1 data-split data-split-now class="font-serif font-light text-[46px] leading-[1.02] sm:text-7xl lg:text-[92px] lg:leading-[0.98] tracking-[-0.01em] text-stone-100">
+            Мистецтво, <span class="italic">створене</span> для <span class="italic gold-text pr-2">особливих моментів</span>
+          </h1>
+          <p class="rise d2 mt-7 sm:mt-9 text-stone-400 text-[16px] sm:text-[18px] max-w-xl mx-auto lg:mx-0 leading-[1.75]">
+            Їстівні букети, фуршетні й фруктові столи, карвінг, цукерки ручної роботи та шоколадний фонтан. Вікторія Білак створює кожну композицію вручну під вашу подію.
+          </p>
+          <div class="rise d3 mt-9 sm:mt-11 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3.5 sm:gap-5 w-full max-w-sm sm:max-w-none mx-auto lg:mx-0">
+            <a href="#menu" class="btn-gold px-7 sm:px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-center whitespace-nowrap">Що ми готуємо</a>
+            <button type="button" id="custom-order-hero-btn" class="open-order-modal btn-outline px-7 sm:px-9 py-4 border border-stone-700 text-stone-200 text-[12px] font-medium uppercase tracking-[0.2em] whitespace-nowrap">Замовити на подію</button>
+          </div>
+        </div>
+
+        <div class="rise d2 relative mx-auto w-full max-w-[420px] sm:max-w-[480px] lg:max-w-none lg:mr-0 pb-10 sm:pb-12">
+          <div class="arch relative aspect-[4/5] overflow-hidden shadow-[0_40px_80px_-30px_rgba(75,46,42,.55)]">
+            <picture>
+              <source media="(max-width: 639px)" srcset="assets/img/photo-f27128116-780x975.webp">
+              <img src="assets/img/photo-f27128116-1280.webp" srcset="assets/img/photo-f27128116-960.webp 960w, assets/img/photo-f27128116-1280.webp 1280w" sizes="(max-width: 1023px) 90vw, 46vw" width="1280" height="962" alt="Святкова фруктова композиція з різьбленою трояндою з кавуна" fetchpriority="high" decoding="async" class="w-full h-full object-cover" style="transform: scale(1.22); transform-origin: 58% 100%">
+            </picture>
+          </div>
+          <div class="absolute -left-4 sm:-left-10 bottom-0 w-[42%] aspect-square overflow-hidden rounded-full border-[6px] border-[#E4CDB8] shadow-[0_24px_50px_-20px_rgba(75,46,42,.6)]">
+            <img src="assets/img/photo-f34997351-500.webp" width="500" height="376" alt="Полуниця в шоколаді" decoding="async" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute right-3 sm:right-5 top-5 sm:top-6 flex items-center gap-2 bg-[#F6ECE1]/95 px-4 py-2.5 rounded-full text-[12px] tracking-wide text-[#4B2E2A] shadow-lg">
+            <svg class="w-3 h-3 text-gold"><use href="#star"/></svg> Готуємо під вашу дату
+          </div>
+        </div>
       </div>
-
-      <h1 data-split data-split-now class="font-serif font-light text-[44px] leading-[1.02] sm:text-7xl md:text-8xl lg:text-[112px] lg:leading-[0.98] tracking-[-0.01em] text-stone-100 max-w-6xl">
-        Мистецтво, <span class="italic">створене</span><br class="hidden sm:block"> для <span class="italic gold-text pr-2">особливих моментів</span>
-      </h1>
-
-      <div class="rise d2 flex items-center gap-4 my-8 sm:my-10 text-gold/80" aria-hidden="true">
-        <span class="w-16 sm:w-24 h-px bg-gradient-to-r from-transparent to-gold/50"></span>
-        <svg class="w-3 h-3"><use href="#star"/></svg>
-        <span class="w-16 sm:w-24 h-px bg-gradient-to-l from-transparent to-gold/50"></span>
-      </div>
-
-      <p class="rise d2 text-stone-400 text-[14px] sm:text-[17px] font-light max-w-2xl leading-[1.85]">
-        Авторські карвінг-композиції Victoria Bilak. Ювелірна точність ліній, бездоганна свіжість і естетика, що робить ваш стіл центром свята.
-      </p>
-
-      <div class="rise d3 mt-10 sm:mt-12 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 sm:gap-5 w-full max-w-sm sm:max-w-none">
-        <a href="#catalog" class="btn-gold px-6 sm:px-9 py-4 text-[11px] font-semibold uppercase tracking-[0.22em] sm:tracking-[0.28em] text-center whitespace-nowrap">Переглянути колекцію</a>
-        <button type="button" id="custom-order-hero-btn" class="open-order-modal btn-outline px-6 sm:px-9 py-4 border border-stone-700 text-stone-200 text-[11px] font-medium uppercase tracking-[0.22em] sm:tracking-[0.28em] whitespace-nowrap bg-black/30">Індивідуальне замовлення</button>
-      </div>
-
-      <a href="#catalog" aria-label="Прокрутити вниз" class="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 w-6 h-10 rounded-full border border-stone-700 justify-center pt-2">
-        <span class="scroll-dot block w-1 h-1.5 rounded-full bg-gold"></span>
-      </a>
     </section>
 
     <!-- ===== ПЕРЕВАГИ ===== -->
@@ -341,18 +356,18 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 border-y border-stone-800/70 divide-y sm:divide-y-0 sm:divide-x divide-stone-800/70">
         <div class="reveal py-8 sm:py-10 px-4 sm:px-8 text-center">
           <div class="font-serif italic text-3xl text-gold mb-2">I</div>
-          <h3 class="text-[11px] uppercase tracking-[0.3em] text-stone-200 mb-2">Ручна робота</h3>
-          <p class="text-[13px] text-stone-500 font-light leading-relaxed">Кожна композиція вирізана вручну, без шаблонів і повторів</p>
+          <h3 class="text-[12px] uppercase tracking-[0.24em] text-stone-200 mb-2">Ручна робота</h3>
+          <p class="text-[15px] text-stone-400 leading-relaxed">Кожна композиція вирізана вручну, без шаблонів і повторів</p>
         </div>
         <div class="reveal d1 py-8 sm:py-10 px-4 sm:px-8 text-center">
           <div class="font-serif italic text-3xl text-gold mb-2">II</div>
-          <h3 class="text-[11px] uppercase tracking-[0.3em] text-stone-200 mb-2">Свіжі продукти</h3>
-          <p class="text-[13px] text-stone-500 font-light leading-relaxed">Тільки добірні фрукти та овочі, які виглядають бездоганно</p>
+          <h3 class="text-[12px] uppercase tracking-[0.24em] text-stone-200 mb-2">Свіжі продукти</h3>
+          <p class="text-[15px] text-stone-400 leading-relaxed">Тільки добірні фрукти та овочі, які виглядають бездоганно</p>
         </div>
         <div class="reveal d2 py-8 sm:py-10 px-4 sm:px-8 text-center">
           <div class="font-serif italic text-3xl text-gold mb-2">III</div>
-          <h3 class="text-[11px] uppercase tracking-[0.3em] text-stone-200 mb-2">Під вашу подію</h3>
-          <p class="text-[13px] text-stone-500 font-light leading-relaxed">Розмір, кольори й подача — під формат і кількість гостей</p>
+          <h3 class="text-[12px] uppercase tracking-[0.24em] text-stone-200 mb-2">Під вашу подію</h3>
+          <p class="text-[15px] text-stone-400 leading-relaxed">Розмір, кольори й подача — під формат і кількість гостей</p>
         </div>
       </div>
     </section>
@@ -379,14 +394,84 @@
       </div>
     </div>
 
+    <!-- ===== ЩО МИ ГОТУЄМО ===== -->
+    <section id="menu" class="scroll-mt-20 py-20 sm:py-32 max-w-7xl mx-auto px-5 sm:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-5">
+        <div class="reveal">
+          <span class="eyebrow text-gold">Що ми готуємо</span>
+          <h2 data-split class="font-serif font-light text-[40px] leading-none sm:text-6xl md:text-7xl text-stone-100 mt-3">Шість <span class="italic gold-text pr-1">напрямів</span></h2>
+        </div>
+        <p class="reveal d1 text-[15px] text-stone-400 max-w-sm leading-relaxed md:text-right">Кожну композицію збираємо під кількість гостей, формат свята і ваш бюджет.</p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-8 lg:gap-x-10 gap-y-10 sm:gap-y-16">
+          <article class="reveal  group">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-[#d9bfa8]">
+              <img src="assets/img/photo-f65242260-960.webp" srcset="assets/img/photo-f65242260-500.webp 500w, assets/img/photo-f65242260-960.webp 960w" sizes="(max-width: 1023px) 48vw, 30vw" width="1280" height="848" alt="Квіти, викладені з сушених фруктів" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#2e1a17]/70 via-transparent to-transparent"></div>
+              <span class="absolute left-3 sm:left-5 bottom-2.5 sm:bottom-4 font-serif italic text-[#F6ECE1] text-base sm:text-lg">№ 01</span>
+            </div>
+            <h3 class="font-serif text-[21px] sm:text-[28px] leading-tight text-stone-100 mt-3 sm:mt-5">Їстівні букети</h3>
+            <p class="text-[14px] sm:text-[15px] text-stone-400 leading-relaxed mt-1.5 sm:mt-2 max-w-sm">Фрукти, сухофрукти, полуниця в шоколаді або м'ясо замість квітів.</p>
+          </article>
+          <article class="reveal d1 group">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-[#d9bfa8]">
+              <img src="assets/img/photo-f186101303-960.webp" srcset="assets/img/photo-f186101303-500.webp 500w, assets/img/photo-f186101303-960.webp 960w" sizes="(max-width: 1023px) 48vw, 30vw" width="1280" height="853" alt="Дошка з нарізкою, сирами й оливками" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#2e1a17]/70 via-transparent to-transparent"></div>
+              <span class="absolute left-3 sm:left-5 bottom-2.5 sm:bottom-4 font-serif italic text-[#F6ECE1] text-base sm:text-lg">№ 02</span>
+            </div>
+            <h3 class="font-serif text-[21px] sm:text-[28px] leading-tight text-stone-100 mt-3 sm:mt-5">М'ясні та сирні композиції</h3>
+            <p class="text-[14px] sm:text-[15px] text-stone-400 leading-relaxed mt-1.5 sm:mt-2 max-w-sm">Нарізки, рулети й сири на дошках для фуршету чи подарунка.</p>
+          </article>
+          <article class="reveal d2 group">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-[#d9bfa8]">
+              <img src="assets/img/photo-f86635673-960.webp" srcset="assets/img/photo-f86635673-500.webp 500w, assets/img/photo-f86635673-960.webp 960w" sizes="(max-width: 1023px) 48vw, 30vw" width="1280" height="1707" alt="Троянда, вирізана на кавуні" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#2e1a17]/70 via-transparent to-transparent"></div>
+              <span class="absolute left-3 sm:left-5 bottom-2.5 sm:bottom-4 font-serif italic text-[#F6ECE1] text-base sm:text-lg">№ 03</span>
+            </div>
+            <h3 class="font-serif text-[21px] sm:text-[28px] leading-tight text-stone-100 mt-3 sm:mt-5">Фруктові столи й карвінг</h3>
+            <p class="text-[14px] sm:text-[15px] text-stone-400 leading-relaxed mt-1.5 sm:mt-2 max-w-sm">Різьблені кавуни, дині й фрукти в центр святкового столу.</p>
+          </article>
+          <article class="reveal  group">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-[#d9bfa8]">
+              <img src="assets/img/photo-f36962786-960.webp" srcset="assets/img/photo-f36962786-500.webp 500w, assets/img/photo-f36962786-960.webp 960w" sizes="(max-width: 1023px) 48vw, 30vw" width="1280" height="962" alt="Таця з канапе" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#2e1a17]/70 via-transparent to-transparent"></div>
+              <span class="absolute left-3 sm:left-5 bottom-2.5 sm:bottom-4 font-serif italic text-[#F6ECE1] text-base sm:text-lg">№ 04</span>
+            </div>
+            <h3 class="font-serif text-[21px] sm:text-[28px] leading-tight text-stone-100 mt-3 sm:mt-5">Фуршет і козацький стіл</h3>
+            <p class="text-[14px] sm:text-[15px] text-stone-400 leading-relaxed mt-1.5 sm:mt-2 max-w-sm">Канапе, закуски та столи для весілля, ювілею чи корпоративу.</p>
+          </article>
+          <article class="reveal d1 group">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-[#d9bfa8]">
+              <img src="assets/img/photo-f16150963-960.webp" srcset="assets/img/photo-f16150963-500.webp 500w, assets/img/photo-f16150963-960.webp 960w" sizes="(max-width: 1023px) 48vw, 30vw" width="1280" height="853" alt="Цукерки в шоколаді у вазі" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#2e1a17]/70 via-transparent to-transparent"></div>
+              <span class="absolute left-3 sm:left-5 bottom-2.5 sm:bottom-4 font-serif italic text-[#F6ECE1] text-base sm:text-lg">№ 05</span>
+            </div>
+            <h3 class="font-serif text-[21px] sm:text-[28px] leading-tight text-stone-100 mt-3 sm:mt-5">Цукерки ручної роботи</h3>
+            <p class="text-[14px] sm:text-[15px] text-stone-400 leading-relaxed mt-1.5 sm:mt-2 max-w-sm">З сухофруктів, горіхів і шоколаду, у подарунковій коробці.</p>
+          </article>
+          <article class="reveal d2 group">
+            <div class="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-[#d9bfa8]">
+              <img src="assets/img/photo-f4881187-960.webp" srcset="assets/img/photo-f4881187-500.webp 500w, assets/img/photo-f4881187-960.webp 960w" sizes="(max-width: 1023px) 48vw, 30vw" width="1280" height="1939" alt="Шоколадний фонтан" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#2e1a17]/70 via-transparent to-transparent"></div>
+              <span class="absolute left-3 sm:left-5 bottom-2.5 sm:bottom-4 font-serif italic text-[#F6ECE1] text-base sm:text-lg">№ 06</span>
+            </div>
+            <h3 class="font-serif text-[21px] sm:text-[28px] leading-tight text-stone-100 mt-3 sm:mt-5">Шоколадний фонтан</h3>
+            <p class="text-[14px] sm:text-[15px] text-stone-400 leading-relaxed mt-1.5 sm:mt-2 max-w-sm">Теплий шоколад і фрукти на шпажках для гостей.</p>
+          </article>
+      </div>
+      <div class="reveal mt-14 sm:mt-16 text-center">
+        <button type="button" class="open-order-modal btn-gold inline-flex items-center gap-3 px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em]">Замовити композицію <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
     <!-- ===== КОЛЕКЦІЯ ===== -->
     <section id="catalog" class="scroll-mt-20 py-20 sm:py-32 max-w-7xl mx-auto px-5 sm:px-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 gap-4">
         <div class="reveal">
-          <span class="text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-gold">Exquisite Portfolio</span>
+          <span class="eyebrow text-gold">Готові роботи з цінами</span>
           <h2 data-split class="font-serif font-light text-[40px] leading-none sm:text-6xl md:text-7xl text-stone-100 mt-3">Вибрані <span class="italic gold-text pr-1">композиції</span></h2>
         </div>
-        <p class="reveal d1 text-[13px] sm:text-sm text-stone-500 font-light max-w-xs leading-relaxed md:text-right">Кожну роботу можна замовити на вашу подію або адаптувати під ваші побажання.</p>
+        <p class="reveal d1 text-[15px] text-stone-400 max-w-xs leading-relaxed md:text-right">Кожну роботу можна замовити на вашу подію або адаптувати під ваші побажання.</p>
       </div>
       <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-8 lg:gap-x-10 gap-y-14 sm:gap-y-16">
         <div class="text-center py-16 text-stone-500 col-span-full font-light">Завантаження колекції…</div>
@@ -398,20 +483,20 @@
       <div class="max-w-6xl mx-auto px-5 sm:px-8 grid md:grid-cols-[5fr_6fr] gap-14 md:gap-20 items-center">
         <div class="reveal relative max-w-sm mx-auto md:max-w-none w-full">
           <div class="absolute inset-0 translate-x-4 translate-y-4 sm:translate-x-6 sm:translate-y-6 border border-gold/30" aria-hidden="true"></div>
-          <div class="curtain relative aspect-[4/5] overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#1c1813_0%,#0b0b0b_70%)] flex items-center justify-center">
+          <div class="relative aspect-[4/5] overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#1c1813_0%,#0b0b0b_70%)] flex items-center justify-center">
             <!-- Фото майстра: покладіть файл victoria.jpg у корінь сайту — і воно зʼявиться тут -->
             <div class="text-center">
               <svg class="w-20 h-20 mx-auto mb-4 opacity-90"><use href="#logo-mark"/></svg>
               <div class="font-serif italic text-5xl gold-text">V · B</div>
             </div>
-            <picture class="absolute inset-0"><source srcset="/victoria.webp" type="image/webp"><img src="/victoria.jpg" alt="Victoria Bilak — майстер карвінгу" loading="lazy" decoding="async" width="800" height="1000" data-parallax="0.1" class="w-full h-full object-cover" onerror="this.closest('picture').remove()"></picture>
+            <picture class="absolute inset-0"><source srcset="/victoria.webp" type="image/webp"><img src="/victoria.jpg" alt="Victoria Bilak — майстер карвінгу" loading="lazy" decoding="async" width="800" height="1000" class="w-full h-full object-cover" onerror="this.closest('picture').remove()"></picture>
           </div>
         </div>
 
         <div>
-          <span class="reveal block text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-gold">Про майстра</span>
+          <span class="reveal block eyebrow text-gold">Про майстра</span>
           <h2 data-split class="font-serif font-light text-[40px] leading-[1.05] sm:text-6xl text-stone-100 mt-3 mb-8">Кожна композиція — <span class="italic gold-text pr-1">як прикраса</span></h2>
-          <div class="reveal d2 space-y-5 text-stone-400 font-light text-[15px] sm:text-base leading-[1.9]">
+          <div class="reveal d2 space-y-5 text-stone-400 text-[16px] sm:text-[17px] leading-[1.9]">
             <p>Мене звати Вікторія. Карвінг для мене — це спосіб перетворити звичайні фрукти й овочі на справжню прикрасу свята, яку гості фотографують ще до першого тосту.</p>
             <p>Я створюю кожну композицію вручну під конкретну подію: продумую форму, кольори й подачу так, щоб вони пасували до вашого столу, інтерʼєру та настрою вечора.</p>
           </div>
@@ -427,7 +512,7 @@
     <section id="process" class="scroll-mt-20 relative py-20 sm:py-32 border-t border-stone-900">
       <div class="max-w-6xl mx-auto px-5 sm:px-8">
         <div class="text-center mb-14 sm:mb-24">
-          <span class="reveal block text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-gold">Як ми працюємо</span>
+          <span class="reveal block eyebrow text-gold">Як ми працюємо</span>
           <h2 data-split class="font-serif font-light text-[40px] leading-[1.05] sm:text-6xl md:text-7xl text-stone-100 mt-4">Чотири кроки <br class="hidden sm:block"><span class="italic gold-text">до ідеального столу</span></h2>
         </div>
 
@@ -436,27 +521,27 @@
           <li class="process-step" style="--s:0">
             <span class="process-dot">01</span>
             <h3 class="font-serif text-[28px] text-stone-100 leading-none mb-3">Заявка</h3>
-            <p class="text-[14px] text-stone-500 font-light leading-relaxed md:max-w-[220px] md:mx-auto">Напишіть у Telegram чи Viber, зателефонуйте або оформіть замовлення на сайті.</p>
+            <p class="text-[15px] text-stone-400 leading-relaxed md:max-w-[220px] md:mx-auto">Напишіть у Telegram чи Viber, зателефонуйте або оформіть замовлення на сайті.</p>
           </li>
           <li class="process-step" style="--s:1">
             <span class="process-dot">02</span>
             <h3 class="font-serif text-[28px] text-stone-100 leading-none mb-3">Обговорення</h3>
-            <p class="text-[14px] text-stone-500 font-light leading-relaxed md:max-w-[220px] md:mx-auto">Уточнюємо дату, формат і кількість гостей, підбираємо стиль композиції.</p>
+            <p class="text-[15px] text-stone-400 leading-relaxed md:max-w-[220px] md:mx-auto">Уточнюємо дату, формат і кількість гостей, підбираємо стиль композиції.</p>
           </li>
           <li class="process-step" style="--s:2">
             <span class="process-dot">03</span>
             <h3 class="font-serif text-[28px] text-stone-100 leading-none mb-3">Створення</h3>
-            <p class="text-[14px] text-stone-500 font-light leading-relaxed md:max-w-[220px] md:mx-auto">Вікторія вручну створює композицію спеціально для вашої події.</p>
+            <p class="text-[15px] text-stone-400 leading-relaxed md:max-w-[220px] md:mx-auto">Вікторія вручну створює композицію спеціально для вашої події.</p>
           </li>
           <li class="process-step" style="--s:3">
             <span class="process-dot">04</span>
             <h3 class="font-serif text-[28px] text-stone-100 leading-none mb-3"><span class="italic gold-text">Свято</span></h3>
-            <p class="text-[14px] text-stone-500 font-light leading-relaxed md:max-w-[220px] md:mx-auto">Ваш стіл стає окрасою вечора, а гості не можуть відвести очей.</p>
+            <p class="text-[15px] text-stone-400 leading-relaxed md:max-w-[220px] md:mx-auto">Ваш стіл стає окрасою вечора, а гості не можуть відвести очей.</p>
           </li>
         </ol>
 
         <div class="reveal mt-16 sm:mt-20 text-center">
-          <button type="button" class="open-order-modal btn-outline inline-flex items-center gap-3 px-9 py-4 border border-gold/50 text-gold text-[11px] uppercase tracking-[0.28em]">Обговорити мою подію <span aria-hidden="true">→</span></button>
+          <button type="button" class="open-order-modal btn-outline inline-flex items-center gap-3 px-9 py-4 border border-gold/50 text-gold text-[12px] uppercase tracking-[0.22em]">Обговорити мою подію <span aria-hidden="true">→</span></button>
         </div>
       </div>
     </section>
@@ -465,22 +550,22 @@
     <section id="contacts" class="scroll-mt-20 relative py-24 sm:py-36 border-t border-stone-900 overflow-hidden">
       <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-gold/[0.06] blur-[120px] rounded-full pointer-events-none" aria-hidden="true"></div>
       <div class="relative max-w-3xl mx-auto px-5 sm:px-8 text-center">
-        <span class="reveal block text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-gold">Індивідуальне замовлення</span>
+        <span class="reveal block eyebrow text-gold">Індивідуальне замовлення</span>
         <h2 data-split class="font-serif font-light text-[40px] leading-[1.05] sm:text-6xl md:text-7xl text-stone-100 mt-4">Створимо красу <br class="hidden sm:block"><span class="italic gold-text pr-1">для вашого свята</span></h2>
-        <p class="reveal d2 mt-7 text-stone-400 font-light text-[15px] sm:text-base leading-relaxed max-w-lg mx-auto">Напишіть або зателефонуйте — обговоримо дату, формат події та кількість гостей.</p>
+        <p class="reveal d2 mt-7 text-stone-400 text-[16px] sm:text-[17px] leading-relaxed max-w-lg mx-auto">Напишіть або зателефонуйте — обговоримо дату, формат події та кількість гостей.</p>
 
         <div class="reveal d3 mt-12 grid sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto">
           <a href="https://t.me/+380501716025" target="_blank" rel="noopener noreferrer" class="group flex sm:flex-col items-center justify-center gap-3 sm:gap-4 py-5 sm:py-8 border border-stone-800 bg-black/40 hover:border-gold/60 transition-colors duration-500">
             <svg class="w-6 h-6 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-            <span class="text-[11px] uppercase tracking-[0.28em] text-stone-200 group-hover:text-gold transition-colors">Telegram</span>
+            <span class="text-[12px] uppercase tracking-[0.22em] text-stone-200 group-hover:text-gold transition-colors">Telegram</span>
           </a>
           <a href="viber://chat?number=%2B380501716025" class="group flex sm:flex-col items-center justify-center gap-3 sm:gap-4 py-5 sm:py-8 border border-stone-800 bg-black/40 hover:border-gold/60 transition-colors duration-500">
             <svg class="w-6 h-6 text-[#7360F2]" viewBox="0 0 24 24" fill="currentColor"><path d="M11.4 0C9.47.03 5.33.34 3.02 2.46 1.3 4.17.7 6.7.62 9.82c-.06 3.11-.13 8.95 5.5 10.54v2.42s-.04.97.6 1.17c.79.25 1.23-.5 1.98-1.3l1.4-1.58c3.85.32 6.8-.42 7.14-.53.78-.25 5.18-.81 5.9-6.65.74-6.02-.36-9.82-2.34-11.54C20.2 1.83 17.25.2 11.4 0zm.53 1.82c4.97.18 7.4 1.5 8.38 2.38 1.66 1.43 2.5 4.84 1.88 9.84-.6 4.85-4.15 5.15-4.8 5.36-.28.09-2.88.73-6.14.52 0 0-2.43 2.93-3.19 3.69-.12.12-.26.17-.35.15-.13-.03-.17-.19-.16-.41l.02-4c-4.77-1.32-4.49-6.29-4.44-8.89.06-2.6.55-4.73 2-6.17 1.96-1.78 5.48-2.03 7.3-2.06zm.4 2.73a.3.3 0 000 .6c1.62.01 2.97.54 4.06 1.6 1.08 1.06 1.63 2.5 1.64 4.33a.3.3 0 00.6 0c-.01-1.97-.62-3.58-1.82-4.76-1.2-1.17-2.71-1.76-4.48-1.77zm-3.88.68a1.1 1.1 0 00-.68.24h-.01c-.33.29-.65.6-.92.95-.24.32-.38.63-.42.94-.02.18 0 .37.06.54l.02.01c.36 1.05.83 2.06 1.39 3.01a14.6 14.6 0 002.75 3.44l.03.04.04.03.03.03.03.03a14.7 14.7 0 003.45 2.75c1.44.79 2.32 1.16 2.84 1.32v.01c.15.04.3.07.45.06.31-.04.62-.18.93-.42.35-.27.66-.59.94-.93l.01-.01c.27-.32.36-.71.3-.97-.07-.34-.36-.62-.93-1.08-.5-.42-1.04-.79-1.6-1.12-.44-.24-.88-.1-1.06.15l-.38.48c-.2.24-.55.21-.55.21-2.6-.66-3.3-3.29-3.3-3.29s-.03-.36.21-.55l.48-.38c.23-.19.39-.63.14-1.06a12.6 12.6 0 00-1.11-1.6c-.25-.3-.53-.6-.84-.83-.15-.1-.32-.17-.49-.17zm4.2.65a.3.3 0 000 .6c1 .07 1.77.4 2.33 1.01.56.61.83 1.37.81 2.3a.3.3 0 00.6.02c.03-1.07-.3-1.98-.97-2.72-.68-.73-1.62-1.14-2.77-1.21zm.43 1.4a.3.3 0 00-.02.6c.85.05 1.27.48 1.32 1.37a.3.3 0 00.6-.03c-.06-1.16-.71-1.88-1.9-1.94z"/></svg>
-            <span class="text-[11px] uppercase tracking-[0.28em] text-stone-200 group-hover:text-gold transition-colors">Viber</span>
+            <span class="text-[12px] uppercase tracking-[0.22em] text-stone-200 group-hover:text-gold transition-colors">Viber</span>
           </a>
           <a href="tel:+380501716025" class="group flex sm:flex-col items-center justify-center gap-3 sm:gap-4 py-5 sm:py-8 border border-stone-800 bg-black/40 hover:border-gold/60 transition-colors duration-500">
             <svg class="w-6 h-6 text-gold" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.28 6.72 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.37c0-.52-.35-.97-.85-1.09l-4.42-1.1c-.44-.11-.9.05-1.17.41l-.97 1.29a1.13 1.13 0 01-1.21.38 12.04 12.04 0 01-7.14-7.14 1.13 1.13 0 01.38-1.21l1.29-.97c.36-.27.52-.73.41-1.17L6.96 3.1A1.13 1.13 0 005.87 2.25H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
-            <span class="text-[11px] uppercase tracking-[0.2em] text-stone-200 group-hover:text-gold transition-colors whitespace-nowrap">+380 50 171 60 25</span>
+            <span class="text-[12px] uppercase tracking-[0.16em] text-stone-200 group-hover:text-gold transition-colors whitespace-nowrap">+380 50 171 60 25</span>
           </a>
         </div>
       </div>
@@ -495,15 +580,15 @@
         <span class="font-serif italic text-2xl text-stone-200">Furshet Carving</span>
         <span class="text-[8.5px] uppercase tracking-[0.35em] text-gold">by Victoria Bilak</span>
       </a>
-      <nav class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-[10.5px] uppercase tracking-[0.25em] text-stone-500">
-        <a href="#catalog" class="link-line hover:text-stone-200">Колекція</a>
+      <nav class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-[12px] uppercase tracking-[0.2em] text-stone-500">
+        <a href="#menu" class="link-line hover:text-stone-200">Меню</a>
         <a href="#about" class="link-line hover:text-stone-200">Про майстра</a>
         <a href="#process" class="link-line hover:text-stone-200">Як замовити</a>
         <a href="#contacts" class="link-line hover:text-stone-200">Контакти</a>
         <a href="tel:+380501716025" class="link-line hover:text-stone-200">+380 50 171 60 25</a>
       </nav>
       <div class="hairline w-full max-w-md"></div>
-      <p class="text-[11px] text-stone-600 font-light tracking-wider">&copy; <span id="year">2026</span> Furshet Carving. Створено для особливих моментів.</p>
+      <p class="text-[12px] text-stone-600 tracking-wider">&copy; <span id="year">2026</span> Furshet Carving. Створено для особливих моментів. · <a href="credits.html" class="link-line">Фото страв: Wikimedia Commons</a></p>
     </div>
   </footer>
 
@@ -627,6 +712,6 @@
   <div id="toast-container" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 left-4 sm:left-auto z-[70] flex flex-col gap-2 pointer-events-none"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
-  <script src="/main.js?v=ba545217" defer></script>
+  <script src="/main.js?v=2639c04c" defer></script>
 </body>
 </html>
